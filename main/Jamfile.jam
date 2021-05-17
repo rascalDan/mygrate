@@ -1,0 +1,2 @@
+exe mygrate : main.cpp : <library>../lib//mygrate ;
+#run main.cpp : : : <library>../lib//mygrate ;

@@ -1,0 +1,38 @@
+using gcc ;
+
+using pkg-config ;
+import pkg-config ;
+import testing ;
+
+pkg-config.import libmariadb ;
+pkg-config.import libpq ;
+
+variant coverage : debug ;
+
+project : requirements
+	<cxxstd>20
+	<visibility>hidden
+	<linkflags>"-Wl,-z,defs,--warn-once,--gc-sections"
+	<variant>release:<lto>on
+	<variant>debug:<warnings>extra
+	<variant>debug:<warnings-as-errors>on
+	<variant>coverage:<coverage>on
+	<toolset>tidy:<checkxx>boost-*
+	<toolset>tidy:<checkxx>bugprone-*
+	<toolset>tidy:<xcheckxx>bugprone-macro-parentheses
+	<toolset>tidy:<checkxx>clang-*
+	<toolset>tidy:<checkxx>misc-*
+	<toolset>tidy:<xcheckxx>misc-non-private-member-variables-in-classes
+	<toolset>tidy:<checkxx>modernize-*
+	<toolset>tidy:<xcheckxx>modernize-use-trailing-return-type
+	<toolset>tidy:<checkxx>hicpp-*
+	<toolset>tidy:<xcheckxx>hicpp-vararg
+	<toolset>tidy:<xcheckxx>hicpp-signed-bitwise
+	<toolset>tidy:<xcheckxx>hicpp-named-parameter
+	<toolset>tidy:<xcheckxx>hicpp-no-array-decay
+	<toolset>tidy:<checkxx>performance-*
+	<toolset>tidy:<mapping>iwyu.json
+	;
+
+build-project main ;
+build-project test ;

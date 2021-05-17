@@ -1,0 +1,9 @@
+lib mygrate :
+	[ glob *.cpp ]
+	:
+	<link>static
+	<use>..//libmariadb
+	: :
+	<include>.
+	<library>..//libmariadb
+	;

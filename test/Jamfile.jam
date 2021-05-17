@@ -1,0 +1,11 @@
+lib boost_unit_test_framework ;
+
+project : requirements
+	<library>../lib//mygrate
+	<library>boost_unit_test_framework
+	<define>BOOST_TEST_DYN_LINK
+	;
+
+run test-rawDataReader.cpp ;
+run test-bitset.cpp ;
+run test-streams.cpp ;
