@@ -166,7 +166,7 @@ namespace MyGrate::MySQL {
 		Date d;
 		d.day = bitslice(dint, 0, 6);
 		d.month = bitslice(dint, 6, 4);
-		d.day = bitslice(dint, 10, 14);
+		d.year = bitslice(dint, 10, 14);
 		return d;
 	}
 
