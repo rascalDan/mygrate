@@ -132,7 +132,7 @@ namespace MyGrate::MySQL {
 	Type<MYSQL_TYPE_DATETIME>::read(RawDataReader &, RawDataReader & data)
 	{
 		auto dtint {data.readValue<uint64_t>()};
-		DateTime dt;
+		DateTime dt {};
 		dt.second = mod100_extract(dtint);
 		dt.minute = mod100_extract(dtint);
 		dt.hour = mod100_extract(dtint);
@@ -146,7 +146,7 @@ namespace MyGrate::MySQL {
 	Type<MYSQL_TYPE_TIME>::read(RawDataReader &, RawDataReader & data)
 	{
 		auto tint {data.readValue<uint32_t, 3>()};
-		Time t;
+		Time t {};
 		t.second = mod100_extract(tint);
 		t.minute = mod100_extract(tint);
 		t.hour = tint;
@@ -163,7 +163,7 @@ namespace MyGrate::MySQL {
 	Type<MYSQL_TYPE_DATE>::read(RawDataReader &, RawDataReader & data)
 	{
 		auto dint {data.readValue<uint32_t, 3>()};
-		Date d;
+		Date d {};
 		d.day = bitslice(dint, 0, 6);
 		d.month = bitslice(dint, 6, 4);
 		d.year = bitslice(dint, 10, 14);
