@@ -3,13 +3,21 @@
 #include <string>
 
 namespace MyGrate {
-	Row::Row(const st_mariadb_rpl_rows_event & r, const st_mariadb_rpl_table_map_event & t) : row {r}, tm {t} { }
-
-	void
-	Row::forEachField(const std::function<void(MySQL::FieldValue)> & cb)
+	Row::Row(const st_mariadb_rpl_rows_event & row, const st_mariadb_rpl_table_map_event & tm) :
+		Row(row, tm, RawDataReader {tm.metadata}, RawDataReader {row.row_data, row.row_data_size})
 	{
-		MyGrate::RawDataReader md {tm.metadata};
-		MyGrate::RawDataReader data {row.row_data, row.row_data_size};
+	}
+
+	Row::Row(const st_mariadb_rpl_rows_event & row, const st_mariadb_rpl_table_map_event & tm,
+			MyGrate::RawDataReader && md, MyGrate::RawDataReader && data) :
+		Row {row, tm, md, data}
+	{
+	}
+
+	Row::Row(const st_mariadb_rpl_rows_event & row, const st_mariadb_rpl_table_map_event & tm,
+			MyGrate::RawDataReader & md, MyGrate::RawDataReader & data)
+	{
+		reserve(tm.column_count);
 		const size_t flagBytes {(tm.column_count + 7) / 8};
 		MyGrate::BitSet nullFlags {data.viewValue<std::span<const std::byte>>(flagBytes)};
 		MyGrate::BitSet columnFlags {{reinterpret_cast<const std::byte *>(row.column_bitmap), flagBytes}};
@@ -44,13 +52,13 @@ namespace MyGrate {
 							break;
 						default:;
 					}
-					cb(nullptr);
+					emplace_back(nullptr);
 				}
 				else {
 					switch (type) {
 #define TYPE_CALLBACK(T) \
 	case T: \
-		cb(MySQL::Type<T>::read(md, data)); \
+		emplace_back(MySQL::Type<T>::read(md, data)); \
 		break
 						TYPE_CALLBACK(MYSQL_TYPE_DECIMAL);
 						TYPE_CALLBACK(MYSQL_TYPE_TINY);
@@ -97,5 +105,17 @@ namespace MyGrate {
 			}
 			++colIter;
 		}
+	}
+
+	RowPair::RowPair(const st_mariadb_rpl_rows_event & row, const st_mariadb_rpl_table_map_event & tm) :
+		RowPair(row, tm, RawDataReader {tm.metadata}, RawDataReader {tm.metadata},
+				RawDataReader {row.row_data, row.row_data_size})
+	{
+	}
+
+	RowPair::RowPair(const st_mariadb_rpl_rows_event & row, const st_mariadb_rpl_table_map_event & tm,
+			MyGrate::RawDataReader && md1, MyGrate::RawDataReader && md2, MyGrate::RawDataReader && data) :
+		std::pair<Row, Row> {Row {row, tm, md1, data}, Row {row, tm, md2, data}}
+	{
 	}
 }

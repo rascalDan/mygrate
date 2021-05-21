@@ -51,7 +51,19 @@ struct write {
 static void
 dumpRowData(const st_mariadb_rpl_rows_event & row)
 {
-	MyGrate::Row {row, tableMaps.at(row.table_id)->event.table_map}.forEachField([](auto && fv) {
+	MyGrate::Row r {row, tableMaps.at(row.table_id)->event.table_map};
+	std::for_each(r.begin(), r.end(), [](auto && fv) {
+		std::visit(write {}, fv);
+	});
+}
+static void
+dumpRowPairData(const st_mariadb_rpl_rows_event & row)
+{
+	MyGrate::RowPair rp {row, tableMaps.at(row.table_id)->event.table_map};
+	std::for_each(rp.first.begin(), rp.first.end(), [](auto && fv) {
+		std::visit(write {}, fv);
+	});
+	std::for_each(rp.second.begin(), rp.second.end(), [](auto && fv) {
 		std::visit(write {}, fv);
 	});
 }
@@ -80,7 +92,7 @@ doUpdate(MariaDB_Event_Ptr event)
 {
 	const auto & rs = event->event.rows;
 	AdHoc::scprintf<"Update %?\n">(std::cout, rs.table_id);
-	dumpRowData(event->event.rows);
+	dumpRowPairData(event->event.rows);
 }
 
 static void

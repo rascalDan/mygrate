@@ -6,15 +6,25 @@
 #include <functional>
 
 namespace MyGrate {
-	class Row {
+	class Row : public std::vector<MySQL::FieldValue> {
 	public:
 		Row(const st_mariadb_rpl_rows_event &, const st_mariadb_rpl_table_map_event &);
 
-		void forEachField(const std::function<void(MySQL::FieldValue)> & callback);
+	private:
+		friend class RowPair;
+		Row(const st_mariadb_rpl_rows_event &, const st_mariadb_rpl_table_map_event &, MyGrate::RawDataReader && md,
+				MyGrate::RawDataReader && data);
+		Row(const st_mariadb_rpl_rows_event &, const st_mariadb_rpl_table_map_event &, MyGrate::RawDataReader & md,
+				MyGrate::RawDataReader & data);
+	};
+
+	class RowPair : public std::pair<Row, Row> {
+	public:
+		RowPair(const st_mariadb_rpl_rows_event &, const st_mariadb_rpl_table_map_event &);
 
 	private:
-		const st_mariadb_rpl_rows_event & row;
-		const st_mariadb_rpl_table_map_event & tm;
+		RowPair(const st_mariadb_rpl_rows_event &, const st_mariadb_rpl_table_map_event &,
+				MyGrate::RawDataReader && md1, MyGrate::RawDataReader && md2, MyGrate::RawDataReader && data);
 	};
 }
 
