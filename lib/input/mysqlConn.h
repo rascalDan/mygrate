@@ -8,6 +8,8 @@ namespace MyGrate::Input {
 	public:
 		MySQLConn(const char * const host, const char * const user, const char * const pass, unsigned short port);
 		~MySQLConn();
+
+		void query(const char * const);
 	};
 }
 

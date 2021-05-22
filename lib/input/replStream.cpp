@@ -3,7 +3,6 @@
 #include <eventHandlerBase.h>
 #include <eventHandlers.h>
 #include <memory>
-#include <mysql.h>
 #include <stdexcept>
 #include <utility>
 
@@ -14,8 +13,8 @@ namespace MyGrate::Input {
 		using MariaDB_Rpl_Ptr = std::unique_ptr<MARIADB_RPL, decltype(&mariadb_rpl_close)>;
 		auto rpl = MariaDB_Rpl_Ptr {mariadb_rpl_init(this), &mariadb_rpl_close};
 
-		mysql_query(this, "SET @mariadb_slave_capability = 4");
-		mysql_query(this, "SET @master_binlog_checksum = @@global.binlog_checksum");
+		query("SET @mariadb_slave_capability = 4");
+		query("SET @master_binlog_checksum = @@global.binlog_checksum");
 
 		mariadb_rpl_optionsv(rpl.get(), MARIADB_RPL_SERVER_ID, 12);
 		mariadb_rpl_optionsv(rpl.get(), MARIADB_RPL_FILENAME, "mariadb-bin.000242");
