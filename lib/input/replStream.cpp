@@ -2,6 +2,7 @@
 #include "mariadb_repl.h"
 #include <eventHandlerBase.h>
 #include <eventHandlers.h>
+#include <helpers.h>
 #include <memory>
 #include <stdexcept>
 #include <utility>
@@ -21,16 +22,12 @@ namespace MyGrate::Input {
 		mariadb_rpl_optionsv(rpl.get(), MARIADB_RPL_START, 4);
 		mariadb_rpl_optionsv(rpl.get(), MARIADB_RPL_FLAGS, MARIADB_RPL_BINLOG_SEND_ANNOTATE_ROWS);
 
-		if (mariadb_rpl_open(rpl.get())) {
-			throw std::runtime_error("Failed to mariadb_rpl_open");
-		}
+		verify<std::runtime_error>(!mariadb_rpl_open(rpl.get()), "Failed to mariadb_rpl_open");
 
 		while (MyGrate::MariaDB_Event_Ptr event {mariadb_rpl_fetch(rpl.get(), nullptr), &mariadb_free_rpl_event}) {
-			const auto & h = eventHandlers.at(event->event_type);
-			if (h.func) {
+			if (const auto & h = eventHandlers.at(event->event_type); h.func) {
 				(eh.*h.func)(std::move(event));
 			}
 		}
 	}
-
 }
