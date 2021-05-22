@@ -2,17 +2,11 @@
 #define MYGRATE_RAW_DATA_READER_H
 
 #include "helpers.h"
-#include <array>
+#include "mariadb_repl.h"
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
-#include <ctime>
-#include <mysql.h> // IWYU pragma: keep
-#include <span>
 #include <stdexcept>
-#include <string_view>
-
-#include <mariadb_rpl.h>
 
 namespace MyGrate {
 	struct PackedInteger {

@@ -1,8 +1,12 @@
 #ifndef MYGRATE_INPUT_REPLSTREAM_H
 #define MYGRATE_INPUT_REPLSTREAM_H
 
-#include "../eventSourceBase.h"
 #include "mysqlConn.h"
+#include <eventSourceBase.h>
+
+namespace MyGrate {
+	class EventHandlerBase;
+}
 
 namespace MyGrate::Input {
 	class ReplicationStream : public EventSourceBase, MySQLConn {

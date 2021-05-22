@@ -2,7 +2,9 @@
 #include <stdexcept>
 
 namespace MyGrate::Input {
-	MySQLConn::MySQLConn(const char * const host, const char * const user, const char * const pass, unsigned short port)
+	MySQLConn::MySQLConn(
+			const char * const host, const char * const user, const char * const pass, unsigned short port) :
+		st_mysql {}
 	{
 		mysql_init(this);
 		if (!mysql_real_connect(this, host, user, pass, "", port, nullptr, 0)) {

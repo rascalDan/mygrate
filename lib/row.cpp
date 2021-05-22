@@ -1,4 +1,10 @@
 #include "row.h"
+#include "bitset.h"
+#include "mariadb_repl.h"
+#include "rawDataReader.h"
+#include <cstddef>
+#include <mysql.h>
+#include <span>
 #include <stdexcept>
 #include <string>
 

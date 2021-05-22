@@ -3,10 +3,20 @@
 #include <boost/test/data/test_case.hpp>
 #include <boost/test/unit_test.hpp>
 
+#include "bitset.h"
 #include "helpers.h"
+#include "mariadb_repl.h"
+#include <cstddef>
+#include <cstdint>
+#include <mysql.h>
 #include <mysql_types.h>
 #include <rawDataReader.h>
+#include <stdexcept>
 #include <streamSupport.h>
+#include <string>
+#include <string_view>
+#include <tuple>
+#include <vector>
 
 using namespace MyGrate;
 
@@ -147,10 +157,10 @@ BOOST_DATA_TEST_CASE(read_field_type,
 
 BOOST_AUTO_TEST_CASE(rdr_from_MARIADB_STRING)
 {
-	char buf[5] = "test";
-	MARIADB_STRING str {buf, strlen(buf)};
+	std::string buf {"test"};
+	MARIADB_STRING str {buf.data(), buf.length()};
 	RawDataReader rdr {str};
-	BOOST_CHECK_EQUAL(rdr.viewValue<std::string_view>(4), "test");
+	BOOST_CHECK_EQUAL(rdr.viewValue<std::string_view>(buf.length()), buf);
 }
 
 using SimpleTypes = boost::mpl::list<std::byte, int8_t, int16_t, int32_t, int64_t, uint8_t, uint16_t, uint32_t,

@@ -2,16 +2,15 @@
 #define MYGRATE_MYSQL_TYPES_H
 
 #include "bitset.h"
-#include <array>
 #include <cstddef>
 #include <cstdint>
 #include <ctime>
-#include <mysql.h> // IWYU pragma: keep
+#include <mysql.h>
 #include <span>
 #include <string_view>
 #include <variant>
 
-#include <mariadb_rpl.h>
+struct timespec;
 
 namespace MyGrate {
 	class RawDataReader;

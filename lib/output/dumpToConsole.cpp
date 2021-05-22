@@ -1,7 +1,7 @@
 #include "dumpToConsole.h"
-#include "../compileTimeFormatter.h"
-#include "../row.h"
-#include "../streamSupport.h"
+#include <compileTimeFormatter.h>
+#include <row.h>
+#include <streamSupport.h>
 
 namespace MyGrate::Output {
 	void

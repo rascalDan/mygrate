@@ -2,6 +2,7 @@ lib mygrate :
 	[ glob-tree *.cpp ]
 	:
 	<link>static
+	<include>.
 	<use>..//libmariadb
 	: :
 	<include>.

@@ -2,8 +2,13 @@
 #define MYGRATE_ROW_H
 
 #include "mysql_types.h"
-#include "rawDataReader.h"
-#include <functional>
+#include <utility>
+#include <vector>
+namespace MyGrate {
+	class RawDataReader;
+}
+struct st_mariadb_rpl_rows_event;
+struct st_mariadb_rpl_table_map_event;
 
 namespace MyGrate {
 	class Row : public std::vector<MySQL::FieldValue> {

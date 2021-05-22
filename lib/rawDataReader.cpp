@@ -1,9 +1,4 @@
 #include "rawDataReader.h"
-#include "helpers.h"
-#include "streamSupport.h"
-#include <cstring>
-#include <iomanip>
-#include <iostream>
 
 namespace MyGrate {
 	RawDataReader::RawDataReader(const void * const d, std::size_t l) :

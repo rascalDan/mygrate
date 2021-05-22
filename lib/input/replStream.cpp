@@ -1,6 +1,11 @@
 #include "replStream.h"
-#include "../eventHandlers.h"
-#include "../mariadb_repl.h"
+#include "mariadb_repl.h"
+#include <eventHandlerBase.h>
+#include <eventHandlers.h>
+#include <memory>
+#include <mysql.h>
+#include <stdexcept>
+#include <utility>
 
 namespace MyGrate::Input {
 	void

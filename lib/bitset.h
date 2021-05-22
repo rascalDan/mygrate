@@ -2,7 +2,7 @@
 #define MYGRATE_BITSET_H
 
 #include <cstddef>
-#include <cstdint>
+#include <iterator>
 #include <span>
 
 namespace MyGrate {

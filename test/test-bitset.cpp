@@ -1,10 +1,12 @@
 #define BOOST_TEST_MODULE BitSet
-#include <boost/test/data/test_case.hpp>
 #include <boost/test/unit_test.hpp>
 
 #include "helpers.h"
+#include <array>
 #include <bitset.h>
 #include <bitset>
+#include <cstddef>
+#include <span>
 
 using namespace MyGrate;
 
@@ -14,7 +16,7 @@ BOOST_TEST_DONT_PRINT_LOG_VALUE(BitSet::Iterator);
 
 BOOST_AUTO_TEST_CASE(bitset)
 {
-	std::byte bytes[3] {0x00_b, 0xFF_b, 0xa1_b};
+	constexpr std::array<std::byte, 3> bytes {0x00_b, 0xFF_b, 0xa1_b};
 	BitSet bs {bytes};
 
 	BOOST_REQUIRE_EQUAL(bs.size(), 24);

@@ -1,8 +1,10 @@
 #include "mysql_types.h"
 #include "helpers.h"
 #include "rawDataReader.h"
-#include <iostream>
+#include <algorithm>
+#include <array>
 #include <stdexcept>
+#include <string>
 
 namespace MyGrate::MySQL {
 	typename Type<MYSQL_TYPE_NULL, false>::C
@@ -96,13 +98,11 @@ namespace MyGrate::MySQL {
 		const auto realtype {md.readValue<enum_field_types, 1>()}; \
 		const auto lenlen {md.readValue<uint8_t>()}; \
 		switch (realtype) { \
-			case MYSQL_TYPE_ENUM: { \
+			case MYSQL_TYPE_ENUM: \
+			case MYSQL_TYPE_VAR_STRING: \
 				return data.viewValue<std::string_view>(lenlen); \
-				break; \
-			} \
 			default: \
 				throw std::logic_error("Not implemented: sub-type: " + std::to_string(realtype)); \
-				break; \
 		} \
 		throw std::logic_error("Didn't return a value: " + std::to_string(realtype)); \
 	}

@@ -1,7 +1,7 @@
 #ifndef MYGRATE_OUTPUT_DUMPTOCONSOLE_H
 #define MYGRATE_OUTPUT_DUMPTOCONSOLE_H
 
-#include "../eventHandlerBase.h"
+#include <eventHandlerBase.h>
 
 namespace MyGrate::Output {
 	class DumpToConsole : public MyGrate::EventHandlerBase {

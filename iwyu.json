@@ -9,9 +9,25 @@
 	},
 	{
 		"include": [
-			"<mariadb_com.h>",
+			"@.(mysql|mariadb_(com|ctype|dyncol|stmt|version))\\.h.",
 			"private",
 			"<mysql.h>",
+			"public"
+		]
+	},
+	{
+		"include": [
+			"@.mariadb_rpl\\.h.",
+			"private",
+			"\"mariadb_repl.h\"",
+			"public"
+		]
+	},
+	{
+		"include": [
+			"<boost/mpl/aux_/preprocessed/gcc/list.hpp>",
+			"private",
+			"<boost/mpl/list.hpp>",
 			"public"
 		]
 	},
