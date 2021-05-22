@@ -1,16 +1,28 @@
 #ifndef MYGRATE_STREAM_SUPPORT_H
 #define MYGRATE_STREAM_SUPPORT_H
 
+#include "mariadb_repl.h"
 #include <array>
 #include <cstddef>
-#include <iomanip>
-#include <mysql.h>
+#include <ctime>
 #include <ostream>
 #include <span>
+#include <utility>
 #include <vector>
-
-#include "mysql_types.h"
-#include <mariadb_rpl.h>
+namespace MyGrate {
+	class BitSet;
+}
+namespace MyGrate::MySQL {
+	struct Date;
+}
+namespace MyGrate::MySQL {
+	struct DateTime;
+}
+namespace MyGrate::MySQL {
+	struct Time;
+}
+struct timespec;
+struct tm;
 
 namespace std {
 	std::ostream & operator<<(std::ostream & strm, const std::byte byt);

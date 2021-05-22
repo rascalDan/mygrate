@@ -2,6 +2,7 @@
 #define MYGRATE_OUTPUT_DUMPTOCONSOLE_H
 
 #include <eventHandlerBase.h>
+struct st_mariadb_rpl_rows_event;
 
 namespace MyGrate::Output {
 	class DumpToConsole : public MyGrate::EventHandlerBase {

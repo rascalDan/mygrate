@@ -1,5 +1,12 @@
 #include "streamSupport.h"
+#include "bitset.h"
 #include "compileTimeFormatter.h"
+#include "mysql_types.h"
+#include <cstdint>
+#include <string_view>
+#include <type_traits>
+struct timespec;
+struct tm;
 
 namespace std {
 	std::ostream &
