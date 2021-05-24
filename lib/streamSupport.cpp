@@ -1,7 +1,7 @@
 #include "streamSupport.h"
 #include "bitset.h"
 #include "compileTimeFormatter.h"
-#include "mysql_types.h"
+#include "dbTypes.h"
 #include <cstdint>
 #include <string_view>
 #include <type_traits>
@@ -35,21 +35,21 @@ namespace std {
 	}
 
 	std::ostream &
-	operator<<(std::ostream & s, const MyGrate::MySQL::Date & d)
+	operator<<(std::ostream & s, const MyGrate::Date & d)
 	{
 		return AdHoc::scprintf<"%04d-%02d-%02d">(s, d.year, d.month, d.day);
 	}
 
 	std::ostream &
-	operator<<(std::ostream & s, const MyGrate::MySQL::Time & t)
+	operator<<(std::ostream & s, const MyGrate::Time & t)
 	{
 		return AdHoc::scprintf<"%02d:%02d:%02d">(s, t.hour, t.minute, t.second);
 	}
 
 	std::ostream &
-	operator<<(std::ostream & s, const MyGrate::MySQL::DateTime & dt)
+	operator<<(std::ostream & s, const MyGrate::DateTime & dt)
 	{
-		return AdHoc::scprintf<"%? %?">(s, (const MyGrate::MySQL::Date)dt, (const MyGrate::MySQL::Time)dt);
+		return AdHoc::scprintf<"%? %?">(s, (const MyGrate::Date)dt, (const MyGrate::Time)dt);
 	}
 
 	std::ostream &

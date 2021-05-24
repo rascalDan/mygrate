@@ -10,3 +10,5 @@ run test-rawDataReader.cpp ;
 run test-bitset.cpp ;
 run test-streams.cpp ;
 run test-misc.cpp ;
+run test-mysql.cpp ;
+run test-postgresql.cpp ;

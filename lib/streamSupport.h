@@ -11,14 +11,8 @@
 #include <vector>
 namespace MyGrate {
 	class BitSet;
-}
-namespace MyGrate::MySQL {
 	struct Date;
-}
-namespace MyGrate::MySQL {
 	struct DateTime;
-}
-namespace MyGrate::MySQL {
 	struct Time;
 }
 struct timespec;
@@ -33,11 +27,11 @@ namespace std {
 
 	std::ostream & operator<<(std::ostream & s, const timespec & ts);
 
-	std::ostream & operator<<(std::ostream & s, const MyGrate::MySQL::Date & d);
+	std::ostream & operator<<(std::ostream & s, const MyGrate::Date & d);
 
-	std::ostream & operator<<(std::ostream & s, const MyGrate::MySQL::Time & t);
+	std::ostream & operator<<(std::ostream & s, const MyGrate::Time & t);
 
-	std::ostream & operator<<(std::ostream & s, const MyGrate::MySQL::DateTime & dt);
+	std::ostream & operator<<(std::ostream & s, const MyGrate::DateTime & dt);
 
 	std::ostream & operator<<(std::ostream & s, const MyGrate::BitSet & bs);
 

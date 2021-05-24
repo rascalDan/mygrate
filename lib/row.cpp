@@ -1,6 +1,7 @@
 #include "row.h"
 #include "bitset.h"
 #include "mariadb_repl.h"
+#include "mysql_types.h"
 #include "rawDataReader.h"
 #include <cstddef>
 #include <mysql.h>

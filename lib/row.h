@@ -1,7 +1,7 @@
 #ifndef MYGRATE_ROW_H
 #define MYGRATE_ROW_H
 
-#include "mysql_types.h"
+#include "dbTypes.h"
 #include <utility>
 #include <vector>
 namespace MyGrate {
@@ -11,7 +11,7 @@ struct st_mariadb_rpl_rows_event;
 struct st_mariadb_rpl_table_map_event;
 
 namespace MyGrate {
-	class Row : public std::vector<MySQL::FieldValue> {
+	class Row : public std::vector<DbValue> {
 	public:
 		Row(const st_mariadb_rpl_rows_event &, const st_mariadb_rpl_table_map_event &);
 

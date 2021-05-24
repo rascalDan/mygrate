@@ -2,40 +2,30 @@
 #define MYGRATE_MYSQL_TYPES_H
 
 #include "bitset.h"
+#include "dbTypes.h"
 #include <cstddef>
 #include <cstdint>
 #include <ctime>
 #include <mysql.h>
-#include <span>
 #include <string_view>
-#include <variant>
-
-struct timespec;
 
 namespace MyGrate {
 	class RawDataReader;
 	namespace MySQL {
-		struct Date {
-			uint16_t year;
-			uint8_t month;
-			uint8_t day;
-		};
-		struct Time {
-			uint8_t hour;
-			uint8_t minute;
-			uint8_t second;
-		};
-		struct DateTime : public Date, public Time {
-		};
-		using Blob = std::span<const std::byte>;
 
 		template<enum_field_types, bool /*unsigned*/ = false> struct Type;
+		template<typename T> struct CType;
 
 #define DEFINE_BASE_TYPE(ET, CT, MDS, SIGN) \
 	template<> struct Type<ET, SIGN> { \
 		using C = CT; \
 		constexpr static size_t md_bytes {MDS}; \
 		static C read(RawDataReader & md, RawDataReader & data); \
+	}
+#define DEFINE_CTYPE(ET, CT) \
+	template<> struct CType<CT> { \
+		using C = CT; \
+		static constexpr enum_field_types type {ET}; \
 	}
 #define DEFINE_TYPE(ET, CT, MDS) DEFINE_BASE_TYPE(ET, CT, MDS, false)
 #define DEFINE_ITYPE(ET, BCT, MDS) \
@@ -74,12 +64,22 @@ namespace MyGrate {
 		DEFINE_TYPE(MYSQL_TYPE_JSON, std::string_view, 2);
 		DEFINE_TYPE(MYSQL_TYPE_GEOMETRY, Blob, 1);
 
+		DEFINE_CTYPE(MYSQL_TYPE_DOUBLE, double);
+		DEFINE_CTYPE(MYSQL_TYPE_FLOAT, float);
+		DEFINE_CTYPE(MYSQL_TYPE_SHORT, int16_t);
+		DEFINE_CTYPE(MYSQL_TYPE_LONG, int32_t);
+		DEFINE_CTYPE(MYSQL_TYPE_LONGLONG, int64_t);
+		DEFINE_CTYPE(MYSQL_TYPE_TINY, int8_t);
+		DEFINE_CTYPE(MYSQL_TYPE_SHORT, uint16_t);
+		DEFINE_CTYPE(MYSQL_TYPE_LONG, uint32_t);
+		DEFINE_CTYPE(MYSQL_TYPE_LONGLONG, uint64_t);
+		DEFINE_CTYPE(MYSQL_TYPE_TINY, uint8_t);
+		DEFINE_CTYPE(MYSQL_TYPE_STRING, std::string_view);
+		DEFINE_CTYPE(MYSQL_TYPE_BLOB, Blob);
+
 #undef DEFINE_ITYPE
 #undef DEFINE_USTYPE
 #undef DEFINE_TYPE
-
-		using FieldValue = std::variant<std::nullptr_t, double, float, int8_t, uint8_t, int16_t, uint16_t, int32_t,
-				uint32_t, int64_t, uint64_t, timespec, Date, Time, DateTime, std::string_view, BitSet, Blob>;
 	}
 }
 

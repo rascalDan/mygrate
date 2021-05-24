@@ -3,9 +3,9 @@
 #include <boost/test/unit_test.hpp>
 
 #include "bitset.h"
+#include "dbTypes.h"
 #include "helpers.h"
 #include "mariadb_repl.h"
-#include "mysql_types.h"
 #include <array>
 #include <cstddef>
 #include <ctime>
@@ -46,7 +46,7 @@ BOOST_DATA_TEST_CASE(tms,
 }
 
 BOOST_DATA_TEST_CASE(rts,
-		boost::unit_test::data::make<ToStream<MyGrate::MySQL::DateTime>>({
+		boost::unit_test::data::make<ToStream<MyGrate::DateTime>>({
 				{{{2016, 1, 4}, {12, 13, 14}}, "2016-01-04 12:13:14"},
 				{{{2016, 12, 31}, {0, 0, 1}}, "2016-12-31 00:00:01"},
 		}),

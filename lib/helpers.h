@@ -3,6 +3,7 @@
 
 #include <concepts>
 #include <cstdint>
+#include <string>
 #include <utility>
 
 namespace MyGrate {
@@ -30,6 +31,24 @@ namespace MyGrate {
 		i /= 100;
 		return r;
 	}
+
+	template<typename T>
+	concept Stringable = requires(T a)
+	{
+		{
+			std::to_string(a)
+			} -> std::same_as<std::string>;
+	};
+	template<typename T>
+	concept Viewable = requires(T a)
+	{
+		{
+			a.data()
+			} -> std::convertible_to<const char *>;
+		{
+			a.size()
+			} -> std::integral;
+	};
 }
 
 #endif

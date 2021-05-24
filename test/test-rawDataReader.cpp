@@ -4,12 +4,12 @@
 #include <boost/test/unit_test.hpp>
 
 #include "bitset.h"
+#include "dbTypes.h"
 #include "helpers.h"
 #include "mariadb_repl.h"
 #include <cstddef>
 #include <cstdint>
 #include <mysql.h>
-#include <mysql_types.h>
 #include <rawDataReader.h>
 #include <stdexcept>
 #include <streamSupport.h>
@@ -125,7 +125,7 @@ BOOST_DATA_TEST_CASE(read_bytes,
 		bytes)
 {
 	RawDataReader rdr {bytes.data(), bytes.size()};
-	const auto out {rdr.viewValue<MyGrate::MySQL::Blob>(bytes.size())};
+	const auto out {rdr.viewValue<MyGrate::Blob>(bytes.size())};
 	BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), bytes.begin(), bytes.end());
 }
 
@@ -140,7 +140,7 @@ BOOST_DATA_TEST_CASE(read_bytes_overflow,
 		bytes)
 {
 	RawDataReader rdr {bytes.data(), bytes.size()};
-	BOOST_CHECK_THROW(rdr.viewValue<MyGrate::MySQL::Blob>(bytes.size() + 1), std::range_error);
+	BOOST_CHECK_THROW(rdr.viewValue<MyGrate::Blob>(bytes.size() + 1), std::range_error);
 }
 
 BOOST_DATA_TEST_CASE(read_field_type,
