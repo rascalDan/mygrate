@@ -1,6 +1,7 @@
 #ifndef MYGRATE_INPUT_MYSQLCONN_H
 #define MYGRATE_INPUT_MYSQLCONN_H
 
+#include <cstddef>
 #include <dbConn.h>
 #include <dbTypes.h>
 #include <initializer_list>
@@ -14,6 +15,8 @@ namespace MyGrate::Input {
 
 		void query(const char * const) override;
 		void query(const char * const q, const std::initializer_list<DbValue> &) override;
+
+		DbPrepStmtPtr prepare(const char * const, std::size_t) override;
 	};
 }
 
