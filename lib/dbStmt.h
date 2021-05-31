@@ -1,7 +1,7 @@
 #ifndef MYGRATE_DBSTMT_H
 #define MYGRATE_DBSTMT_H
 
-#include <compileTimeFormatter.h>
+#include "fixedString.h"
 #include <dbConn.h>
 #include <dbRecordSet.h>
 #include <memory>
@@ -12,7 +12,7 @@ namespace MyGrate {
 	class DbConn;
 	enum class ParamMode { None, DollarNum, QMark };
 
-	template<AdHoc::support::basic_fixed_string S, ParamMode pm = ParamMode::None> class DbStmt {
+	template<Support::basic_fixed_string S, ParamMode pm = ParamMode::None> class DbStmt {
 	public:
 		// This don't account for common table expressions, hopefully won't need those :)
 		static constexpr auto isSelect {S.v().starts_with("SELECT") || S.v().starts_with("SHOW")

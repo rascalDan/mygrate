@@ -17,7 +17,7 @@ namespace MyGrate::Output {
 	DumpToConsole::tableMap(MyGrate::MariaDB_Event_Ptr event)
 	{
 		const auto & tm = event->event.table_map;
-		AdHoc::scprintf<"Table map %?.%? -> %?\n">(std::cout, tm.database, tm.table, tm.table_id);
+		scprintf<"Table map %?.%? -> %?\n">(std::cout, tm.database, tm.table, tm.table_id);
 		EventHandlerBase::tableMap(std::move(event));
 	}
 
@@ -25,7 +25,7 @@ namespace MyGrate::Output {
 	DumpToConsole::insertRow(MyGrate::MariaDB_Event_Ptr event)
 	{
 		const auto & rs = event->event.rows;
-		AdHoc::scprintf<"Insert into %?\n">(std::cout, rs.table_id);
+		scprintf<"Insert into %?\n">(std::cout, rs.table_id);
 		dumpRowData(event->event.rows);
 	}
 
@@ -33,7 +33,7 @@ namespace MyGrate::Output {
 	DumpToConsole::updateRow(MyGrate::MariaDB_Event_Ptr event)
 	{
 		const auto & rs = event->event.rows;
-		AdHoc::scprintf<"Update %?\n">(std::cout, rs.table_id);
+		scprintf<"Update %?\n">(std::cout, rs.table_id);
 		dumpRowPairData(event->event.rows);
 	}
 
@@ -41,7 +41,7 @@ namespace MyGrate::Output {
 	DumpToConsole::deleteRow(MyGrate::MariaDB_Event_Ptr event)
 	{
 		const auto & rs = event->event.rows;
-		AdHoc::scprintf<"Delete from %?\n">(std::cout, rs.table_id);
+		scprintf<"Delete from %?\n">(std::cout, rs.table_id);
 		dumpRowData(event->event.rows);
 	}
 
@@ -50,19 +50,19 @@ namespace MyGrate::Output {
 		void
 		operator()(const T & v) const
 		{
-			AdHoc::scprintf<"\t\t%?\n">(std::cout, v);
+			scprintf<"\t\t%?\n">(std::cout, v);
 		}
 
 		void
 		operator()(const uint8_t & v) const
 		{
-			AdHoc::scprintf<"\t\t%d\n">(std::cout, v);
+			scprintf<"\t\t%d\n">(std::cout, v);
 		}
 
 		void
 		operator()(const int8_t & v) const
 		{
-			AdHoc::scprintf<"\t\t%d\n">(std::cout, v);
+			scprintf<"\t\t%d\n">(std::cout, v);
 		}
 	};
 

@@ -12,7 +12,7 @@ namespace std {
 	std::ostream &
 	operator<<(std::ostream & strm, const std::byte byt)
 	{
-		return AdHoc::scprintf<"%#02x">(strm, std::to_integer<uint8_t>(byt));
+		return MyGrate::scprintf<"%#02x">(strm, std::to_integer<uint8_t>(byt));
 	}
 
 	std::ostream &
@@ -24,32 +24,32 @@ namespace std {
 	std::ostream &
 	operator<<(std::ostream & s, const tm & tm)
 	{
-		return AdHoc::scprintf<"%04d-%02d-%02d %02d:%02d:%02d">(
+		return MyGrate::scprintf<"%04d-%02d-%02d %02d:%02d:%02d">(
 				s, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
 	}
 
 	std::ostream &
 	operator<<(std::ostream & s, const timespec & ts)
 	{
-		return AdHoc::scprintf<"%d.%09d">(s, ts.tv_sec, ts.tv_nsec);
+		return MyGrate::scprintf<"%d.%09d">(s, ts.tv_sec, ts.tv_nsec);
 	}
 
 	std::ostream &
 	operator<<(std::ostream & s, const MyGrate::Date & d)
 	{
-		return AdHoc::scprintf<"%04d-%02d-%02d">(s, d.year, d.month, d.day);
+		return MyGrate::scprintf<"%04d-%02d-%02d">(s, d.year, d.month, d.day);
 	}
 
 	std::ostream &
 	operator<<(std::ostream & s, const MyGrate::Time & t)
 	{
-		return AdHoc::scprintf<"%02d:%02d:%02d">(s, t.hour, t.minute, t.second);
+		return MyGrate::scprintf<"%02d:%02d:%02d">(s, t.hour, t.minute, t.second);
 	}
 
 	std::ostream &
 	operator<<(std::ostream & s, const MyGrate::DateTime & dt)
 	{
-		return AdHoc::scprintf<"%? %?">(s, (const MyGrate::Date)dt, (const MyGrate::Time)dt);
+		return MyGrate::scprintf<"%? %?">(s, (const MyGrate::Date)dt, (const MyGrate::Time)dt);
 	}
 
 	std::ostream &

@@ -1,6 +1,7 @@
-#ifndef ADHOCUTIL_COMPILE_TIME_FORMATTER_H
-#define ADHOCUTIL_COMPILE_TIME_FORMATTER_H
+#ifndef MYGRATE_COMPILE_TIME_FORMATTER_H
+#define MYGRATE_COMPILE_TIME_FORMATTER_H
 
+#include "fixedString.h"
 #include <array>
 #include <boost/preprocessor/variadic/size.hpp>
 #include <cstring>
@@ -9,7 +10,7 @@
 #include <sstream> // IWYU pragma: export
 #include <string_view>
 
-namespace AdHoc {
+namespace MyGrate {
 	// Template char utils
 	template<typename char_type>
 	constexpr bool
@@ -235,82 +236,29 @@ namespace AdHoc {
 		};
 	};
 
-	// New C++20 implementation
-	namespace support {
-		template<typename CharT, std::size_t N> class basic_fixed_string {
-		public:
-			// cppcheck-suppress noExplicitConstructor
-			constexpr basic_fixed_string(const CharT (&str)[N + 1])
-			{
-				for (decltype(N) x = 0; x < N; x++) {
-					arr.at(x) = str[x];
-				}
-				arr.at(N) = '\0';
-			}
-			constexpr basic_fixed_string(const CharT * str, decltype(N) len)
-			{
-				for (decltype(N) x = 0; x < len; x++) {
-					arr.at(x) = str[x];
-				}
-				arr.at(N) = '\0';
-			}
-			constexpr const char *
-			s() const
-			{
-				return arr.data();
-			}
-			constexpr operator const char *() const
-			{
-				return s();
-			}
-			constexpr std::string_view
-			v() const
-			{
-				return {arr.data(), arr.size() - 1};
-			}
-			constexpr auto &
-			operator[](std::size_t n) const
-			{
-				return arr[n];
-			}
-			constexpr auto
-			size() const
-			{
-				return arr.size() - 1;
-			}
-
-			std::array<CharT, N + 1> arr;
-		};
-
-		template<typename CharT, std::size_t N>
-		basic_fixed_string(const CharT (&str)[N]) -> basic_fixed_string<CharT, N - 1>;
-	}
-
-	template<const support::basic_fixed_string Str> class LiteralFormatter : public FormatterDetail<Str, Str.size()> {
+	template<const Support::basic_fixed_string Str> class LiteralFormatter : public FormatterDetail<Str, Str.size()> {
 	};
 
 	template<const auto & S, decltype(strlen(S)) L = strlen(S)>
 	class Formatter :
-		public FormatterDetail<support::basic_fixed_string<typename std::decay<decltype(S[0])>::type, L>(S, L), L> {
+		public FormatterDetail<Support::basic_fixed_string<typename std::decay<decltype(S[0])>::type, L>(S, L), L> {
 	};
 
-#define AdHocFormatter(name, str) using name = ::AdHoc::LiteralFormatter<str>
-
-	template<const support::basic_fixed_string Str, typename... Pn>
+	template<const Support::basic_fixed_string Str, typename... Pn>
 	inline auto
 	scprintf(const Pn &... pn)
 	{
 		return FormatterDetail<Str, Str.size()>::get(pn...);
 	}
 
-	template<const support::basic_fixed_string Str, typename stream, typename... Pn>
+	template<const Support::basic_fixed_string Str, typename stream, typename... Pn>
 	inline auto &
 	scprintf(stream & strm, const Pn &... pn)
 	{
 		return FormatterDetail<Str, Str.size()>::write(strm, pn...);
 	}
 
-	template<const support::basic_fixed_string Str, typename... Pn>
+	template<const Support::basic_fixed_string Str, typename... Pn>
 	inline auto &
 	cprintf(const Pn &... pn)
 	{
@@ -327,7 +275,7 @@ namespace AdHoc {
 #include <iomanip>
 #include <type_traits>
 
-namespace AdHoc {
+namespace MyGrate {
 #define BASICCONV(PARAMTYPE, OP, ...) \
 	StreamWriterT(__VA_ARGS__) { \
 		template<typename... Pn> \

@@ -1,11 +1,11 @@
 #define BOOST_TEST_MODULE PostgreSQL
 #include <boost/test/unit_test.hpp>
 
-#include <compileTimeFormatter.h>
 #include <cstddef>
 #include <dbRecordSet.h>
 #include <dbStmt.h>
 #include <dbTypes.h>
+#include <fixedString.h>
 #include <helpers.h>
 #include <memory>
 #include <output/pq/pqConn.h>

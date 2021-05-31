@@ -1,5 +1,5 @@
 lib mygrate :
-	[ glob-tree *.cpp ]
+	[ glob-tree *.cpp *.sql : bin ]
 	:
 	<link>static
 	<include>.

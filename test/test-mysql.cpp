@@ -1,13 +1,12 @@
 #define BOOST_TEST_MODULE MySQL
 #include <boost/test/unit_test.hpp>
 
-#include <compileTimeFormatter.h>
-#include <cstddef>
 #include <cstdint>
 #include <cstdlib>
 #include <dbRecordSet.h>
 #include <dbStmt.h>
 #include <dbTypes.h>
+#include <fixedString.h>
 #include <helpers.h>
 #include <input/mysqlConn.h>
 #include <memory>

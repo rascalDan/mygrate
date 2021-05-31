@@ -4,6 +4,9 @@ using clang : 12 ;
 using pkg-config ;
 import pkg-config ;
 import testing ;
+import type : register ;
+import generators : register-standard ;
+import regex : replace ;
 
 pkg-config.import libmariadb ;
 pkg-config.import libpq ;
@@ -37,3 +40,21 @@ project : requirements
 
 build-project main ;
 build-project test ;
+
+path-constant root : . ;
+
+type.register SQL : sql ;
+
+generators.register-standard embed.sql : SQL : CPP H ;
+
+actions embed.sql
+{
+	echo "#include \"$(2:B).h\"" > $(1[1])
+	m4 -DSOURCE=$(2) -DNS=$(NS) -DNAME=$(2:B) > $(1[2]) lib/genstmt.m4
+}
+rule embed.sql ( targets * : sources * : properties * )
+{
+	DEPENDS $(targets) : $(root)/lib/genstmt.m4 ;
+	NS on $(targets) = [ replace $(sources:D) "/" "::" ] ;
+}
+IMPORT $(__name__) : embed.sql : : embed.sql ;
