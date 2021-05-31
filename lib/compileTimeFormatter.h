@@ -7,6 +7,7 @@
 #include <iostream>
 #include <optional>
 #include <sstream> // IWYU pragma: export
+#include <string_view>
 
 namespace AdHoc {
 	// Template char utils
@@ -236,21 +237,49 @@ namespace AdHoc {
 
 	// New C++20 implementation
 	namespace support {
-		template<typename CharT, std::size_t N> class basic_fixed_string : public std::array<CharT, N> {
+		template<typename CharT, std::size_t N> class basic_fixed_string {
 		public:
 			// cppcheck-suppress noExplicitConstructor
 			constexpr basic_fixed_string(const CharT (&str)[N + 1])
 			{
 				for (decltype(N) x = 0; x < N; x++) {
-					this->at(x) = str[x];
+					arr.at(x) = str[x];
 				}
+				arr.at(N) = '\0';
 			}
 			constexpr basic_fixed_string(const CharT * str, decltype(N) len)
 			{
 				for (decltype(N) x = 0; x < len; x++) {
-					this->at(x) = str[x];
+					arr.at(x) = str[x];
 				}
+				arr.at(N) = '\0';
 			}
+			constexpr const char *
+			s() const
+			{
+				return arr.data();
+			}
+			constexpr operator const char *() const
+			{
+				return s();
+			}
+			constexpr std::string_view
+			v() const
+			{
+				return {arr.data(), arr.size() - 1};
+			}
+			constexpr auto &
+			operator[](std::size_t n) const
+			{
+				return arr[n];
+			}
+			constexpr auto
+			size() const
+			{
+				return arr.size() - 1;
+			}
+
+			std::array<CharT, N + 1> arr;
 		};
 
 		template<typename CharT, std::size_t N>
