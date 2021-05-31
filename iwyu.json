@@ -8,6 +8,14 @@
 		]
 	},
 	{
+		"symbol": [
+			"std::size_t",
+			"private",
+			"<cstddef>",
+			"public"
+		]
+	},
+	{
 		"include": [
 			"@.(mysql|mariadb_(com|ctype|dyncol|stmt|version))\\.h.",
 			"private",
