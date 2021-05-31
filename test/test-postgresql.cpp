@@ -6,6 +6,7 @@
 #include <dbRecordSet.h>
 #include <dbStmt.h>
 #include <dbTypes.h>
+#include <helpers.h>
 #include <memory>
 #include <output/pq/pqConn.h>
 #include <stdexcept>
@@ -13,13 +14,15 @@
 #include <type_traits>
 #include <variant>
 
+const auto CONNSTR {MyGrate::getenv("MYGRATE_POSTGRESQL_CONNSTR", "user=postgres")};
+
 BOOST_AUTO_TEST_CASE(simple)
 {
 	BOOST_CHECK_THROW(([]() {
 		MyGrate::Output::Pq::PqConn {"nonsense"};
 	}()),
 			std::runtime_error);
-	MyGrate::Output::Pq::PqConn c {"user=postgres"};
+	MyGrate::Output::Pq::PqConn c {CONNSTR};
 	BOOST_CHECK_NO_THROW(c.query("SET application_name = ''"));
 	BOOST_CHECK_NO_THROW(c.query("SET application_name = 'something'"));
 	BOOST_CHECK_THROW(c.query("SET application_name = "), std::runtime_error);
@@ -51,7 +54,7 @@ static_assert(std::is_same_v<SomeIns::Return, std::size_t>);
 
 BOOST_AUTO_TEST_CASE(stmt)
 {
-	MyGrate::Output::Pq::PqConn c {"user=postgres"};
+	MyGrate::Output::Pq::PqConn c {CONNSTR};
 	const auto rs {SomeShow::execute(&c)};
 	BOOST_REQUIRE(rs);
 	BOOST_REQUIRE_EQUAL(rs->columns(), 3);
@@ -62,7 +65,7 @@ BOOST_AUTO_TEST_CASE(stmt)
 
 BOOST_AUTO_TEST_CASE(stmt_reuse)
 {
-	MyGrate::Output::Pq::PqConn c {"user=postgres"};
+	MyGrate::Output::Pq::PqConn c {CONNSTR};
 	for (int x = 0; x < 10; x++) {
 		const auto rs {SomeShow::execute(&c)};
 		BOOST_REQUIRE(rs);

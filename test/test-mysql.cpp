@@ -4,9 +4,11 @@
 #include <compileTimeFormatter.h>
 #include <cstddef>
 #include <cstdint>
+#include <cstdlib>
 #include <dbRecordSet.h>
 #include <dbStmt.h>
 #include <dbTypes.h>
+#include <helpers.h>
 #include <input/mysqlConn.h>
 #include <memory>
 #include <stdexcept>
@@ -14,13 +16,18 @@
 #include <type_traits>
 #include <variant>
 
+const auto SERVER {MyGrate::getenv("MYGRATE_MYSQL_SERVER", "localhost")};
+const auto USER {MyGrate::getenv("MYGRATE_MYSQL_USER", getenv("LOGNAME"))};
+const auto PASSWORD {getenv("MYGRATE_MYSQL_PASSWORD")};
+const auto PORT {(unsigned short)std::atoi(MyGrate::getenv("MYGRATE_MYSQL_PORT", "3306"))};
+
 BOOST_AUTO_TEST_CASE(simple)
 {
 	BOOST_CHECK_THROW(([]() {
-		MyGrate::Input::MySQLConn {"192.168.1.38", "repl", "repl", 3306};
+		MyGrate::Input::MySQLConn {SERVER, USER, "badpass", PORT};
 	}()),
 			std::runtime_error);
-	MyGrate::Input::MySQLConn c {"192.168.1.38", "repl", "r3pl", 3306};
+	MyGrate::Input::MySQLConn c {SERVER, USER, PASSWORD, PORT};
 	BOOST_CHECK_NO_THROW(c.query("SET @var = ''"));
 	BOOST_CHECK_NO_THROW(c.query("SET @var = 'something'"));
 	BOOST_CHECK_THROW(c.query("SET @var = "), std::runtime_error);
@@ -45,7 +52,7 @@ static_assert(SomeUpdate::paramCount == 2);
 
 BOOST_AUTO_TEST_CASE(stmt)
 {
-	MyGrate::Input::MySQLConn c {"192.168.1.38", "repl", "r3pl", 3306};
+	MyGrate::Input::MySQLConn c {SERVER, USER, PASSWORD, PORT};
 	const auto rs {SomeShow::execute(&c)};
 	BOOST_REQUIRE(rs);
 	BOOST_REQUIRE_EQUAL(rs->rows(), 1);

@@ -3,6 +3,7 @@
 
 #include <concepts>
 #include <cstdint>
+#include <cstdlib>
 #include <string>
 #include <utility>
 
@@ -49,6 +50,15 @@ namespace MyGrate {
 			a.size()
 			} -> std::integral;
 	};
+
+	inline const char *
+	getenv(const char * env, const char * dfl)
+	{
+		if (const auto e {::getenv(env)}) {
+			return e;
+		}
+		return dfl;
+	}
 }
 
 #endif
