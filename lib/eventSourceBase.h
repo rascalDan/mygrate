@@ -6,6 +6,7 @@
 namespace MyGrate {
 	class EventSourceBase {
 	public:
+		virtual ~EventSourceBase() = default;
 		virtual void readEvents(EventHandlerBase &) = 0;
 	};
 }
