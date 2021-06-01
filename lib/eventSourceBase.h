@@ -2,6 +2,7 @@
 #define MYGRATE_EVENTSOURCEBASE_H
 
 #include "eventHandlerBase.h"
+#include <memory>
 
 namespace MyGrate {
 	class EventSourceBase {
@@ -9,6 +10,7 @@ namespace MyGrate {
 		virtual ~EventSourceBase() = default;
 		virtual void readEvents(EventHandlerBase &) = 0;
 	};
+	using EventSourceBasePtr = std::unique_ptr<EventSourceBase>;
 }
 
 #endif
