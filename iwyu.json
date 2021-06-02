@@ -33,6 +33,22 @@
 	},
 	{
 		"include": [
+			"<boost/cstdint.hpp>",
+			"private",
+			"<cstdint>",
+			"public"
+		]
+	},
+	{
+		"include": [
+			"@<boost/program_options/.*>",
+			"private",
+			"<boost/program_options.hpp>",
+			"public"
+		]
+	},
+	{
+		"include": [
 			"<boost/mpl/aux_/preprocessed/gcc/list.hpp>",
 			"private",
 			"<boost/mpl/list.hpp>",

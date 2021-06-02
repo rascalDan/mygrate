@@ -10,6 +10,7 @@ import regex : replace ;
 
 pkg-config.import libmariadb ;
 pkg-config.import libpq ;
+lib po : : <name>boost_program_options ;
 
 variant coverage : debug ;
 

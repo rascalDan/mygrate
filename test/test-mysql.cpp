@@ -1,7 +1,6 @@
 #define BOOST_TEST_MODULE MySQL
 #include <boost/test/unit_test.hpp>
 
-#include <cstddef>
 #include <cstdint>
 #include <cstdlib>
 #include <dbConn.h>
