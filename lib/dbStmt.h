@@ -9,17 +9,16 @@
 #include <type_traits>
 
 namespace MyGrate {
-	class DbConn;
-	enum class ParamMode { None, DollarNum, QMark };
-
-	template<Support::basic_fixed_string S, ParamMode pm = ParamMode::None> class DbStmt {
+	template<Support::basic_fixed_string S> class DbStmt {
 	public:
 		// This don't account for common table expressions, hopefully won't need those :)
 		static constexpr auto isSelect {S.v().starts_with("SELECT") || S.v().starts_with("SHOW")
 				|| S.v().find("RETURNING") != std::string_view::npos};
 
 		// These don't account for string literals, which we'd prefer to avoid anyway :)
-		static constexpr auto paramCount {[]() -> std::size_t {
+		static constexpr std::size_t
+		paramCount(ParamMode pm)
+		{
 			switch (pm) {
 				case ParamMode::None:
 					return 0LU;
@@ -42,15 +41,15 @@ namespace MyGrate {
 						return c == '?';
 					});
 			}
-		}()};
+		}
 
 		using Return = std::conditional_t<isSelect, RecordSetPtr, std::size_t>;
 
-		template<typename... P>
+		template<typename ConnType, typename... P>
 		static Return
-		execute(DbConn * c, P &&... p)
+		execute(ConnType * c, P &&... p)
 		{
-			static_assert(sizeof...(P) == paramCount);
+			static_assert(sizeof...(P) == paramCount(ConnType::paramMode));
 			auto stmt {c->prepare(S, sizeof...(P))};
 			stmt->execute({std::forward<P...>(p)...});
 			if constexpr (isSelect) {

@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
+#include <dbConn.h>
 #include <dbRecordSet.h>
 #include <dbStmt.h>
 #include <dbTypes.h>
@@ -42,13 +43,13 @@ BOOST_AUTO_TEST_CASE(simple)
 
 using SomeSelect = MyGrate::DbStmt<"SELECT * FROM foo">;
 using SomeShow = MyGrate::DbStmt<"SHOW MASTER STATUS">;
-using SomeUpdate = MyGrate::DbStmt<"UPDATE foo SET blah = ? WHERE bar = ?", MyGrate::ParamMode::QMark>;
+using SomeUpdate = MyGrate::DbStmt<"UPDATE foo SET blah = ? WHERE bar = ?">;
 
 static_assert(std::is_same_v<SomeSelect::Return, MyGrate::RecordSetPtr>);
 static_assert(std::is_same_v<SomeShow::Return, MyGrate::RecordSetPtr>);
 static_assert(std::is_same_v<SomeUpdate::Return, std::size_t>);
-static_assert(SomeShow::paramCount == 0);
-static_assert(SomeUpdate::paramCount == 2);
+static_assert(SomeShow::paramCount(MyGrate::ParamMode::QMark) == 0);
+static_assert(SomeUpdate::paramCount(MyGrate::ParamMode::QMark) == 2);
 
 BOOST_AUTO_TEST_CASE(stmt)
 {

@@ -14,6 +14,8 @@
 namespace MyGrate::Output::Pq {
 	class PqConn : public DbConn {
 	public:
+		static constexpr auto paramMode {ParamMode::DollarNum};
+
 		explicit PqConn(const char * const str);
 		virtual ~PqConn() = default;
 

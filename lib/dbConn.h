@@ -15,6 +15,8 @@ namespace MyGrate {
 	};
 	using DbPrepStmtPtr = std::unique_ptr<DbPrepStmt>;
 
+	enum class ParamMode { None, DollarNum, QMark };
+
 	class DbConn {
 	public:
 		virtual ~DbConn() = default;

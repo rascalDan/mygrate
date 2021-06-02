@@ -2,6 +2,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <cstddef>
+#include <dbConn.h>
 #include <dbRecordSet.h>
 #include <dbStmt.h>
 #include <dbTypes.h>
@@ -38,18 +39,17 @@ BOOST_AUTO_TEST_CASE(simple)
 	c.query("DROP TABLE test");
 }
 
-using SomeUpdate = MyGrate::DbStmt<"UPDATE foo SET blah = $2 WHERE bar = $1", MyGrate::ParamMode::DollarNum>;
-using SomeUpdateRtn
-		= MyGrate::DbStmt<"UPDATE foo SET blah = $2 WHERE bar = $1 RETURNING x", MyGrate::ParamMode::DollarNum>;
-using SomeShow = MyGrate::DbStmt<"SHOW all", MyGrate::ParamMode::DollarNum>;
-using SomeIns = MyGrate::DbStmt<"INSERT INTO foo VALUES(..., $87)", MyGrate::ParamMode::DollarNum>;
+using SomeUpdate = MyGrate::DbStmt<"UPDATE foo SET blah = $2 WHERE bar = $1">;
+using SomeUpdateRtn = MyGrate::DbStmt<"UPDATE foo SET blah = $2 WHERE bar = $1 RETURNING x">;
+using SomeShow = MyGrate::DbStmt<"SHOW all">;
+using SomeIns = MyGrate::DbStmt<"INSERT INTO foo VALUES(..., $87)">;
 
-static_assert(SomeUpdate::paramCount == 2);
+static_assert(SomeUpdate::paramCount(MyGrate::ParamMode::DollarNum) == 2);
 static_assert(std::is_same_v<SomeUpdate::Return, std::size_t>);
-static_assert(SomeUpdateRtn::paramCount == 2);
+static_assert(SomeUpdateRtn::paramCount(MyGrate::ParamMode::DollarNum) == 2);
 static_assert(std::is_same_v<SomeUpdateRtn::Return, MyGrate::RecordSetPtr>);
-static_assert(SomeShow::paramCount == 0);
-static_assert(SomeIns::paramCount == 87);
+static_assert(SomeShow::paramCount(MyGrate::ParamMode::DollarNum) == 0);
+static_assert(SomeIns::paramCount(MyGrate::ParamMode::DollarNum) == 87);
 static_assert(std::is_same_v<SomeIns::Return, std::size_t>);
 
 BOOST_AUTO_TEST_CASE(stmt)

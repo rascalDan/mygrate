@@ -10,6 +10,8 @@
 namespace MyGrate::Input {
 	class MySQLConn : public MYSQL, public DbConn {
 	public:
+		static constexpr auto paramMode {ParamMode::QMark};
+
 		MySQLConn(const char * const host, const char * const user, const char * const pass, unsigned short port);
 		~MySQLConn();
 
