@@ -13,7 +13,7 @@ namespace MyGrate {
 namespace MyGrate::Input {
 	class ReplicationStream : public EventSourceBase, MySQLConn {
 	public:
-		ReplicationStream(const char * const host, const char * const user, const char * const pass,
+		ReplicationStream(const std::string & host, const std::string & user, const std::string & pass,
 				unsigned short port, uint64_t serverid, std::string filename, uint64_t position);
 
 		void readEvents(EventHandlerBase &) override;

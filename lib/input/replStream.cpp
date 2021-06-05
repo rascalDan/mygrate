@@ -9,9 +9,9 @@
 #include <utility>
 
 namespace MyGrate::Input {
-	ReplicationStream::ReplicationStream(const char * const host, const char * const user, const char * const pass,
+	ReplicationStream::ReplicationStream(const std::string & host, const std::string & user, const std::string & pass,
 			unsigned short port, uint64_t sid, std::string fn, uint64_t pos) :
-		MySQLConn {host, user, pass, port},
+		MySQLConn {host.c_str(), user.c_str(), pass.c_str(), port},
 		serverid {sid}, filename {std::move(fn)}, position {pos}
 	{
 	}
