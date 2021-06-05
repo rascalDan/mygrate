@@ -33,8 +33,28 @@ namespace MyGrate {
 	};
 	using Blob = std::span<const std::byte>;
 
-	using DbValue = std::variant<std::nullptr_t, double, float, int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t,
+	using DbValueV = std::variant<std::nullptr_t, double, float, int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t,
 			int64_t, uint64_t, timespec, Date, Time, DateTime, std::string_view, BitSet, Blob>;
+
+	class DbValue : public DbValueV {
+	public:
+		using DbValueV::DbValueV;
+		using DbValueV::operator=;
+
+		template<typename V>
+		inline auto
+		visit(V && v) const
+		{
+			return std::visit(std::forward<V>(v), static_cast<const DbValueV &>(*this));
+		}
+
+		template<typename T>
+		inline const auto &
+		get() const
+		{
+			return std::get<T>(static_cast<const DbValueV &>(*this));
+		}
+	};
 }
 
 #endif

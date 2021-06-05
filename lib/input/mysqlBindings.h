@@ -23,7 +23,7 @@ namespace MyGrate::Input {
 			binds.reserve(vs.size());
 			data.reserve(vs.size());
 			for (const auto & v : vs) {
-				std::visit(*this, v);
+				v.visit(*this);
 			}
 		}
 		template<std::integral T>

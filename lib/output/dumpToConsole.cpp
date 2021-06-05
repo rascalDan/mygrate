@@ -71,7 +71,7 @@ namespace MyGrate::Output {
 	{
 		Row r {row, tableMaps.at(row.table_id)->event.table_map};
 		std::for_each(r.begin(), r.end(), [](auto && fv) {
-			std::visit(write {}, fv);
+			fv.visit(write {});
 		});
 	}
 
@@ -80,10 +80,10 @@ namespace MyGrate::Output {
 	{
 		RowPair rp {row, tableMaps.at(row.table_id)->event.table_map};
 		std::for_each(rp.first.begin(), rp.first.end(), [](auto && fv) {
-			std::visit(write {}, fv);
+			fv.visit(write {});
 		});
 		std::for_each(rp.second.begin(), rp.second.end(), [](auto && fv) {
-			std::visit(write {}, fv);
+			fv.visit(write {});
 		});
 	}
 

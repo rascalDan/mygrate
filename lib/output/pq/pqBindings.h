@@ -16,7 +16,7 @@ namespace MyGrate::Output::Pq {
 			values.reserve(vs.size());
 			lengths.reserve(vs.size());
 			for (const auto & v : vs) {
-				std::visit(*this, v);
+				v.visit(*this);
 			}
 		}
 		template<Stringable T>
