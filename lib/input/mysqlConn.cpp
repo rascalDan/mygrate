@@ -4,7 +4,6 @@
 #include <cstddef>
 #include <cstring>
 #include <dbConn.h>
-#include <dbTypes.h>
 #include <helpers.h>
 #include <memory>
 #include <mysql.h>

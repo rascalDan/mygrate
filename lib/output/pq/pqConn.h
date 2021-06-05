@@ -3,7 +3,6 @@
 
 #include <cstddef>
 #include <dbConn.h>
-#include <dbTypes.h>
 #include <functional>
 #include <initializer_list>
 #include <libpq-fe.h>
@@ -11,6 +10,9 @@
 #include <memory>
 #include <string>
 
+namespace MyGrate {
+	class DbValue;
+}
 namespace MyGrate::Output::Pq {
 	class PqConn : public DbConn {
 	public:

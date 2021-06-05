@@ -2,7 +2,6 @@
 #include "pqBindings.h"
 #include "pqStmt.h"
 #include <dbConn.h>
-#include <dbTypes.h>
 #include <helpers.h>
 #include <libpq-fe.h>
 #include <memory>

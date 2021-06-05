@@ -3,12 +3,14 @@
 
 #include "dbConn.h"
 #include "dbRecordSet.h"
-#include "dbTypes.h"
 #include <cstddef>
 #include <initializer_list>
 #include <memory>
 #include <mysql.h>
 
+namespace MyGrate {
+	class DbValue;
+}
 namespace MyGrate::Input {
 	using StmtPtr = std::unique_ptr<MYSQL_STMT, decltype(&mysql_stmt_close)>;
 

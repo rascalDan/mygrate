@@ -10,7 +10,6 @@
 #include <row.h>
 #include <streamSupport.h>
 #include <utility>
-#include <variant>
 
 namespace MyGrate::Output {
 	void

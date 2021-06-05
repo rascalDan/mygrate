@@ -2,6 +2,7 @@
 #define MYGRATE_DBTYPES_H
 
 #include "bitset.h"
+#include <boost/numeric/conversion/cast.hpp>
 #include <cstdint>
 #include <span>
 #include <string_view>
@@ -36,6 +37,60 @@ namespace MyGrate {
 	using DbValueV = std::variant<std::nullptr_t, double, float, int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t,
 			int64_t, uint64_t, timespec, Date, Time, DateTime, std::string_view, BitSet, Blob>;
 
+	namespace detail {
+		template<typename I>
+		concept HasToString = requires
+		{
+			std::to_string(I {});
+		};
+
+		template<typename T> struct is_false {
+			static constexpr bool value {false};
+		};
+
+		template<typename R, template<typename> typename ConceptT> struct SafeExtract {
+			R
+			operator()(const R & i) const
+			{
+				return i;
+			}
+
+			template<typename I>
+			R
+			operator()(const I & i) const
+			{
+				if constexpr (ConceptT<I>::value) {
+					return boost::numeric_cast<R>(i);
+				}
+				else {
+					throw std::logic_error("Unreasonable conversion requested");
+				}
+			}
+		};
+
+		struct ToString {
+			std::string
+			operator()(const std::string_view & i) const
+			{
+				return std::string {i};
+			}
+
+			template<HasToString I>
+			std::string
+			operator()(const I & i) const
+			{
+				return std::to_string(i);
+			}
+
+			template<typename I>
+			std::string
+			operator()(const I &) const
+			{
+				throw std::logic_error("Unreasonable to_string requested");
+			}
+		};
+	}
+
 	class DbValue : public DbValueV {
 	public:
 		using DbValueV::DbValueV;
@@ -53,6 +108,25 @@ namespace MyGrate {
 		get() const
 		{
 			return std::get<T>(static_cast<const DbValueV &>(*this));
+		}
+
+		template<typename R> operator R() const
+		{
+			if constexpr (std::is_integral_v<R>) {
+				return visit(detail::SafeExtract<R, std::is_integral> {});
+			}
+			else if constexpr (std::is_floating_point_v<R>) {
+				return visit(detail::SafeExtract<R, std::is_floating_point> {});
+			}
+			else if constexpr (std::is_same_v<std::string_view, R>) {
+				return get<std::string_view>();
+			}
+			else if constexpr (std::is_same_v<std::string, R>) {
+				return visit(detail::ToString {});
+			}
+			else {
+				static_assert(detail::is_false<R>::value, "Cannot extract one of these");
+			}
 		}
 	};
 }

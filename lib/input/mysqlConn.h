@@ -3,10 +3,12 @@
 
 #include <cstddef>
 #include <dbConn.h>
-#include <dbTypes.h>
 #include <initializer_list>
 #include <mysql.h>
 
+namespace MyGrate {
+	class DbValue;
+}
 namespace MyGrate::Input {
 	class MySQLConn : public MYSQL, public DbConn {
 	public:
