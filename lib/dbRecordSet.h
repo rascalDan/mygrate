@@ -13,16 +13,16 @@ namespace MyGrate {
 
 		DbValue operator[](std::size_t col) const;
 
-		template<typename S, std::size_t N, typename Indices = std::make_index_sequence<N>>
+		template<typename S, std::size_t N, std::size_t O = 0>
 		auto
 		create() const
 		{
-			return create<S>(Indices {});
+			return create<S, O>(std::make_index_sequence<N> {});
 		}
 
-		template<typename S, std::size_t... I> auto create(std::index_sequence<I...>) const
+		template<typename S, std::size_t O, std::size_t... I> auto create(std::index_sequence<I...>) const
 		{
-			return std::make_unique<S>((*this)[I]...);
+			return std::make_unique<S>((*this)[I + O]...);
 		}
 
 	private:
