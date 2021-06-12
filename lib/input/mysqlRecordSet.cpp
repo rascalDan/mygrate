@@ -1,5 +1,6 @@
 #include "mysqlRecordSet.h"
 #include "mysqlBindings.h"
+#include "mysqlConn.h"
 #include "mysqlStmt.h"
 #include <cstdint>
 #include <dbTypes.h>
@@ -61,18 +62,17 @@ namespace MyGrate::Input {
 				case MYSQL_TYPE_SET:
 				case MYSQL_TYPE_GEOMETRY:;
 			}
-			throw std::runtime_error("Unsupported column type");
+			throw std::logic_error("Unsupported column type");
 		};
 		ResPtr meta {mysql_stmt_result_metadata(stmt.get()), mysql_free_result};
-		const auto fieldDefs = mysql_fetch_fields(meta.get());
-		verify<std::runtime_error>(fieldDefs, "Fetch fields");
+		const auto fieldDefs = verify<MySQLErr>(mysql_fetch_fields(meta.get()), "Fetch fields", stmt->mysql);
 		for (std::size_t i = 0; i < fields.size(); i += 1) {
 			extras[i] = getBind(fieldDefs[i], fields[i]);
 		}
-		verify<std::runtime_error>(!mysql_stmt_bind_result(stmt.get(), fields.data()), "Store result error");
-		verify<std::runtime_error>(!mysql_stmt_store_result(stmt.get()), "Store result error");
+		verify<MySQLErr>(!mysql_stmt_bind_result(stmt.get(), fields.data()), "Store result error", stmt->mysql);
+		verify<MySQLErr>(!mysql_stmt_store_result(stmt.get()), "Store result error", stmt->mysql);
 		stmtres = {stmt.get(), mysql_stmt_free_result};
-		verify<std::runtime_error>(!mysql_stmt_fetch(stmt.get()), "Fetch");
+		verify<MySQLErr>(!mysql_stmt_fetch(stmt.get()), "Fetch", stmt->mysql);
 	}
 
 	std::size_t

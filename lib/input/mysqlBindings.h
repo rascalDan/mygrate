@@ -63,7 +63,7 @@ namespace MyGrate::Input {
 		void
 		operator()(const T &)
 		{
-			throw std::runtime_error("Not implemented");
+			throw std::logic_error("Not implemented");
 		}
 		std::vector<MYSQL_BIND> binds;
 		std::vector<BingingData> data;

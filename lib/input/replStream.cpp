@@ -30,7 +30,7 @@ namespace MyGrate::Input {
 		mariadb_rpl_optionsv(rpl.get(), MARIADB_RPL_START, position);
 		mariadb_rpl_optionsv(rpl.get(), MARIADB_RPL_FLAGS, MARIADB_RPL_BINLOG_SEND_ANNOTATE_ROWS);
 
-		verify<std::runtime_error>(!mariadb_rpl_open(rpl.get()), "Failed to mariadb_rpl_open");
+		verify<MySQLErr>(!mariadb_rpl_open(rpl.get()), "Failed to mariadb_rpl_open", this);
 
 		while (MyGrate::MariaDB_Event_Ptr event {mariadb_rpl_fetch(rpl.get(), nullptr), &mariadb_free_rpl_event}) {
 			position = event->next_event_pos;

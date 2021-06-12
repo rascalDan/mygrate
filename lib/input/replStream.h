@@ -11,7 +11,7 @@ namespace MyGrate {
 }
 
 namespace MyGrate::Input {
-	class ReplicationStream : public EventSourceBase, MySQLConn {
+	class ReplicationStream : public EventSourceBase, public MySQLConn {
 	public:
 		ReplicationStream(const std::string & host, const std::string & user, const std::string & pass,
 				unsigned short port, uint64_t serverid, std::string filename, uint64_t position);

@@ -26,18 +26,18 @@ BOOST_AUTO_TEST_CASE(simple)
 	BOOST_CHECK_THROW(([]() {
 		MyGrate::Input::MySQLConn {SERVER, USER, "badpass", PORT};
 	}()),
-			std::runtime_error);
+			MyGrate::Input::MySQLErr);
 	MyGrate::Input::MySQLConn c {SERVER, USER, PASSWORD, PORT};
 	BOOST_CHECK_NO_THROW(c.query("SET @var = ''"));
 	BOOST_CHECK_NO_THROW(c.query("SET @var = 'something'"));
-	BOOST_CHECK_THROW(c.query("SET @var = "), std::runtime_error);
+	BOOST_CHECK_THROW(c.query("SET @var = "), MyGrate::Input::MySQLErr);
 	BOOST_CHECK_THROW(c.query("SET @var = ?", {}), std::logic_error);
 	BOOST_CHECK_NO_THROW(c.query("SET @var = ''", {}));
 	BOOST_CHECK_NO_THROW(c.query("SET @var = ?", {1}));
 	BOOST_CHECK_NO_THROW(c.query("SET @var = ?", {"string_view"}));
 	BOOST_CHECK_NO_THROW(c.query("SET @var = ?", {nullptr}));
 	BOOST_CHECK_NO_THROW(c.query("SET @var = ?", {1.2}));
-	BOOST_CHECK_THROW(c.query("SET @var = ?", {MyGrate::Time {}}), std::runtime_error);
+	BOOST_CHECK_THROW(c.query("SET @var = ?", {MyGrate::Time {}}), std::logic_error);
 }
 
 using SomeSelect = MyGrate::DbStmt<"SELECT * FROM foo">;

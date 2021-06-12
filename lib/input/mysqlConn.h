@@ -10,6 +10,11 @@ namespace MyGrate {
 	class DbValue;
 }
 namespace MyGrate::Input {
+	class MySQLErr : public std::runtime_error {
+	public:
+		MySQLErr(const std::string & when, MYSQL *);
+	};
+
 	class MySQLConn : public MYSQL, public DbConn {
 	public:
 		static constexpr auto paramMode {ParamMode::QMark};
