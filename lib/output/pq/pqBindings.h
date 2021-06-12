@@ -39,7 +39,7 @@ namespace MyGrate::Output::Pq {
 		void
 		operator()(const T &)
 		{
-			throw std::runtime_error("Not implemented");
+			throw std::logic_error("Not implemented");
 		}
 		void
 		operator()(const std::nullptr_t &)

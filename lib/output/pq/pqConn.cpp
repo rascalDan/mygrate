@@ -10,9 +10,14 @@
 #include <vector>
 
 namespace MyGrate::Output::Pq {
+	PqErr::PqErr(const std::string & when, PGconn * c) : std::runtime_error(when + ": " + PQerrorMessage((c))) { }
+	PqErr::PqErr(const std::string & when, PGresult * r) : std::runtime_error(when + ": " + PQresultErrorMessage((r)))
+	{
+	}
+
 	PqConn::PqConn(const char * const str) : conn {PQconnectdb(str), PQfinish}
 	{
-		verify<std::runtime_error>(PQstatus(conn.get()) == CONNECTION_OK, "Connection failure");
+		verify<PqErr>(PQstatus(conn.get()) == CONNECTION_OK, "Connection failure", conn.get());
 		PQsetNoticeProcessor(conn.get(), notice_processor, this);
 	}
 
@@ -20,7 +25,7 @@ namespace MyGrate::Output::Pq {
 	PqConn::query(const char * const q)
 	{
 		ResPtr res {PQexec(conn.get(), q), &PQclear};
-		verify<std::runtime_error>(PQresultStatus(res.get()) == PGRES_COMMAND_OK, q);
+		verify<PqErr>(PQresultStatus(res.get()) == PGRES_COMMAND_OK, q, res.get());
 	}
 
 	void
@@ -29,7 +34,7 @@ namespace MyGrate::Output::Pq {
 		Bindings b {vs};
 		ResPtr res {PQexecParams(conn.get(), q, (int)vs.size(), nullptr, b.values.data(), b.lengths.data(), nullptr, 0),
 				&PQclear};
-		verify<std::runtime_error>(PQresultStatus(res.get()) == PGRES_COMMAND_OK, q);
+		verify<PqErr>(PQresultStatus(res.get()) == PGRES_COMMAND_OK, q, res.get());
 	}
 
 	DbPrepStmtPtr

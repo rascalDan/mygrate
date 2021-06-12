@@ -24,8 +24,8 @@ namespace MyGrate::Output::Pq {
 		Bindings b {vs};
 		res = {PQexecPrepared(conn, name.c_str(), (int)vs.size(), b.values.data(), b.lengths.data(), nullptr, 0),
 				&PQclear};
-		verify<std::runtime_error>(
-				PQresultStatus(res.get()) == PGRES_COMMAND_OK || PQresultStatus(res.get()) == PGRES_TUPLES_OK, name);
+		verify<PqErr>(PQresultStatus(res.get()) == PGRES_COMMAND_OK || PQresultStatus(res.get()) == PGRES_TUPLES_OK,
+				name, conn);
 	}
 
 	std::size_t
@@ -48,7 +48,7 @@ namespace MyGrate::Output::Pq {
 		}
 		auto nam {scprintf<"pst%0x">(c->stmts.size())};
 		ResPtr res {PQprepare(c->conn.get(), nam.c_str(), q, (int)n, nullptr), PQclear};
-		verify<std::runtime_error>(PQresultStatus(res.get()) == PGRES_COMMAND_OK, q);
+		verify<PqErr>(PQresultStatus(res.get()) == PGRES_COMMAND_OK, q, c->conn.get());
 		return c->stmts.emplace(q, std::move(nam)).first->second;
 	}
 }

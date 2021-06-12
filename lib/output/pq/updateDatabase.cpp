@@ -25,7 +25,7 @@ namespace MyGrate::Output::Pq {
 	UpdateDatabase::getSource()
 	{
 		auto srcrec = output::pq::sql::selectSource::execute(this, source);
-		verify<std::runtime_error>(srcrec->rows() == 1, "Wrong number of source config rows");
+		verify<ConfigError>(srcrec->rows() == 1, "Wrong number of source config rows");
 		return (*srcrec)[0].create<Input::ReplicationStream, 7>();
 	}
 

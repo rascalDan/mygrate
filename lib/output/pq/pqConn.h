@@ -14,6 +14,12 @@ namespace MyGrate {
 	class DbValue;
 }
 namespace MyGrate::Output::Pq {
+	class PqErr : public std::runtime_error {
+	public:
+		PqErr(const std::string & when, PGconn *);
+		PqErr(const std::string & when, PGresult *);
+	};
+
 	class PqConn : public DbConn {
 	public:
 		static constexpr auto paramMode {ParamMode::DollarNum};

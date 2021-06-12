@@ -22,6 +22,10 @@ namespace MyGrate::Output::Pq {
 	};
 	using TableDefPtr = std::unique_ptr<TableDef>;
 
+	class ConfigError : public std::runtime_error {
+		using std::runtime_error::runtime_error;
+	};
+
 	class UpdateDatabase : public PqConn, public EventHandlerBase {
 	public:
 		UpdateDatabase(const char * const str, uint64_t source);
