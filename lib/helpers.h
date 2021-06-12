@@ -15,13 +15,14 @@ namespace MyGrate {
 		return (i >> offset) & ((1U << size) - 1U);
 	}
 
-	template<typename X, typename... P>
-	constexpr inline void
-	verify(bool expr, P &&... p)
+	template<typename X, typename R, typename... P>
+	constexpr inline auto
+	verify(R expr, P &&... p)
 	{
 		if (!expr) {
 			throw X(std::forward<P>(p)...);
 		}
+		return expr;
 	}
 
 	template<typename T>
