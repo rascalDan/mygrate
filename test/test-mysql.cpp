@@ -1,6 +1,7 @@
 #define BOOST_TEST_MODULE MySQL
 #include <boost/test/unit_test.hpp>
 
+#include "testdb-mysql.h"
 #include <cstdint>
 #include <cstdlib>
 #include <dbConn.h>
@@ -59,4 +60,9 @@ BOOST_AUTO_TEST_CASE(stmt)
 	BOOST_REQUIRE_EQUAL(rs->columns(), 4);
 	BOOST_CHECK(std::get<std::string_view>(rs->at(0, 0)).starts_with("mariadb"));
 	BOOST_CHECK_GE(std::get<int64_t>(rs->at(0, 1)), 4);
+}
+
+BOOST_AUTO_TEST_CASE(mock)
+{
+	MyGrate::Testing::MySQLDB db;
 }

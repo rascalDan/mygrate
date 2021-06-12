@@ -2,13 +2,18 @@ lib boost_unit_test_framework ;
 
 project : requirements
 	<library>../lib//mygrate
-	<library>boost_unit_test_framework
+	<library>boost_unit_test_framework/<link>shared
 	<define>BOOST_TEST_DYN_LINK
+	;
+
+lib testdb :
+	[ glob testdb-*.cpp ] :
+	<link>static
 	;
 
 run test-rawDataReader.cpp ;
 run test-bitset.cpp ;
 run test-streams.cpp ;
 run test-misc.cpp ;
-run test-mysql.cpp ;
+run test-mysql.cpp : : : <library>testdb ;
 run test-postgresql.cpp ;
