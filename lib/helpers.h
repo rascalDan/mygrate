@@ -20,7 +20,7 @@ namespace MyGrate {
 	verify(bool expr, P &&... p)
 	{
 		if (!expr) {
-			throw X(std::forward<P...>(p)...);
+			throw X(std::forward<P>(p)...);
 		}
 	}
 
