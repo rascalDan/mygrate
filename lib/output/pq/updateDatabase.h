@@ -32,6 +32,9 @@ namespace MyGrate::Output::Pq {
 
 		EventSourceBasePtr getSource();
 
+		static UpdateDatabase createNew(PqConn *, const char * host, const char * un, const char * pw, unsigned short p,
+				const char * db, int sid, const char * sc);
+
 		const uint64_t source;
 
 	private:
