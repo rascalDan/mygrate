@@ -13,12 +13,12 @@
 namespace MyGrate::Input {
 	MySQLErr::MySQLErr(const std::string & when, MYSQL * c) : std::runtime_error(when + ": " + mysql_error(c)) { }
 
-	MySQLConn::MySQLConn(
-			const char * const host, const char * const user, const char * const pass, unsigned short port) :
+	MySQLConn::MySQLConn(const char * const host, const char * const user, const char * const pass, unsigned short port,
+			const char * const db) :
 		st_mysql {}
 	{
 		mysql_init(this);
-		if (!mysql_real_connect(this, host, user, pass, "", port, nullptr, 0)) {
+		if (!mysql_real_connect(this, host, user, pass, db, port, nullptr, 0)) {
 			mysql_close(this);
 			throw MySQLErr("Connecting", this);
 		}

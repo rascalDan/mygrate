@@ -19,7 +19,10 @@ namespace MyGrate::Input {
 	public:
 		static constexpr auto paramMode {ParamMode::QMark};
 
-		MySQLConn(const char * const host, const char * const user, const char * const pass, unsigned short port);
+		MySQLConn(const char * const host, const char * const user, const char * const pass, unsigned short port,
+				const char * const db = "");
+		MySQLConn(const MySQLConn &) = delete;
+		MySQLConn(MySQLConn &&) = delete;
 		~MySQLConn();
 
 		void query(const char * const) override;

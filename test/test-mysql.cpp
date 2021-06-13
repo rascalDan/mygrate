@@ -65,4 +65,7 @@ BOOST_AUTO_TEST_CASE(stmt)
 BOOST_AUTO_TEST_CASE(mock)
 {
 	MyGrate::Testing::MySQLDB db;
+	auto mdb = db.mock();
+	auto rs = MyGrate::DbStmt<"SELECT DATABASE()">::execute(&mdb);
+	BOOST_CHECK_EQUAL(rs->at(0, 0).get<std::string_view>().substr(0, 13), "mygrate_test_");
 }

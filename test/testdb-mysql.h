@@ -9,6 +9,11 @@ namespace MyGrate {
 		public:
 			MySQLDB();
 			~MySQLDB();
+
+			Input::MySQLConn mock() const;
+
+			std::string mockname;
+			static std::size_t mocknum;
 		};
 	}
 }
