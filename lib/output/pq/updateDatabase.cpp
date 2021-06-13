@@ -47,10 +47,11 @@ namespace MyGrate::Output::Pq {
 	{
 		Input::MySQLConn my {host, username, password, port};
 		auto ms = input::sql::showMasterStatus::execute(&my);
-		auto source_id = output::pq::sql::insertSource::execute(
-				pq, host, username, password, port, db, ms->at(0, 0), ms->at(0, 1), sid, schema);
-		pq->query(scprintf<"CREATE SCHEMA IF NOT EXISTS %?">(schema).c_str());
-
-		return UpdateDatabase(pq->connstr.c_str(), source_id->at(0, 0));
+		auto source_id = Tx {pq}([&]() {
+			pq->query(scprintf<"CREATE SCHEMA IF NOT EXISTS %?">(schema).c_str());
+			return **output::pq::sql::insertSource::execute(
+					pq, host, username, password, port, db, ms->at(0, 0), ms->at(0, 1), sid, schema);
+		});
+		return UpdateDatabase(pq->connstr.c_str(), source_id);
 	}
 }
