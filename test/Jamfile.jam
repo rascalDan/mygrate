@@ -4,6 +4,7 @@ project : requirements
 	<library>../lib//mygrate
 	<library>boost_unit_test_framework/<link>shared
 	<define>BOOST_TEST_DYN_LINK
+	<define>ROOT=\\\"$(root)\\\"
 	;
 
 lib testdb :

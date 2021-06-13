@@ -82,3 +82,11 @@ BOOST_AUTO_TEST_CASE(mock)
 	auto rs = MyGrate::DbStmt<"SELECT CURRENT_DATABASE()">::execute(&mdb);
 	BOOST_CHECK_EQUAL(rs->at(0, 0).get<std::string_view>().substr(0, 13), "mygrate_test_");
 }
+
+BOOST_AUTO_TEST_CASE(mock_schema)
+{
+	MyGrate::Testing::PqConnDB db {ROOT "/db/schema.sql"};
+	auto mdb = db.mock();
+	auto rs = MyGrate::DbStmt<"SELECT COUNT(*) FROM mygrate.source">::execute(&mdb);
+	BOOST_CHECK_EQUAL(rs->at(0, 0).operator unsigned int(), 0);
+}

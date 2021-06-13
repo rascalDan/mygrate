@@ -8,6 +8,7 @@ namespace MyGrate {
 		class PqConnDB : public Output::Pq::PqConn {
 		public:
 			PqConnDB();
+			PqConnDB(const std::string & schemaFile);
 			~PqConnDB();
 
 			Output::Pq::PqConn mock() const;

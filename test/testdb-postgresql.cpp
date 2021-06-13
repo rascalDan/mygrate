@@ -1,6 +1,7 @@
 #include "testdb-postgresql.h"
 #include <compileTimeFormatter.h>
 #include <cstdlib>
+#include <fstream>
 #include <helpers.h>
 #include <output/pq/pqConn.h>
 
@@ -13,6 +14,16 @@ namespace MyGrate {
 		{
 			query(("DROP DATABASE IF EXISTS " + mockname).c_str());
 			query(("CREATE DATABASE " + mockname).c_str());
+		}
+
+		PqConnDB::PqConnDB(const std::string & schemaFile) : PqConnDB()
+		{
+			auto mdb = mock();
+
+			std::stringstream buffer;
+			buffer << std::ifstream(schemaFile).rdbuf();
+
+			mdb.query(buffer.str().c_str());
 		}
 
 		PqConnDB::~PqConnDB()
