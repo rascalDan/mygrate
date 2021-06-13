@@ -1,6 +1,7 @@
 #define BOOST_TEST_MODULE PostgreSQL
 #include <boost/test/unit_test.hpp>
 
+#include "testdb-postgresql.h"
 #include <cstddef>
 #include <dbConn.h>
 #include <dbRecordSet.h>
@@ -72,4 +73,12 @@ BOOST_AUTO_TEST_CASE(stmt_reuse)
 		BOOST_CHECK_EQUAL(rs->columns(), 3);
 		BOOST_CHECK_GT(rs->rows(), 1);
 	}
+}
+
+BOOST_AUTO_TEST_CASE(mock)
+{
+	MyGrate::Testing::PqConnDB db;
+	auto mdb = db.mock();
+	auto rs = MyGrate::DbStmt<"SELECT CURRENT_DATABASE()">::execute(&mdb);
+	BOOST_CHECK_EQUAL(rs->at(0, 0).get<std::string_view>().substr(0, 13), "mygrate_test_");
 }
