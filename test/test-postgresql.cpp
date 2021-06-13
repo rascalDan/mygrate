@@ -30,14 +30,6 @@ BOOST_AUTO_TEST_CASE(simple)
 	BOOST_CHECK_THROW(c.query("SET application_name = "), MyGrate::Output::Pq::PqErr);
 	// BOOST_CHECK_THROW(c.query("SET application_name = $1", {}), std::logic_error);
 	BOOST_CHECK_NO_THROW(c.query("SET application_name = 'something'", {}));
-	c.query("DROP TABLE IF EXISTS test");
-	c.query("CREATE TABLE test(c text)");
-	BOOST_CHECK_NO_THROW(c.query("INSERT INTO test VALUES($1)", {1}));
-	BOOST_CHECK_NO_THROW(c.query("INSERT INTO test VALUES($1)", {"string_view"}));
-	BOOST_CHECK_NO_THROW(c.query("INSERT INTO test VALUES($1)", {nullptr}));
-	BOOST_CHECK_NO_THROW(c.query("INSERT INTO test VALUES($1)", {1.2}));
-	BOOST_CHECK_THROW(c.query("INSERT INTO test VALUES($1)", {MyGrate::Time {}}), std::logic_error);
-	c.query("DROP TABLE test");
 }
 
 using SomeUpdate = MyGrate::DbStmt<"UPDATE foo SET blah = $2 WHERE bar = $1">;
@@ -81,6 +73,15 @@ BOOST_AUTO_TEST_CASE(mock)
 	auto mdb = db.mock();
 	auto rs = MyGrate::DbStmt<"SELECT CURRENT_DATABASE()">::execute(&mdb);
 	BOOST_CHECK_EQUAL(rs->at(0, 0).get<std::string_view>().substr(0, 13), "mygrate_test_");
+
+	mdb.query("CREATE TABLE test(c text)");
+	BOOST_CHECK_NO_THROW(mdb.query("INSERT INTO test VALUES($1)", {1}));
+	BOOST_CHECK_NO_THROW(mdb.query("INSERT INTO test VALUES($1)", {"string_view"}));
+	BOOST_CHECK_NO_THROW(mdb.query("INSERT INTO test VALUES($1)", {nullptr}));
+	BOOST_CHECK_NO_THROW(mdb.query("INSERT INTO test VALUES($1)", {1.2}));
+	BOOST_CHECK_THROW(mdb.query("INSERT INTO test VALUES($1)", {MyGrate::Time {}}), std::logic_error);
+	auto rscount = MyGrate::DbStmt<"SELECT COUNT(*) FROM test">::execute(&mdb);
+	BOOST_CHECK_EQUAL(rscount->at(0, 0).operator unsigned int(), 4);
 }
 
 BOOST_AUTO_TEST_CASE(mock_schema)
