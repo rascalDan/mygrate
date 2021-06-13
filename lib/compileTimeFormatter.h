@@ -251,7 +251,12 @@ namespace MyGrate {
 		return FormatterDetail<Str, Str.size()>::get(pn...);
 	}
 
-	template<const Support::basic_fixed_string Str, typename stream, typename... Pn>
+	template<typename T>
+	concept Writable = requires(T s)
+	{
+		{s << 0};
+	};
+	template<const Support::basic_fixed_string Str, Writable stream, typename... Pn>
 	inline auto &
 	scprintf(stream & strm, const Pn &... pn)
 	{
