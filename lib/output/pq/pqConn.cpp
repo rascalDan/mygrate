@@ -18,6 +18,7 @@ namespace MyGrate::Output::Pq {
 	PqConn::PqConn(const char * const str) : connstr {str}, conn {PQconnectdb(str), PQfinish}
 	{
 		verify<PqErr>(PQstatus(conn.get()) == CONNECTION_OK, "Connection failure", conn.get());
+		verify<PqErr>(!PQsetClientEncoding(conn.get(), "utf-8"), "Setting char set", conn.get());
 		PQsetNoticeProcessor(conn.get(), notice_processor, this);
 	}
 
