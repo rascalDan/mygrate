@@ -32,8 +32,9 @@ namespace MyGrate::Output::Pq {
 
 		EventSourceBasePtr getSource();
 
+		const uint64_t source;
+
 	private:
-		uint64_t source;
 		std::map<std::string, TableDefPtr, std::less<>> tables;
 	};
 }
