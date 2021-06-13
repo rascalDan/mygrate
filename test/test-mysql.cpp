@@ -17,18 +17,14 @@
 #include <type_traits>
 #include <variant>
 
-const auto SERVER {MyGrate::getenv("MYGRATE_MYSQL_SERVER", "localhost")};
-const auto USER {MyGrate::getenv("MYGRATE_MYSQL_USER", getenv("LOGNAME"))};
-const auto PASSWORD {getenv("MYGRATE_MYSQL_PASSWORD")};
-const auto PORT {(unsigned short)std::atoi(MyGrate::getenv("MYGRATE_MYSQL_PORT", "3306"))};
-
 BOOST_AUTO_TEST_CASE(simple)
 {
+	using namespace MyGrate::Testing;
 	BOOST_CHECK_THROW(([]() {
-		MyGrate::Input::MySQLConn {SERVER, USER, "badpass", PORT};
+		MyGrate::Input::MySQLConn {MySQLDB::SERVER, MySQLDB::USER, "badpass", MySQLDB::PORT};
 	}()),
 			MyGrate::Input::MySQLErr);
-	MyGrate::Input::MySQLConn c {SERVER, USER, PASSWORD, PORT};
+	MyGrate::Input::MySQLConn c {MySQLDB::SERVER, MySQLDB::USER, MySQLDB::PASSWORD, MySQLDB::PORT};
 	BOOST_CHECK_NO_THROW(c.query("SET @var = ''"));
 	BOOST_CHECK_NO_THROW(c.query("SET @var = 'something'"));
 	BOOST_CHECK_THROW(c.query("SET @var = "), MyGrate::Input::MySQLErr);
@@ -53,7 +49,8 @@ static_assert(SomeUpdate::paramCount(MyGrate::ParamMode::QMark) == 2);
 
 BOOST_AUTO_TEST_CASE(stmt)
 {
-	MyGrate::Input::MySQLConn c {SERVER, USER, PASSWORD, PORT};
+	using namespace MyGrate::Testing;
+	MyGrate::Input::MySQLConn c {MySQLDB::SERVER, MySQLDB::USER, MySQLDB::PASSWORD, MySQLDB::PORT};
 	const auto rs {SomeShow::execute(&c)};
 	BOOST_REQUIRE(rs);
 	BOOST_REQUIRE_EQUAL(rs->rows(), 1);

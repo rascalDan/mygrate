@@ -13,6 +13,13 @@ namespace MyGrate {
 			Input::MySQLConn mock() const;
 
 			std::string mockname;
+
+			static const char * const SERVER;
+			static const char * const USER;
+			static const char * const PASSWORD;
+			static const unsigned short PORT;
+
+		private:
 			static std::size_t mocknum;
 		};
 	}
