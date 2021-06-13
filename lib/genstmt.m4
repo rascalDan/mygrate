@@ -1,3 +1,4 @@
+changequote(`{{',`}}')dnl
 // NAME
 #include <fixedString.h>
 #include <dbStmt.h>
