@@ -17,4 +17,4 @@ run test-bitset.cpp ;
 run test-streams.cpp ;
 run test-misc.cpp ;
 run test-mysql.cpp : : : <library>testdb ;
-run test-postgresql.cpp : : : <library>testdb ;
+run test-postgresql.cpp : -- : ../db/schema.sql : <library>testdb ;
