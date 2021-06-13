@@ -38,6 +38,7 @@ namespace MyGrate {
 		virtual std::size_t columns() const = 0;
 		virtual DbValue at(std::size_t, std::size_t) const = 0;
 		RowView operator[](std::size_t row) const;
+		DbValue operator*() const;
 	};
 	using RecordSetPtr = std::unique_ptr<RecordSet>;
 }

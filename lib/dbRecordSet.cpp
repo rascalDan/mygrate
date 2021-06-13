@@ -14,4 +14,10 @@ namespace MyGrate {
 	{
 		return {this, row};
 	}
+
+	DbValue
+	RecordSet::operator*() const
+	{
+		return at(0, 0);
+	}
 }
