@@ -52,4 +52,24 @@ namespace MyGrate::Input {
 	{
 		return std::make_unique<MySQLPrepStmt>(q, this);
 	}
+
+	void
+	MySQLConn::beginTx()
+	{
+		verify<MySQLErr>(!mysql_autocommit(this, false), "Auto commit off", this);
+	}
+
+	void
+	MySQLConn::commitTx()
+	{
+		verify<MySQLErr>(!mysql_commit(this), "Commit", this);
+		verify<MySQLErr>(!mysql_autocommit(this, true), "Auto commit on", this);
+	}
+
+	void
+	MySQLConn::rollbackTx()
+	{
+		verify<MySQLErr>(!mysql_rollback(this), "Rollback", this);
+		verify<MySQLErr>(!mysql_autocommit(this, true), "Auto commit on", this);
+	}
 }

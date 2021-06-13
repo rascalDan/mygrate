@@ -44,6 +44,24 @@ namespace MyGrate::Output::Pq {
 	}
 
 	void
+	PqConn::beginTx()
+	{
+		query("BEGIN");
+	}
+
+	void
+	PqConn::commitTx()
+	{
+		query("COMMIT");
+	}
+
+	void
+	PqConn::rollbackTx()
+	{
+		query("ROLLBACK");
+	}
+
+	void
 	PqConn::notice_processor(void * p, const char * n)
 	{
 		return static_cast<PqConn *>(p)->notice_processor(n);

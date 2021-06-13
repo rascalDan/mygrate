@@ -32,6 +32,10 @@ namespace MyGrate::Output::Pq {
 
 		DbPrepStmtPtr prepare(const char * const, std::size_t nParams) override;
 
+		void beginTx() override;
+		void commitTx() override;
+		void rollbackTx() override;
+
 		const std::string connstr;
 
 	private:

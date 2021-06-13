@@ -24,6 +24,28 @@ namespace MyGrate {
 		virtual void query(const char * const, const std::initializer_list<DbValue> &) = 0;
 
 		virtual DbPrepStmtPtr prepare(const char * const, std::size_t nParams) = 0;
+
+		virtual void beginTx() = 0;
+		virtual void commitTx() = 0;
+		virtual void rollbackTx() = 0;
+	};
+
+	class Tx {
+	public:
+		explicit Tx(DbConn *);
+		Tx(const Tx &) = delete;
+		Tx(Tx &&) = delete;
+		~Tx();
+
+		template<typename C>
+		auto
+		operator()(C && callback)
+		{
+			return callback();
+		}
+
+	private:
+		DbConn * conn;
 	};
 }
 

@@ -29,6 +29,10 @@ namespace MyGrate::Input {
 		void query(const char * const q, const std::initializer_list<DbValue> &) override;
 
 		DbPrepStmtPtr prepare(const char * const, std::size_t) override;
+
+		void beginTx() override;
+		void commitTx() override;
+		void rollbackTx() override;
 	};
 }
 
