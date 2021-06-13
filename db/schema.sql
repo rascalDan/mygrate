@@ -37,6 +37,7 @@ CREATE TABLE mygrate.source (
     username text NOT NULL,
     password text NOT NULL,
     port integer NOT NULL,
+    database text NOT NULL,
     filename text NOT NULL,
     "position" bigint NOT NULL,
     serverid integer NOT NULL,
