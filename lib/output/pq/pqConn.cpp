@@ -15,7 +15,7 @@ namespace MyGrate::Output::Pq {
 	{
 	}
 
-	PqConn::PqConn(const char * const str) : conn {PQconnectdb(str), PQfinish}
+	PqConn::PqConn(const char * const str) : connstr {str}, conn {PQconnectdb(str), PQfinish}
 	{
 		verify<PqErr>(PQstatus(conn.get()) == CONNECTION_OK, "Connection failure", conn.get());
 		PQsetNoticeProcessor(conn.get(), notice_processor, this);

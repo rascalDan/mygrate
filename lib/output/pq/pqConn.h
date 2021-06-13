@@ -32,6 +32,8 @@ namespace MyGrate::Output::Pq {
 
 		DbPrepStmtPtr prepare(const char * const, std::size_t nParams) override;
 
+		const std::string connstr;
+
 	private:
 		static void notice_processor(void *, const char *);
 		virtual void notice_processor(const char *) const;
