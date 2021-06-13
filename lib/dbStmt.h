@@ -51,7 +51,7 @@ namespace MyGrate {
 		{
 			static_assert(sizeof...(P) == paramCount(ConnType::paramMode));
 			auto stmt {c->prepare(S, sizeof...(P))};
-			stmt->execute({std::forward<P...>(p)...});
+			stmt->execute({std::forward<P>(p)...});
 			if constexpr (isSelect) {
 				return stmt->recordSet();
 			}
