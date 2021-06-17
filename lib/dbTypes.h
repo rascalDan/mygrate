@@ -131,4 +131,8 @@ namespace MyGrate {
 	};
 }
 
+namespace std {
+	std::ostream & operator<<(std::ostream & strm, const MyGrate::DbValueV & v);
+}
+
 #endif
