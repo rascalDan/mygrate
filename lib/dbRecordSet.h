@@ -25,6 +25,11 @@ namespace MyGrate {
 			return std::make_unique<S>((*this)[I + O]...);
 		}
 
+		bool operator==(const RowView &) const;
+		RowView & operator++();
+		const RowView & operator*() const;
+		std::size_t currentRow() const;
+
 	private:
 		const RecordSet * recordSet;
 		std::size_t row;
@@ -39,6 +44,9 @@ namespace MyGrate {
 		virtual DbValue at(std::size_t, std::size_t) const = 0;
 		RowView operator[](std::size_t row) const;
 		DbValue operator*() const;
+
+		RowView begin() const;
+		RowView end() const;
 	};
 	using RecordSetPtr = std::unique_ptr<RecordSet>;
 }
