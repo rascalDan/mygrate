@@ -31,6 +31,7 @@ namespace MyGrate::Input {
 		StmtResPtr stmtres;
 		std::vector<MYSQL_BIND> fields;
 		std::vector<ResultDataPtr> extras;
+		mutable std::size_t currentRow {static_cast<size_t>(-1)};
 	};
 }
 

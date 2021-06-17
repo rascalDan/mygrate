@@ -72,7 +72,6 @@ namespace MyGrate::Input {
 		verify<MySQLErr>(!mysql_stmt_bind_result(stmt.get(), fields.data()), "Store result error", stmt->mysql);
 		verify<MySQLErr>(!mysql_stmt_store_result(stmt.get()), "Store result error", stmt->mysql);
 		stmtres = {stmt.get(), mysql_stmt_free_result};
-		verify<MySQLErr>(!mysql_stmt_fetch(stmt.get()), "Fetch", stmt->mysql);
 	}
 
 	std::size_t
@@ -90,7 +89,11 @@ namespace MyGrate::Input {
 	DbValue
 	MySQLRecordSet::at(std::size_t row, std::size_t col) const
 	{
-		mysql_stmt_data_seek(stmt.get(), row);
+		if (currentRow != row) {
+			mysql_stmt_data_seek(stmt.get(), row);
+			verify<MySQLErr>(!mysql_stmt_fetch(stmt.get()), "Fetch", stmt->mysql);
+			currentRow = row;
+		}
 		if (extras[col]->null) {
 			return nullptr;
 		}
