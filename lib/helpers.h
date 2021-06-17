@@ -19,7 +19,7 @@ namespace MyGrate {
 	constexpr inline auto
 	verify(R expr, P &&... p)
 	{
-		if (!expr) {
+		if (!expr) [[unlikely]] {
 			throw X(std::forward<P>(p)...);
 		}
 		return expr;
