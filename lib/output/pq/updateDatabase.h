@@ -36,6 +36,7 @@ namespace MyGrate::Output::Pq {
 				const char * db, int sid, const char * sc);
 
 		const uint64_t source;
+		const std::string schema;
 
 	private:
 		std::map<std::string, TableDefPtr, std::less<>> tables;

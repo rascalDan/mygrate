@@ -11,11 +11,13 @@
 #include <output/pq/sql/insertSource.h>
 #include <output/pq/sql/selectColumns.h>
 #include <output/pq/sql/selectSource.h>
+#include <output/pq/sql/selectSourceSchema.h>
 #include <output/pq/sql/selectTables.h>
 #include <stdexcept>
 
 namespace MyGrate::Output::Pq {
-	UpdateDatabase::UpdateDatabase(const char * const str, uint64_t s) : PqConn {str}, source {s}
+	UpdateDatabase::UpdateDatabase(const char * const str, uint64_t s) :
+		PqConn {str}, source {s}, schema(**output::pq::sql::selectSourceSchema::execute(this, s))
 	{
 		auto trecs = output::pq::sql::selectTables::execute(this, source);
 		auto crecs = output::pq::sql::selectColumns::execute(this, source);
