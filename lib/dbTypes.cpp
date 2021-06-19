@@ -1,4 +1,5 @@
 #include "dbTypes.h"
+#include <iostream> // Required else this write::operator() is always recursive
 
 namespace std {
 	struct write {
