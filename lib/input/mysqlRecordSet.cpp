@@ -51,12 +51,14 @@ namespace MyGrate::Input {
 				case MYSQL_TYPE_STRING:
 				case MYSQL_TYPE_JSON:
 				case MYSQL_TYPE_ENUM:
-					return std::make_unique<ResultDataT<std::string_view>>(b, f);
 				case MYSQL_TYPE_TINY_BLOB:
 				case MYSQL_TYPE_MEDIUM_BLOB:
 				case MYSQL_TYPE_LONG_BLOB:
 				case MYSQL_TYPE_BLOB:
-					return std::make_unique<ResultDataT<Blob>>(b, f);
+					if (f.charsetnr == 63)
+						return std::make_unique<ResultDataT<Blob>>(b, f);
+					else
+						return std::make_unique<ResultDataT<std::string_view>>(b, f);
 				case MAX_NO_FIELD_TYPES:
 				case MYSQL_TYPE_BIT:
 				case MYSQL_TYPE_SET:
