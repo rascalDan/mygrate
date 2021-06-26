@@ -4,6 +4,8 @@
 #include <concepts>
 #include <cstddef>
 #include <ctime>
+#include <iostream>
+#include <optional>
 
 inline constexpr std::byte operator""_b(const unsigned long long hex)
 {
@@ -23,6 +25,18 @@ namespace std {
 	operator!=(const byte b, const T i)
 	{
 		return to_integer<T>(b) != i;
+	}
+
+	template<typename T>
+	ostream &
+	operator<<(ostream & s, const std::optional<T> & o)
+	{
+		if (o) {
+			return s << *o;
+		}
+		else {
+			return s << "-";
+		}
 	}
 }
 
