@@ -6,6 +6,9 @@
 #include <eventHandlerBase.h>
 #include <eventSourceBase.h>
 
+namespace MyGrate::Input {
+	class MySQLConn;
+}
 namespace MyGrate::Output::Pq {
 	struct ColumnDef {
 		std::string name;
@@ -34,6 +37,8 @@ namespace MyGrate::Output::Pq {
 
 		static UpdateDatabase createNew(PqConn *, const char * host, const char * un, const char * pw, unsigned short p,
 				const char * db, int sid, const char * sc);
+
+		void addTable(Input::MySQLConn *, const char * tableName);
 
 		const uint64_t source;
 		const std::string schema;
