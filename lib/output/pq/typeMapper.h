@@ -20,6 +20,7 @@ namespace MyGrate::Output::Pq {
 		};
 
 		struct Mapping {
+			virtual ~Mapping() = default;
 			virtual std::optional<std::string_view> map(std::string_view t, std::string_view n) const = 0;
 		};
 		using MappingPtr = std::unique_ptr<Mapping>;
