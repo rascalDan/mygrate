@@ -9,6 +9,7 @@ namespace MyGrate {
 	public:
 		virtual ~EventSourceBase() = default;
 		virtual void readEvents(EventHandlerBase &) = 0;
+		virtual void stopEvents() = 0;
 	};
 	using EventSourceBasePtr = std::unique_ptr<EventSourceBase>;
 }

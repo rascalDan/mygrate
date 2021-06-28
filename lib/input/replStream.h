@@ -17,6 +17,7 @@ namespace MyGrate::Input {
 				unsigned short port, uint64_t serverid, std::string filename, uint64_t position);
 
 		void readEvents(EventHandlerBase &) override;
+		void stopEvents() override;
 
 	private:
 		uint64_t serverid;

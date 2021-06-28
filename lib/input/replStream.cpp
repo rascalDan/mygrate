@@ -39,4 +39,10 @@ namespace MyGrate::Input {
 			}
 		}
 	}
+
+	void
+	ReplicationStream::stopEvents()
+	{
+		mariadb_cancel(this);
+	}
 }
