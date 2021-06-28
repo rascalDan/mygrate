@@ -22,6 +22,8 @@
 #include <streamSupport.h>
 
 namespace MyGrate::Output::Pq {
+	ColumnDef::ColumnDef(std::string n, std::size_t o, bool p) : name {std::move(n)}, ordinal(o), is_pk(p) { }
+
 	UpdateDatabase::UpdateDatabase(const char * const str, uint64_t s) :
 		PqConn {str}, source {s}, schema(**output::pq::sql::selectSourceSchema::execute(this, s))
 	{

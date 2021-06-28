@@ -11,6 +11,8 @@ namespace MyGrate::Input {
 }
 namespace MyGrate::Output::Pq {
 	struct ColumnDef {
+		ColumnDef(std::string, std::size_t, bool);
+
 		std::string name;
 		std::size_t ordinal;
 		bool is_pk;
