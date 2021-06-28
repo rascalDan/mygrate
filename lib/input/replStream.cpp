@@ -26,7 +26,7 @@ namespace MyGrate::Input {
 		query("SET @master_binlog_checksum = @@global.binlog_checksum");
 
 		mariadb_rpl_optionsv(rpl.get(), MARIADB_RPL_SERVER_ID, serverid);
-		mariadb_rpl_optionsv(rpl.get(), MARIADB_RPL_FILENAME, filename.c_str());
+		mariadb_rpl_optionsv(rpl.get(), MARIADB_RPL_FILENAME, filename.c_str(), filename.length());
 		mariadb_rpl_optionsv(rpl.get(), MARIADB_RPL_START, position);
 		mariadb_rpl_optionsv(rpl.get(), MARIADB_RPL_FLAGS, MARIADB_RPL_BINLOG_SEND_ANNOTATE_ROWS);
 
