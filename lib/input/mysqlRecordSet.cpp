@@ -11,9 +11,8 @@
 // IWYU pragma: no_include <ext/alloc_traits.h>
 
 namespace MyGrate::Input {
-	MySQLRecordSet::MySQLRecordSet(StmtPtr s) :
-		stmt {std::move(s)}, stmtres {nullptr, nullptr}, fields(mysql_stmt_field_count(stmt.get())),
-		extras(fields.size())
+	MySQLData::MySQLData(StmtPtr s) :
+		stmt {std::move(s)}, fields(mysql_stmt_field_count(stmt.get())), extras(fields.size())
 	{
 		auto getBind = [](const MYSQL_FIELD & f, MYSQL_BIND & b) -> std::unique_ptr<ResultData> {
 			switch (f.type) {
@@ -72,6 +71,16 @@ namespace MyGrate::Input {
 			extras[i] = getBind(fieldDefs[i], fields[i]);
 		}
 		verify<MySQLErr>(!mysql_stmt_bind_result(stmt.get(), fields.data()), "Store result error", stmt->mysql);
+	}
+
+	std::size_t
+	MySQLData::columns() const
+	{
+		return fields.size();
+	}
+
+	MySQLRecordSet::MySQLRecordSet(StmtPtr s) : MySQLData(std::move(s)), stmtres {nullptr, nullptr}
+	{
 		verify<MySQLErr>(!mysql_stmt_store_result(stmt.get()), "Store result error", stmt->mysql);
 		stmtres = {stmt.get(), mysql_stmt_free_result};
 	}
@@ -85,7 +94,7 @@ namespace MyGrate::Input {
 	std::size_t
 	MySQLRecordSet::columns() const
 	{
-		return fields.size();
+		return MySQLData::columns();
 	}
 
 	DbValue

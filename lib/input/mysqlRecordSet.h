@@ -12,11 +12,23 @@
 namespace MyGrate::Input {
 	class ResultData;
 
-	class MySQLRecordSet : public RecordSet {
+	class MySQLData {
 	public:
-		using ResPtr = std::unique_ptr<MYSQL_RES, decltype(&mysql_free_result)>;
-		using StmtResPtr = std::unique_ptr<MYSQL_STMT, decltype(&mysql_stmt_free_result)>;
 		using ResultDataPtr = std::unique_ptr<ResultData>;
+		using ResPtr = std::unique_ptr<MYSQL_RES, decltype(&mysql_free_result)>;
+
+		explicit MySQLData(StmtPtr s);
+
+		std::size_t columns() const;
+
+		StmtPtr stmt;
+		std::vector<MYSQL_BIND> fields;
+		std::vector<ResultDataPtr> extras;
+	};
+
+	class MySQLRecordSet : public MySQLData, public RecordSet {
+	public:
+		using StmtResPtr = std::unique_ptr<MYSQL_STMT, decltype(&mysql_stmt_free_result)>;
 
 		explicit MySQLRecordSet(StmtPtr s);
 
@@ -27,10 +39,7 @@ namespace MyGrate::Input {
 		DbValue at(std::size_t row, std::size_t col) const override;
 
 	private:
-		StmtPtr stmt;
 		StmtResPtr stmtres;
-		std::vector<MYSQL_BIND> fields;
-		std::vector<ResultDataPtr> extras;
 		mutable std::size_t currentRow {static_cast<size_t>(-1)};
 	};
 }
