@@ -55,6 +55,8 @@ namespace MyGrate {
 		virtual ~Cursor() = default;
 
 		virtual bool fetch() = 0;
+		virtual std::size_t columns() const = 0;
+		virtual DbValue at(std::size_t) const = 0;
 	};
 	using CursorPtr = std::unique_ptr<Cursor>;
 }

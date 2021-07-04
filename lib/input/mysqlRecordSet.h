@@ -32,7 +32,9 @@ namespace MyGrate::Input {
 	public:
 		using MySQLData::MySQLData;
 
-		bool fetch();
+		bool fetch() override;
+		std::size_t columns() const override;
+		DbValue at(std::size_t col) const override;
 	};
 
 	class MySQLRecordSet : public MySQLData, public RecordSet {

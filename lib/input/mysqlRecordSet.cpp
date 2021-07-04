@@ -128,4 +128,16 @@ namespace MyGrate::Input {
 		}
 		throw MySQLErr("Fetch", stmt.get());
 	}
+
+	std::size_t
+	MySQLCursor::columns() const
+	{
+		return MySQLData::columns();
+	}
+
+	DbValue
+	MySQLCursor::at(std::size_t col) const
+	{
+		return MySQLData::at(col);
+	}
 }
