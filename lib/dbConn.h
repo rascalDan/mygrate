@@ -12,6 +12,7 @@ namespace MyGrate {
 		virtual void execute(const std::initializer_list<DbValue> &) = 0;
 		virtual std::size_t rows() const = 0;
 		virtual RecordSetPtr recordSet() = 0;
+		virtual CursorPtr cursor() = 0;
 	};
 	using DbPrepStmtPtr = std::unique_ptr<DbPrepStmt>;
 

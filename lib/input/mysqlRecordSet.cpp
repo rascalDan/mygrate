@@ -116,4 +116,16 @@ namespace MyGrate::Input {
 		}
 		return extras[col]->getValue();
 	}
+
+	bool
+	MySQLCursor::fetch()
+	{
+		switch (mysql_stmt_fetch(stmt.get())) {
+			case 0:
+				return true;
+			case MYSQL_NO_DATA:
+				return false;
+		}
+		throw MySQLErr("Fetch", stmt.get());
+	}
 }

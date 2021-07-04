@@ -27,6 +27,8 @@ namespace MyGrate::Output::Pq {
 
 		RecordSetPtr recordSet() override;
 
+		CursorPtr cursor() override;
+
 	private:
 		static std::string prepareAsNeeded(const char * const q, std::size_t n, PqConn * c);
 

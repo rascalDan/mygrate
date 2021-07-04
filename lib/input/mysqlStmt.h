@@ -23,6 +23,8 @@ namespace MyGrate::Input {
 
 		RecordSetPtr recordSet() override;
 
+		CursorPtr cursor() override;
+
 	private:
 		StmtPtr stmt;
 	};

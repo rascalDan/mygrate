@@ -28,6 +28,13 @@ namespace MyGrate::Input {
 		std::vector<ResultDataPtr> extras;
 	};
 
+	class MySQLCursor : public MySQLData, public Cursor {
+	public:
+		using MySQLData::MySQLData;
+
+		bool fetch();
+	};
+
 	class MySQLRecordSet : public MySQLData, public RecordSet {
 	public:
 		using StmtResPtr = std::unique_ptr<MYSQL_STMT, decltype(&mysql_stmt_free_result)>;

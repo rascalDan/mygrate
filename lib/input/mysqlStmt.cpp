@@ -33,4 +33,10 @@ namespace MyGrate::Input {
 	{
 		return std::make_unique<MySQLRecordSet>(std::move(stmt));
 	}
+
+	CursorPtr
+	MySQLPrepStmt::cursor()
+	{
+		return std::make_unique<MySQLCursor>(std::move(stmt));
+	}
 }

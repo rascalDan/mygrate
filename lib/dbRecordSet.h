@@ -49,6 +49,14 @@ namespace MyGrate {
 		RowView end() const;
 	};
 	using RecordSetPtr = std::unique_ptr<RecordSet>;
+
+	class Cursor {
+	public:
+		virtual ~Cursor() = default;
+
+		virtual bool fetch() = 0;
+	};
+	using CursorPtr = std::unique_ptr<Cursor>;
 }
 
 #endif

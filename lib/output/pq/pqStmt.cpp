@@ -40,6 +40,12 @@ namespace MyGrate::Output::Pq {
 		return std::make_unique<PqRecordSet>(std::move(res));
 	}
 
+	CursorPtr
+	PqPrepStmt::cursor()
+	{
+		throw std::logic_error("Not implemented");
+	}
+
 	std::string
 	PqPrepStmt::prepareAsNeeded(const char * const q, std::size_t n, PqConn * c)
 	{
