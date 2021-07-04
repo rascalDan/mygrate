@@ -70,6 +70,7 @@ namespace MyGrate::Output::Pq {
 	{
 		auto cols = input::sql::selectColumns::execute(conn, tableName);
 		verify<std::logic_error>(cols->rows() > 0, "Table has no rows");
+		auto tableDef {std::make_unique<TableDef>()};
 		Tx {this}([&] {
 			const auto table_id = **output::pq::sql::insertTable::execute(this, tableName, source);
 			std::stringstream ct;
@@ -84,9 +85,11 @@ namespace MyGrate::Output::Pq {
 					ct << " not null";
 				if (col[3])
 					ct << " primary key";
+				tableDef->columns.push_back(std::make_unique<ColumnDef>(col[0], tableDef->columns.size() + 1, col[3]));
 			}
 			ct << ")";
 			this->query(ct.str().c_str());
 		});
+		tables.emplace(tableName, std::move(tableDef));
 	}
 }

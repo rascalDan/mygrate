@@ -21,6 +21,7 @@ namespace MyGrate::Output::Pq {
 
 	class TableDef {
 	public:
+		TableDef() = default;
 		TableDef(const RecordSet &, std::string_view name);
 
 		std::vector<ColumnDefPtr> columns;
