@@ -66,11 +66,11 @@ namespace MyGrate::Input {
 			throw std::logic_error("Unsupported column type");
 		};
 		ResPtr meta {mysql_stmt_result_metadata(stmt.get()), mysql_free_result};
-		const auto fieldDefs = verify<MySQLErr>(mysql_fetch_fields(meta.get()), "Fetch fields", stmt->mysql);
+		const auto fieldDefs = verify<MySQLErr>(mysql_fetch_fields(meta.get()), "Fetch fields", stmt.get());
 		for (std::size_t i = 0; i < fields.size(); i += 1) {
 			extras[i] = getBind(fieldDefs[i], fields[i]);
 		}
-		verify<MySQLErr>(!mysql_stmt_bind_result(stmt.get(), fields.data()), "Store result error", stmt->mysql);
+		verify<MySQLErr>(!mysql_stmt_bind_result(stmt.get(), fields.data()), "Bind result error", stmt.get());
 	}
 
 	std::size_t
@@ -81,7 +81,7 @@ namespace MyGrate::Input {
 
 	MySQLRecordSet::MySQLRecordSet(StmtPtr s) : MySQLData(std::move(s)), stmtres {nullptr, nullptr}
 	{
-		verify<MySQLErr>(!mysql_stmt_store_result(stmt.get()), "Store result error", stmt->mysql);
+		verify<MySQLErr>(!mysql_stmt_store_result(stmt.get()), "Store result error", stmt.get());
 		stmtres = {stmt.get(), mysql_stmt_free_result};
 	}
 
@@ -102,7 +102,7 @@ namespace MyGrate::Input {
 	{
 		if (currentRow != row) {
 			mysql_stmt_data_seek(stmt.get(), row);
-			verify<MySQLErr>(!mysql_stmt_fetch(stmt.get()), "Fetch", stmt->mysql);
+			verify<MySQLErr>(!mysql_stmt_fetch(stmt.get()), "Fetch", stmt.get());
 			currentRow = row;
 		}
 		if (extras[col]->null) {

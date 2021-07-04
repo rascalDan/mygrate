@@ -13,6 +13,7 @@ namespace MyGrate::Input {
 	class MySQLErr : public std::runtime_error {
 	public:
 		MySQLErr(const std::string & when, MYSQL *);
+		MySQLErr(const std::string & when, MYSQL_STMT *);
 	};
 
 	class MySQLConn : public MYSQL, public DbConn {
