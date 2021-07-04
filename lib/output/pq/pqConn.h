@@ -2,6 +2,7 @@
 #define MYGRATE_OUTPUT_PQ_PQCONN_H
 
 #include <cstddef>
+#include <cstdio>
 #include <dbConn.h>
 #include <functional>
 #include <initializer_list>
@@ -35,6 +36,9 @@ namespace MyGrate::Output::Pq {
 		void beginTx() override;
 		void commitTx() override;
 		void rollbackTx() override;
+
+		FILE * beginBulkUpload(const char * schema, const char * table);
+		void endBulkUpload(const char * errormsg);
 
 		const std::string connstr;
 

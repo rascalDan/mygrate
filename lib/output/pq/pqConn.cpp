@@ -1,6 +1,7 @@
 #include "pqConn.h"
 #include "pqBindings.h"
 #include "pqStmt.h"
+#include <compileTimeFormatter.h>
 #include <dbConn.h>
 #include <helpers.h>
 #include <libpq-fe.h>
@@ -60,6 +61,41 @@ namespace MyGrate::Output::Pq {
 	PqConn::rollbackTx()
 	{
 		query("ROLLBACK");
+	}
+
+	FILE *
+	PqConn::beginBulkUpload(const char * schema, const char * table)
+	{
+		ResPtr res {PQexec(conn.get(), scprintf<"COPY %?.%? FROM STDIN">(schema, table).c_str()), &PQclear};
+		verify<PqErr>(PQresultStatus(res.get()) == PGRES_COPY_IN, "begin copy", res.get());
+		return fopencookie(this, "w",
+				{nullptr,
+						[](void * cookie, const char * buf, size_t size) -> ssize_t {
+							auto pq = static_cast<PqConn *>(cookie);
+							int rc;
+							while (!(rc = PQputCopyData(pq->conn.get(), buf, size))) {
+								sleep(1);
+							}
+							verify<PqErr>(rc == 1, "copy data", pq->conn.get());
+							return size;
+						},
+						nullptr,
+						[](void * cookie) -> int {
+							static_cast<PqConn *>(cookie)->endBulkUpload(nullptr);
+							return 0;
+						}});
+	}
+
+	void
+	PqConn::endBulkUpload(const char * errormsg)
+	{
+		int rc;
+		while (!(rc = PQputCopyEnd(this->conn.get(), errormsg))) {
+			sleep(1);
+		}
+		verify<PqErr>(rc == 1, "copy end rc", conn.get());
+		ResPtr res {PQgetResult(conn.get()), &PQclear};
+		verify<PqErr>(PQresultStatus(res.get()) == PGRES_COMMAND_OK, "end copy", res.get());
 	}
 
 	void
