@@ -21,6 +21,8 @@ namespace MyGrate::Input {
 
 		std::size_t columns() const;
 
+		DbValue at(std::size_t col) const;
+
 		StmtPtr stmt;
 		std::vector<MYSQL_BIND> fields;
 		std::vector<ResultDataPtr> extras;

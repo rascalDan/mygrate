@@ -105,6 +105,12 @@ namespace MyGrate::Input {
 			verify<MySQLErr>(!mysql_stmt_fetch(stmt.get()), "Fetch", stmt.get());
 			currentRow = row;
 		}
+		return MySQLData::at(col);
+	}
+
+	DbValue
+	MySQLData::at(std::size_t col) const
+	{
 		if (extras[col]->null) {
 			return nullptr;
 		}
