@@ -6,6 +6,7 @@
 #include "testdb-postgresql.h"
 #include <output/pq/updateDatabase.h>
 #include <sql/createTestTable.h>
+#include <sql/fillTestTable.h>
 #include <sql/selectTestTable.h>
 
 BOOST_AUTO_TEST_CASE(e2e)
@@ -25,7 +26,9 @@ BOOST_AUTO_TEST_CASE(e2e)
 	BOOST_REQUIRE(src);
 
 	MyGrate::sql::createTestTable::execute(&mym);
+	MyGrate::sql::fillTestTable::execute(&mym);
 	out.addTable(&mym, "session");
+	out.copyTableContent(&mym, "session");
 
-	BOOST_CHECK_EQUAL(MyGrate::sql::selectTestTable::execute(&pqm)->rows(), 0);
+	BOOST_CHECK_EQUAL(MyGrate::sql::selectTestTable::execute(&pqm)->rows(), 1);
 }

@@ -42,6 +42,7 @@ namespace MyGrate::Output::Pq {
 				const char * db, int sid, const char * sc);
 
 		void addTable(Input::MySQLConn *, const char * tableName);
+		void copyTableContent(Input::MySQLConn *, const char * tableName);
 
 		const uint64_t source;
 		const std::string schema;
