@@ -79,13 +79,16 @@ namespace MyGrate::Output::Pq {
 			TypeMapper tm;
 			for (auto col : *cols) {
 				output::pq::sql::insertColumn::execute(this, col[0], col.currentRow(), table_id);
-				if (col.currentRow())
+				if (col.currentRow()) {
 					ct << ',';
+				}
 				scprintf<"%? %?">(ct, col[0], tm.map(col[2], scprintf<"%?.%?">(tableName, col[0])));
-				if (!col[1])
+				if (!col[1]) {
 					ct << " not null";
-				if (col[3])
+				}
+				if (col[3]) {
 					ct << " primary key";
+				}
 				tableDef->columns.push_back(std::make_unique<ColumnDef>(col[0], tableDef->columns.size() + 1, col[3]));
 			}
 			ct << ")";

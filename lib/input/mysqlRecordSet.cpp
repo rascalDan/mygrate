@@ -54,10 +54,12 @@ namespace MyGrate::Input {
 				case MYSQL_TYPE_MEDIUM_BLOB:
 				case MYSQL_TYPE_LONG_BLOB:
 				case MYSQL_TYPE_BLOB:
-					if (f.charsetnr == 63)
+					if (f.charsetnr == 63) {
 						return std::make_unique<ResultDataT<Blob>>(b, f);
-					else
+					}
+					else {
 						return std::make_unique<ResultDataT<std::string_view>>(b, f);
+					}
 				case MAX_NO_FIELD_TYPES:
 				case MYSQL_TYPE_BIT:
 				case MYSQL_TYPE_SET:
