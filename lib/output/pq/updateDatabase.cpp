@@ -98,6 +98,12 @@ namespace MyGrate::Output::Pq {
 	}
 
 	struct WritePqCopyStream {
+		explicit WritePqCopyStream(FILE * o) : out {o} { }
+		WritePqCopyStream(const WritePqCopyStream &) = delete;
+		WritePqCopyStream(WritePqCopyStream &&) = delete;
+		WritePqCopyStream & operator=(const WritePqCopyStream &) = delete;
+		WritePqCopyStream & operator=(WritePqCopyStream &&) = delete;
+
 		~WritePqCopyStream()
 		{
 			fputc('\n', out);
