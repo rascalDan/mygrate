@@ -58,6 +58,7 @@ namespace MyGrate::Output::Pq {
 	TypeMapper::map(std::string_view t, std::string_view n) const
 	{
 		for (const auto & m : mappings) {
+			// cppcheck-suppress useStlAlgorithm; (returns value)
 			if (const auto rt {m->map(t, n)}) {
 				return *rt;
 			}
