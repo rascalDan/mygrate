@@ -39,7 +39,7 @@ namespace MyGrate {
 	RowView
 	RecordSet::operator[](std::size_t row) const
 	{
-		return {this, row};
+		return RowView {this, row};
 	}
 
 	DbValue
@@ -51,12 +51,12 @@ namespace MyGrate {
 	RowView
 	RecordSet::begin() const
 	{
-		return {this, 0};
+		return RowView {this, 0};
 	}
 
 	RowView
 	RecordSet::end() const
 	{
-		return {this, rows()};
+		return RowView {this, rows()};
 	}
 }

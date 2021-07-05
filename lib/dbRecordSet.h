@@ -9,7 +9,7 @@ namespace MyGrate {
 
 	class RowView {
 	public:
-		RowView(const RecordSet * rs, std::size_t rw = 0);
+		explicit RowView(const RecordSet * rs, std::size_t rw = 0);
 
 		DbValue operator[](std::size_t col) const;
 
