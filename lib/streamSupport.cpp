@@ -18,7 +18,7 @@ namespace std {
 	std::ostream &
 	operator<<(std::ostream & s, const MARIADB_STRING & str)
 	{
-		return s << std::string_view(str.str, str.length);
+		return s << *str;
 	}
 
 	std::ostream &

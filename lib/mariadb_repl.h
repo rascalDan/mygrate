@@ -8,4 +8,12 @@
 
 #include <mariadb_rpl.h>
 
+#include <string_view>
+
+inline std::string_view
+operator*(const MARIADB_STRING & mbstr)
+{
+	return {mbstr.str, mbstr.length};
+}
+
 #endif
