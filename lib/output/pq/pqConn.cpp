@@ -71,12 +71,8 @@ namespace MyGrate::Output::Pq {
 		return fopencookie(this, "w",
 				{nullptr,
 						[](void * cookie, const char * buf, size_t size) {
-							auto pq = static_cast<PqConn *>(cookie);
-							int rc;
-							while (!(rc = PQputCopyData(pq->conn.get(), buf, (int)size))) {
-								sleep(1);
-							}
-							verify<PqErr>(rc == 1, "copy data", pq->conn.get());
+							auto conn = static_cast<PqConn *>(cookie)->conn.get();
+							verify<PqErr>(PQputCopyData(conn, buf, (int)size) == 1, "copy data", conn);
 							return (ssize_t)size;
 						},
 						nullptr,
