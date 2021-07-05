@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(simple)
 }
 
 using SomeSelect = MyGrate::DbStmt<"SELECT * FROM foo">;
-using SomeShow = MyGrate::DbStmt<"SHOW MASTER STATUS">;
+using SomeShow = MyGrate::DbStmt<"SHOW VARIABLES LIKE 'version'">;
 using SomeUpdate = MyGrate::DbStmt<"UPDATE foo SET blah = ? WHERE bar = ?">;
 
 static_assert(std::is_same_v<SomeSelect::Return, MyGrate::RecordSetPtr>);
@@ -54,9 +54,9 @@ BOOST_AUTO_TEST_CASE(stmt)
 	const auto rs {SomeShow::execute(&c)};
 	BOOST_REQUIRE(rs);
 	BOOST_REQUIRE_EQUAL(rs->rows(), 1);
-	BOOST_REQUIRE_EQUAL(rs->columns(), 4);
-	BOOST_CHECK(std::get<std::string_view>(rs->at(0, 0)).starts_with("mariadb"));
-	BOOST_CHECK_GE(std::get<int64_t>(rs->at(0, 1)), 4);
+	BOOST_REQUIRE_EQUAL(rs->columns(), 2);
+	const std::string_view versionString {rs->at(0, 1)};
+	BOOST_CHECK(versionString.find("MariaDB") != std::string_view::npos);
 }
 
 BOOST_AUTO_TEST_CASE(mock)
