@@ -185,13 +185,16 @@ namespace MyGrate::Output::Pq {
 	UpdateDatabase::copyTableContent(Input::MySQLConn * conn, const char * table)
 	{
 		auto out = beginBulkUpload(schema.c_str(), table);
-		std::stringstream sf;
-		unsigned int ordinal {0};
-		for (const auto & col : tables.at(table)->columns) {
-			scprintf<"%? %?">(sf, !ordinal++ ? "SELECT " : ", ", col->name);
-		}
-		sf << " FROM " << table;
-		auto stmt {conn->prepare(sf.str().c_str(), 0)};
+		auto sourceSelect = [this](auto table) {
+			std::stringstream sf;
+			unsigned int ordinal {0};
+			for (const auto & col : tables.at(table)->columns) {
+				scprintf<"%? %?">(sf, !ordinal++ ? "SELECT " : ", ", col->name);
+			}
+			sf << " FROM " << table;
+			return sf.str();
+		};
+		auto stmt {conn->prepare(sourceSelect(table).c_str(), 0)};
 		stmt->execute({});
 		auto sourceCursor {stmt->cursor()};
 
