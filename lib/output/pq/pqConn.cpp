@@ -70,17 +70,17 @@ namespace MyGrate::Output::Pq {
 		verify<PqErr>(PQresultStatus(res.get()) == PGRES_COPY_IN, "begin copy", res.get());
 		return fopencookie(this, "w",
 				{nullptr,
-						[](void * cookie, const char * buf, size_t size) -> ssize_t {
+						[](void * cookie, const char * buf, size_t size) {
 							auto pq = static_cast<PqConn *>(cookie);
 							int rc;
-							while (!(rc = PQputCopyData(pq->conn.get(), buf, size))) {
+							while (!(rc = PQputCopyData(pq->conn.get(), buf, (int)size))) {
 								sleep(1);
 							}
 							verify<PqErr>(rc == 1, "copy data", pq->conn.get());
-							return size;
+							return (ssize_t)size;
 						},
 						nullptr,
-						[](void * cookie) -> int {
+						[](void * cookie) {
 							static_cast<PqConn *>(cookie)->endBulkUpload(nullptr);
 							return 0;
 						}});
