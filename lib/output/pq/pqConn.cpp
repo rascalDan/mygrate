@@ -85,11 +85,7 @@ namespace MyGrate::Output::Pq {
 	void
 	PqConn::endBulkUpload(const char * errormsg)
 	{
-		int rc;
-		while (!(rc = PQputCopyEnd(this->conn.get(), errormsg))) {
-			sleep(1);
-		}
-		verify<PqErr>(rc == 1, "copy end rc", conn.get());
+		verify<PqErr>(PQputCopyEnd(this->conn.get(), errormsg) == 1, "copy end rc", conn.get());
 		ResPtr res {PQgetResult(conn.get()), &PQclear};
 		verify<PqErr>(PQresultStatus(res.get()) == PGRES_COMMAND_OK, "end copy", res.get());
 	}
