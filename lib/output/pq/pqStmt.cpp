@@ -22,7 +22,8 @@ namespace MyGrate::Output::Pq {
 	PqPrepStmt::execute(const std::initializer_list<DbValue> & vs)
 	{
 		Bindings b {vs};
-		res = {PQexecPrepared(conn, name.c_str(), (int)vs.size(), b.values.data(), b.lengths.data(), nullptr, 0),
+		res = {PQexecPrepared(
+					   conn, name.c_str(), (int)vs.size(), b.values.data(), b.lengths.data(), b.formats.data(), 0),
 				&PQclear};
 		verify<PqErr>(PQresultStatus(res.get()) == PGRES_COMMAND_OK || PQresultStatus(res.get()) == PGRES_TUPLES_OK,
 				name, conn);

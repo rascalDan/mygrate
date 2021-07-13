@@ -1,9 +1,11 @@
 #ifndef MYGRATE_OUTPUT_PQ_PQBINDINGS
 #define MYGRATE_OUTPUT_PQ_PQBINDINGS
 
+#include <compileTimeFormatter.h>
 #include <dbTypes.h>
 #include <helpers.h>
 #include <initializer_list>
+#include <streamSupport.h>
 #include <variant>
 #include <vector>
 
@@ -15,6 +17,7 @@ namespace MyGrate::Output::Pq {
 			bufs.reserve(vs.size());
 			values.reserve(vs.size());
 			lengths.reserve(vs.size());
+			formats.reserve(vs.size());
 			for (const auto & v : vs) {
 				v.visit(*this);
 			}
@@ -23,10 +26,7 @@ namespace MyGrate::Output::Pq {
 		void
 		operator()(const T & v)
 		{
-			bufs.emplace_back(std::to_string(v));
-			const auto & vw {bufs.back()};
-			values.emplace_back(vw.data());
-			lengths.emplace_back(vw.length());
+			addBuf(std::to_string(v));
 		}
 		template<Viewable T>
 		void
@@ -34,10 +34,16 @@ namespace MyGrate::Output::Pq {
 		{
 			values.emplace_back(v.data());
 			lengths.emplace_back(v.size());
+			formats.push_back(1);
 		}
 		template<typename T>
 		void
-		operator()(const T &)
+		operator()(const T & v)
+		{
+			addBuf(scprintf<"%?">(v));
+		}
+		void
+		operator()(const timespec &)
 		{
 			throw std::logic_error("Not implemented");
 		}
@@ -46,11 +52,23 @@ namespace MyGrate::Output::Pq {
 		{
 			values.emplace_back(nullptr);
 			lengths.emplace_back(0);
+			formats.push_back(0);
 		}
 
 		std::vector<std::string> bufs;
 		std::vector<const char *> values;
 		std::vector<int> lengths;
+		std::vector<int> formats;
+
+	private:
+		void
+		addBuf(std::string str)
+		{
+			const auto & vw = bufs.emplace_back(std::move(str));
+			values.emplace_back(vw.data());
+			lengths.emplace_back(vw.length());
+			formats.push_back(0);
+		}
 	};
 }
 

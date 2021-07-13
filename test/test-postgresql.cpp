@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE(mock)
 	BOOST_CHECK_NO_THROW(mdb.query("INSERT INTO test VALUES($1)", {"string_view"}));
 	BOOST_CHECK_NO_THROW(mdb.query("INSERT INTO test VALUES($1)", {nullptr}));
 	BOOST_CHECK_NO_THROW(mdb.query("INSERT INTO test VALUES($1)", {1.2}));
-	BOOST_CHECK_THROW(mdb.query("INSERT INTO test VALUES($1)", {MyGrate::Time {}}), std::logic_error);
+	BOOST_CHECK_THROW(mdb.query("INSERT INTO test VALUES($1)", {timespec {}}), std::logic_error);
 	auto rscount = MyGrate::DbStmt<"SELECT COUNT(*) FROM test">::execute(&mdb);
 	BOOST_CHECK_EQUAL(rscount->at(0, 0).operator unsigned int(), 4);
 }
