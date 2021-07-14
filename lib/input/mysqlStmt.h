@@ -17,7 +17,7 @@ namespace MyGrate::Input {
 	class MySQLPrepStmt : public DbPrepStmt {
 	public:
 		MySQLPrepStmt(const char * const q, MYSQL * c);
-		void execute(const std::initializer_list<DbValue> & vs) override;
+		void execute(const std::span<const DbValue> vs) override;
 
 		std::size_t rows() const override;
 

@@ -15,7 +15,7 @@ namespace MyGrate::Input {
 	}
 
 	void
-	MySQLPrepStmt::execute(const std::initializer_list<DbValue> & vs)
+	MySQLPrepStmt::execute(const std::span<const DbValue> vs)
 	{
 		Bindings b {vs};
 		verify<std::logic_error>(!mysql_stmt_bind_param(stmt.get(), b.binds.data()), "Param count mismatch");

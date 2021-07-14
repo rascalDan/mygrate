@@ -11,8 +11,7 @@
 
 namespace MyGrate::Output::Pq {
 	struct Bindings {
-		// NOLINTNEXTLINE(hicpp-explicit-conversions)
-		explicit Bindings(const std::initializer_list<DbValue> & vs)
+		explicit Bindings(const std::span<const DbValue> vs)
 		{
 			bufs.reserve(vs.size());
 			values.reserve(vs.size());

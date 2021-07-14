@@ -21,7 +21,7 @@ namespace MyGrate::Output::Pq {
 	public:
 		PqPrepStmt(const char * const q, std::size_t n, PqConn * c);
 
-		void execute(const std::initializer_list<DbValue> & vs) override;
+		void execute(const std::span<const DbValue> vs) override;
 
 		std::size_t rows() const override;
 

@@ -19,7 +19,7 @@ namespace MyGrate::Output::Pq {
 	}
 
 	void
-	PqPrepStmt::execute(const std::initializer_list<DbValue> & vs)
+	PqPrepStmt::execute(const std::span<const DbValue> vs)
 	{
 		Bindings b {vs};
 		res = {PQexecPrepared(

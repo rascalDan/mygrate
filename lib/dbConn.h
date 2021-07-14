@@ -9,7 +9,12 @@ namespace MyGrate {
 	class DbPrepStmt {
 	public:
 		virtual ~DbPrepStmt() = default;
-		virtual void execute(const std::initializer_list<DbValue> &) = 0;
+		virtual void execute(const std::span<const DbValue>) = 0;
+		void
+		execute(const std::initializer_list<DbValue> & v)
+		{
+			return execute(std::span<const DbValue> {v});
+		}
 		virtual std::size_t rows() const = 0;
 		virtual RecordSetPtr recordSet() = 0;
 		virtual CursorPtr cursor() = 0;

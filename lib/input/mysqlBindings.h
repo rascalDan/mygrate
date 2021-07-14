@@ -17,8 +17,7 @@ namespace MyGrate::Input {
 	};
 
 	struct Bindings {
-		// NOLINTNEXTLINE(hicpp-explicit-conversions)
-		explicit Bindings(const std::initializer_list<DbValue> & vs)
+		explicit Bindings(const std::span<const DbValue> vs)
 		{
 			binds.reserve(vs.size());
 			data.reserve(vs.size());
