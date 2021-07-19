@@ -26,6 +26,7 @@ namespace MyGrate::Output::Pq {
 		static constexpr auto paramMode {ParamMode::DollarNum};
 
 		explicit PqConn(const char * const str);
+		explicit PqConn(PqConn &&) = default;
 		virtual ~PqConn() = default;
 
 		void query(const char * const) override;
@@ -46,7 +47,7 @@ namespace MyGrate::Output::Pq {
 		static void notice_processor(void *, const char *);
 		virtual void notice_processor(const char *) const;
 
-		std::unique_ptr<PGconn, decltype(&PQfinish)> const conn;
+		std::unique_ptr<PGconn, decltype(&PQfinish)> conn;
 
 		friend class PqPrepStmt;
 		std::map<std::string, std::string, std::less<>> stmts;
