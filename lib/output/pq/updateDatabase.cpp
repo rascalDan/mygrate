@@ -31,7 +31,7 @@ namespace MyGrate::Output::Pq {
 		auto trecs = output::pq::sql::selectTables::execute(this, source);
 		auto crecs = output::pq::sql::selectColumns::execute(this, source);
 		for (auto t {0U}; t < trecs->rows(); t++) {
-			tables.emplace(trecs->at(t, 0), std::make_unique<TableDef>(*crecs, trecs->at(t, 0)));
+			tables.emplace(trecs->at(t, 0), std::make_unique<TableOutput>(*crecs, trecs->at(t, 0)));
 		}
 	}
 
@@ -43,7 +43,7 @@ namespace MyGrate::Output::Pq {
 		return (*srcrec)[0].create<Input::ReplicationStream, 7>();
 	}
 
-	TableDef::TableDef(const RecordSet & crecs, std::string_view name)
+	TableOutput::TableOutput(const RecordSet & crecs, std::string_view name)
 	{
 		for (auto c {0U}; c < crecs.rows(); c++) {
 			if (crecs.at(c, 0) == name) {
@@ -71,7 +71,7 @@ namespace MyGrate::Output::Pq {
 	{
 		auto cols = input::sql::selectColumns::execute(conn, tableName);
 		verify<std::logic_error>(cols->rows() > 0, "Table has no rows");
-		auto tableDef {std::make_unique<TableDef>()};
+		auto tableDef {std::make_unique<TableOutput>()};
 		Tx {this}([&] {
 			const auto table_id = **output::pq::sql::insertTable::execute(this, tableName, source);
 			std::stringstream ct;

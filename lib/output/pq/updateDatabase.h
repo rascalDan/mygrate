@@ -19,14 +19,14 @@ namespace MyGrate::Output::Pq {
 	};
 	using ColumnDefPtr = std::unique_ptr<ColumnDef>;
 
-	class TableDef {
+	class TableOutput {
 	public:
-		TableDef() = default;
-		TableDef(const RecordSet &, std::string_view name);
+		TableOutput() = default;
+		TableOutput(const RecordSet &, std::string_view name);
 
 		std::vector<ColumnDefPtr> columns;
 	};
-	using TableDefPtr = std::unique_ptr<TableDef>;
+	using TableDefPtr = std::unique_ptr<TableOutput>;
 
 	class ConfigError : public std::runtime_error {
 		using std::runtime_error::runtime_error;
