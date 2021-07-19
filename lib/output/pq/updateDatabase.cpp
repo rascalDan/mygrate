@@ -25,8 +25,15 @@
 namespace MyGrate::Output::Pq {
 	ColumnDef::ColumnDef(std::string n, std::size_t o, bool p) : name {std::move(n)}, ordinal(o), is_pk(p) { }
 
-	UpdateDatabase::UpdateDatabase(const char * const str, uint64_t s) :
-		PqConn {str}, source {s}, schema(**output::pq::sql::selectSourceSchema::execute(this, s))
+	UpdateDatabase::UpdateDatabase(const char * const str, uint64_t s) : UpdateDatabase {PqConn {str}, s} { }
+
+	UpdateDatabase::UpdateDatabase(PqConn && conn, uint64_t s) :
+		UpdateDatabase {std::forward<PqConn>(conn), s, output::pq::sql::selectSourceSchema::execute(&conn, s)}
+	{
+	}
+
+	UpdateDatabase::UpdateDatabase(PqConn && conn, uint64_t s, RecordSetPtr cfg) :
+		PqConn {std::move(conn)}, source {s}, schema(cfg->at(0, 0)), database(cfg->at(0, 1))
 	{
 		auto trecs = output::pq::sql::selectTables::execute(this, source);
 		auto crecs = output::pq::sql::selectColumns::execute(this, source);

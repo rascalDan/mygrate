@@ -46,8 +46,11 @@ namespace MyGrate::Output::Pq {
 
 		const uint64_t source;
 		const std::string schema;
+		const std::string database;
 
 	private:
+		UpdateDatabase(PqConn &&, uint64_t source);
+		UpdateDatabase(PqConn &&, uint64_t source, RecordSetPtr cfg);
 		std::map<std::string, TableDefPtr, std::less<>> tables;
 	};
 }
