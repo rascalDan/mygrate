@@ -285,4 +285,38 @@ namespace MyGrate::Output::Pq {
 			verify<ReplicationError>(out->update->rows() == 1, "Wrong number of rows updated.");
 		}
 	}
+
+	void
+	UpdateDatabase::deleteRow(MariaDB_Event_Ptr e)
+	{
+		if (selected != tables.end()) {
+			auto & out = selected->second;
+			verify<std::runtime_error>(
+					e->event.rows.column_count == out->columns.size(), "Incorrect number of columns in row data");
+			if (!out->deleteFrom) {
+				std::stringstream ou;
+				std::size_t kordinal {0};
+
+				scprintf<"DELETE FROM %?.%? ">(ou, schema, selected->first);
+				for (const auto & col : out->columns) {
+					if (col->is_pk) {
+						scprintf<"%? %? = $%?">(
+								ou, kordinal == out->columns.size() ? " WHERE " : " AND ", col->name, kordinal + 1);
+						kordinal++;
+					}
+				}
+
+				out->deleteFrom = prepare(ou.str().c_str(), kordinal);
+			}
+			std::vector<DbValue> updateValues;
+			updateValues.reserve(out->keys);
+			Row rp {e->event.rows, table_map->event.table_map};
+			std::copy_if(rp.begin(), rp.end(), std::back_inserter(updateValues),
+					[c = out->columns.begin()](auto &&) mutable {
+						return (c++)->get()->is_pk;
+					});
+			out->deleteFrom->execute(updateValues);
+			verify<ReplicationError>(out->deleteFrom->rows() == 1, "Wrong number of rows deleted.");
+		}
+	}
 }
