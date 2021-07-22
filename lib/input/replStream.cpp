@@ -14,6 +14,8 @@ namespace MyGrate::Input {
 		MySQLConn {host.c_str(), user.c_str(), pass.c_str(), port},
 		serverid {sid}, filename {std::move(fn)}, position {pos}
 	{
+		query("SET @mariadb_slave_capability = 4");
+		query("SET @master_binlog_checksum = @@global.binlog_checksum");
 	}
 
 	void
@@ -21,9 +23,6 @@ namespace MyGrate::Input {
 	{
 		using MariaDB_Rpl_Ptr = std::unique_ptr<MARIADB_RPL, decltype(&mariadb_rpl_close)>;
 		auto rpl = MariaDB_Rpl_Ptr {mariadb_rpl_init(this), &mariadb_rpl_close};
-
-		query("SET @mariadb_slave_capability = 4");
-		query("SET @master_binlog_checksum = @@global.binlog_checksum");
 
 		mariadb_rpl_optionsv(rpl.get(), MARIADB_RPL_SERVER_ID, serverid);
 		mariadb_rpl_optionsv(rpl.get(), MARIADB_RPL_FILENAME, filename.c_str(), filename.length());
