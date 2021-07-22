@@ -19,14 +19,15 @@ BOOST_AUTO_TEST_CASE(e2e)
 	auto pqm = pq.mock();
 	auto mym = my.mock();
 
+	MyGrate::sql::createTestTable::execute(&mym);
+	MyGrate::sql::fillTestTable::execute(&mym);
+
 	auto out = MyGrate::Output::Pq::UpdateDatabase::createNew(&pqm, MySQLDB::SERVER, MySQLDB::USER, MySQLDB::PASSWORD,
 			MySQLDB::PORT, my.mockname.c_str(), 100, target_schema);
 	BOOST_CHECK_EQUAL(out.source, 1);
 	auto src = out.getSource();
 	BOOST_REQUIRE(src);
 
-	MyGrate::sql::createTestTable::execute(&mym);
-	MyGrate::sql::fillTestTable::execute(&mym);
 	out.addTable(&mym, "session");
 	out.copyTableContent(&mym, "session");
 
