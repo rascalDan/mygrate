@@ -32,10 +32,11 @@ namespace MyGrate::Input {
 		verify<MySQLErr>(!mariadb_rpl_open(rpl.get()), "Failed to mariadb_rpl_open", this);
 
 		while (MyGrate::MariaDB_Event_Ptr event {mariadb_rpl_fetch(rpl.get(), nullptr), &mariadb_free_rpl_event}) {
-			position = event->next_event_pos;
+			auto np = event->next_event_pos;
 			if (const auto & h = eventHandlers.at(event->event_type); h.func) {
 				(eh.*h.func)(std::move(event));
 			}
+			position = np;
 		}
 	}
 
