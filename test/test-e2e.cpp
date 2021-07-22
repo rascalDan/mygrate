@@ -4,10 +4,12 @@
 
 #include "testdb-mysql.h"
 #include "testdb-postgresql.h"
+#include <input/replStream.h>
 #include <output/pq/updateDatabase.h>
 #include <sql/createTestTable.h>
 #include <sql/fillTestTable.h>
 #include <sql/selectTestTable.h>
+#include <thread>
 
 BOOST_AUTO_TEST_CASE(e2e)
 {
@@ -32,4 +34,14 @@ BOOST_AUTO_TEST_CASE(e2e)
 	out.copyTableContent(&mym, "session");
 
 	BOOST_CHECK_EQUAL(MyGrate::sql::selectTestTable::execute(&pqm)->rows(), 1);
+
+	std::thread repl {&MyGrate::EventSourceBase::readEvents, src.get(), std::ref(out)};
+
+	auto upd = mym.prepare("UPDATE session SET session_id = ? WHERE id = ?", 2);
+	upd->execute(std::array<MyGrate::DbValue, 2> {"food", 1});
+
+	sleep(1);
+
+	src->stopEvents();
+	repl.join();
 }

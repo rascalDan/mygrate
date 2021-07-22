@@ -2,6 +2,7 @@
 #define MYGRATE_OUTPUT_PQ_UPDATEDATABASE_H
 
 #include "pqConn.h"
+#include "pqStmt.h"
 #include <cstdint>
 #include <eventHandlerBase.h>
 #include <eventSourceBase.h>
@@ -25,10 +26,15 @@ namespace MyGrate::Output::Pq {
 		TableOutput(const RecordSet &, std::string_view name);
 
 		std::vector<ColumnDefPtr> columns;
+		DbPrepStmtPtr update;
 	};
 	using TableDefPtr = std::unique_ptr<TableOutput>;
 
 	class ConfigError : public std::runtime_error {
+		using std::runtime_error::runtime_error;
+	};
+
+	class ReplicationError : public std::runtime_error {
 		using std::runtime_error::runtime_error;
 	};
 
@@ -44,6 +50,10 @@ namespace MyGrate::Output::Pq {
 		void addTable(Input::MySQLConn *, const char * tableName);
 		void copyTableContent(Input::MySQLConn *, const char * tableName);
 
+		// Replication events
+		void updateRow(MariaDB_Event_Ptr) override;
+		void tableMap(MariaDB_Event_Ptr) override;
+
 		const uint64_t source;
 		const std::string schema;
 		const std::string database;
@@ -51,7 +61,11 @@ namespace MyGrate::Output::Pq {
 	private:
 		UpdateDatabase(PqConn &&, uint64_t source);
 		UpdateDatabase(PqConn &&, uint64_t source, RecordSetPtr cfg);
-		std::map<std::string, TableDefPtr, std::less<>> tables;
+
+		using Tables = std::map<std::string, TableDefPtr, std::less<>>;
+		Tables tables;
+		Tables::const_iterator selected;
+		MariaDB_Event_Ptr table_map;
 	};
 }
 
