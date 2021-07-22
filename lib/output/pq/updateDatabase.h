@@ -26,6 +26,7 @@ namespace MyGrate::Output::Pq {
 		TableOutput(const RecordSet &, std::string_view name);
 
 		std::vector<ColumnDefPtr> columns;
+		std::size_t keys;
 		DbPrepStmtPtr update;
 	};
 	using TableDefPtr = std::unique_ptr<TableOutput>;

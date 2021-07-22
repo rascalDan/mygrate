@@ -56,7 +56,10 @@ namespace MyGrate::Output::Pq {
 	{
 		for (auto c {0U}; c < crecs.rows(); c++) {
 			if (crecs.at(c, 0) == name) {
-				columns.emplace_back(crecs[c].create<ColumnDef, 3, 1>());
+				const auto & cd = columns.emplace_back(crecs[c].create<ColumnDef, 3, 1>());
+				if (cd->is_pk) {
+					keys += 1;
+				}
 			}
 		}
 	}
@@ -97,6 +100,7 @@ namespace MyGrate::Output::Pq {
 				}
 				if (col[3]) {
 					ct << " primary key";
+					tableDef->keys += 1;
 				}
 				tableDef->columns.push_back(std::make_unique<ColumnDef>(col[0], tableDef->columns.size() + 1, col[3]));
 			}
@@ -270,10 +274,7 @@ namespace MyGrate::Output::Pq {
 				out->update = prepare(ou.str().c_str(), kordinal);
 			}
 			std::vector<DbValue> updateValues;
-			updateValues.reserve(
-					out->columns.size() + std::count_if(out->columns.begin(), out->columns.end(), [](auto && c) {
-						return c->is_pk;
-					}));
+			updateValues.reserve(out->columns.size() + out->keys);
 			RowPair rp {e->event.rows, table_map->event.table_map};
 			std::copy(rp.second.begin(), rp.second.end(), std::back_inserter(updateValues));
 			std::copy_if(rp.first.begin(), rp.first.end(), std::back_inserter(updateValues),
