@@ -52,7 +52,7 @@ namespace MyGrate::Output::Pq {
 		return (*srcrec)[0].create<Input::ReplicationStream, 7>();
 	}
 
-	TableOutput::TableOutput(const RecordSet & crecs, std::string_view name)
+	TableOutput::TableOutput(const RecordSet & crecs, std::string_view name) : keys {0}
 	{
 		for (auto c {0U}; c < crecs.rows(); c++) {
 			if (crecs.at(c, 0) == name) {
