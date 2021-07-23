@@ -27,7 +27,7 @@ namespace MyGrate::Output::Pq {
 
 		std::vector<ColumnDefPtr> columns;
 		std::size_t keys;
-		DbPrepStmtPtr update, deleteFrom;
+		DbPrepStmtPtr update, deleteFrom, insertInto;
 	};
 	using TableDefPtr = std::unique_ptr<TableOutput>;
 
@@ -54,6 +54,7 @@ namespace MyGrate::Output::Pq {
 		// Replication events
 		void updateRow(MariaDB_Event_Ptr) override;
 		void deleteRow(MariaDB_Event_Ptr) override;
+		void insertRow(MariaDB_Event_Ptr) override;
 		void tableMap(MariaDB_Event_Ptr) override;
 
 		const uint64_t source;
