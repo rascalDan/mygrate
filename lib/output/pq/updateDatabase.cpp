@@ -300,8 +300,7 @@ namespace MyGrate::Output::Pq {
 				scprintf<"DELETE FROM %?.%? ">(ou, schema, selected->first);
 				for (const auto & col : out->columns) {
 					if (col->is_pk) {
-						scprintf<"%? %? = $%?">(
-								ou, kordinal == out->columns.size() ? " WHERE " : " AND ", col->name, kordinal + 1);
+						scprintf<"%? %? = $%?">(ou, !kordinal ? " WHERE " : " AND ", col->name, kordinal + 1);
 						kordinal++;
 					}
 				}
@@ -329,19 +328,20 @@ namespace MyGrate::Output::Pq {
 					e->event.rows.column_count == out->columns.size(), "Incorrect number of columns in row data");
 			if (!out->insertInto) {
 				std::stringstream ou;
-				std::size_t ordinal {0}, kordinal {out->columns.size()};
+				std::size_t ordinal {0}, vordinal {0};
 
 				scprintf<"INSERT INTO %?.%? ">(ou, schema, selected->first);
 				for (const auto & col : out->columns) {
-					scprintf<"%? %?">(ou, !ordinal ? "(" : ", ", col->name);
+					scprintf<"%? %?">(ou, !ordinal++ ? "(" : ", ", col->name);
 				}
 				ou << ") VALUES";
 				for (const auto & col : out->columns) {
-					scprintf<"%? $%?">(ou, !ordinal ? "(" : ", ", col->name);
+					scprintf<"%? $%?">(ou, !vordinal++ ? "(" : ", ", vordinal);
+					(void)col;
 				}
 				ou << ")";
 
-				out->insertInto = prepare(ou.str().c_str(), kordinal);
+				out->insertInto = prepare(ou.str().c_str(), out->columns.size());
 			}
 			std::vector<DbValue> updateValues;
 			updateValues.reserve(out->columns.size());

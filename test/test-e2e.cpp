@@ -38,7 +38,13 @@ BOOST_AUTO_TEST_CASE(e2e)
 	std::thread repl {&MyGrate::EventSourceBase::readEvents, src.get(), std::ref(out)};
 
 	auto upd = mym.prepare("UPDATE session SET session_id = ? WHERE id = ?", 2);
-	upd->execute(std::array<MyGrate::DbValue, 2> {"food", 1});
+	upd->execute({"food", 1});
+	auto del = mym.prepare("DELETE FROM session WHERE id = ?", 2);
+	del->execute({1});
+	auto ins = mym.prepare("INSERT INTO session(session_id, username, user_lvl, ip_addr, port, created, modified) \
+			VALUES(?, ?, ?, ?, ?, now(), now())",
+			5);
+	ins->execute({"hashyhash", "testuser", "groupadm", "10.10.0.1", 2433});
 
 	sleep(1);
 
