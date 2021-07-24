@@ -17,7 +17,7 @@ namespace MyGrate::Output {
 	{
 		const auto & tm = event->event.table_map;
 		scprintf<"Table map %?.%? -> %?\n">(std::cout, tm.database, tm.table, tm.table_id);
-		EventHandlerBase::tableMap(std::move(event));
+		tableMaps.insert_or_assign(event->event.table_map.table_id, std::move(event));
 	}
 
 	void

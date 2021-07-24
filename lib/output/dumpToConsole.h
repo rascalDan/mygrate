@@ -16,8 +16,13 @@ namespace MyGrate::Output {
 		void deleteRow(MyGrate::MariaDB_Event_Ptr event) override;
 
 	private:
+		using TableId = decltype(st_mariadb_rpl_table_map_event::table_id);
+		using TableMaps = std::map<TableId, MyGrate::MariaDB_Event_Ptr>;
+
 		void dumpRowData(const st_mariadb_rpl_rows_event & row) const;
 		void dumpRowPairData(const st_mariadb_rpl_rows_event & row) const;
+
+		TableMaps tableMaps;
 	};
 }
 
