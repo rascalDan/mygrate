@@ -13,6 +13,7 @@ namespace MyGrate {
 		virtual void insertRow(MariaDB_Event_Ptr);
 		virtual void updateRow(MariaDB_Event_Ptr);
 		virtual void deleteRow(MariaDB_Event_Ptr);
+		virtual void rotate(MariaDB_Event_Ptr);
 	};
 }
 

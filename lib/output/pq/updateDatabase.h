@@ -57,6 +57,7 @@ namespace MyGrate::Output::Pq {
 		void deleteRow(MariaDB_Event_Ptr) override;
 		void insertRow(MariaDB_Event_Ptr) override;
 		void tableMap(MariaDB_Event_Ptr) override;
+		void rotate(MariaDB_Event_Ptr) override;
 
 		const uint64_t source;
 		const std::string schema;

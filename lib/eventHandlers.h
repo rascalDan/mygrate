@@ -18,7 +18,7 @@ namespace MyGrate {
 		eh[START_EVENT_V3] = {"START_EVENT_V3", nullptr};
 		eh[QUERY_EVENT] = {"QUERY_EVENT", nullptr};
 		eh[STOP_EVENT] = {"STOP_EVENT", nullptr};
-		eh[ROTATE_EVENT] = {"ROTATE_EVENT", nullptr};
+		eh[ROTATE_EVENT] = {"ROTATE_EVENT", &MyGrate::EventHandlerBase::rotate};
 		eh[INTVAR_EVENT] = {"INTVAR_EVENT", nullptr};
 		eh[LOAD_EVENT] = {"LOAD_EVENT", nullptr};
 		eh[SLAVE_EVENT] = {"SLAVE_EVENT", nullptr};

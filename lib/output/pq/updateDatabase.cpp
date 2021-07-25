@@ -20,6 +20,7 @@
 #include <output/pq/sql/selectSourceSchema.h>
 #include <output/pq/sql/selectTables.h>
 #include <output/pq/sql/updateSourcePosition.h>
+#include <output/pq/sql/updateSourceRotate.h>
 #include <row.h>
 #include <stdexcept>
 #include <streamSupport.h>
@@ -382,6 +383,15 @@ namespace MyGrate::Output::Pq {
 			out->insertInto->execute(updateValues);
 			verify<ReplicationError>(out->insertInto->rows() == 1, "Wrong number of rows updated.");
 			afterEvent(e);
+		}
+	}
+
+	void
+	UpdateDatabase::rotate(MariaDB_Event_Ptr e)
+	{
+		if ((e->flags & LOG_EVENT_ARTIFICIAL_F) == 0) {
+			output::pq::sql::updateSourceRotate::execute(
+					this, *e->event.rotate.filename, e->event.rotate.position, source);
 		}
 	}
 }

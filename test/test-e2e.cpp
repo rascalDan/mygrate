@@ -45,6 +45,7 @@ BOOST_AUTO_TEST_CASE(e2e)
 			VALUES(?, ?, ?, ?, ?, now(), now())",
 			5);
 	ins->execute({"hashyhash", "testuser", "groupadm", "10.10.0.1", 2433});
+	mym.query("flush logs");
 
 	sleep(1);
 

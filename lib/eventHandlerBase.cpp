@@ -6,4 +6,5 @@ namespace MyGrate {
 	void EventHandlerBase::insertRow(MariaDB_Event_Ptr) { }
 	void EventHandlerBase::updateRow(MariaDB_Event_Ptr) { }
 	void EventHandlerBase::deleteRow(MariaDB_Event_Ptr) { }
+	void EventHandlerBase::rotate(MariaDB_Event_Ptr) { }
 }
