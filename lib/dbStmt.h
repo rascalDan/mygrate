@@ -49,7 +49,7 @@ namespace MyGrate {
 		static Return
 		execute(ConnType * c, P &&... p)
 		{
-			static_assert(sizeof...(P) == paramCount(ConnType::paramMode));
+			static_assert(sizeof...(P) == paramCount(ConnType::paramMode), "Wrong number of parameters for statement");
 			auto stmt {c->prepare(S, sizeof...(P))};
 			stmt->execute({std::forward<P>(p)...});
 			if constexpr (isSelect) {
