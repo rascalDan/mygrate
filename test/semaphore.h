@@ -11,7 +11,7 @@ using semaphore = std::binary_semaphore;
 #	include <mutex>
 class semaphore {
 public:
-	semaphore(unsigned int v_);
+	explicit semaphore(unsigned int v_);
 
 	void release(unsigned int n = 1);
 
