@@ -82,6 +82,9 @@ namespace MyGrate {
 #undef DEFINE_TYPE
 
 		struct ReplicationPosition {
+#ifndef __cpp_aggregate_paren_init
+			ReplicationPosition(std::string f, uint64_t p) : filename {std::move(f)}, position {p} { }
+#endif
 			std::string filename;
 			uint64_t position;
 		};
