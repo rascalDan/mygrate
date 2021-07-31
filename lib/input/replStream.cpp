@@ -4,11 +4,16 @@
 #include <eventHandlerBase.h>
 #include <eventHandlers.h>
 #include <helpers.h>
+#include <input/sql/selectBinLogFormat.h>
 #include <memory>
 #include <stdexcept>
 #include <utility>
 
 namespace MyGrate::Input {
+	class ConfigError : public std::runtime_error {
+		using std::runtime_error::runtime_error;
+	};
+
 	ReplicationStream::ReplicationStream(const std::string & host, const std::string & user, const std::string & pass,
 			unsigned short port, uint64_t sid, std::string fn, uint64_t pos) :
 		MySQLConn {host.c_str(), user.c_str(), pass.c_str(), port},
@@ -16,6 +21,8 @@ namespace MyGrate::Input {
 	{
 		query("SET @mariadb_slave_capability = 4");
 		query("SET @master_binlog_checksum = @@global.binlog_checksum");
+		verify<ConfigError>((**input::sql::selectBinLogFormat::execute(this)).get<std::string_view>() == "ROW",
+				"@@binlog_format must be 'ROW'");
 	}
 
 	void
