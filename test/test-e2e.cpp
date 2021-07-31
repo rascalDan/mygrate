@@ -31,7 +31,6 @@ BOOST_AUTO_TEST_CASE(e2e)
 	BOOST_REQUIRE(src);
 
 	out.addTable(&mym, "session");
-	out.copyTableContent(&mym, "session");
 
 	BOOST_CHECK_EQUAL(MyGrate::sql::selectTestTable::execute(&pqm)->rows(), 1);
 

@@ -80,6 +80,11 @@ namespace MyGrate {
 #undef DEFINE_ITYPE
 #undef DEFINE_USTYPE
 #undef DEFINE_TYPE
+
+		struct ReplicationPosition {
+			std::string filename;
+			uint64_t position;
+		};
 	}
 }
 

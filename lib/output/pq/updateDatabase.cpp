@@ -12,6 +12,7 @@
 #include <input/sql/selectColumns.h>
 #include <input/sql/showMasterStatus.h>
 #include <memory>
+#include <mysql_types.h>
 #include <output/pq/sql/insertColumn.h>
 #include <output/pq/sql/insertSource.h>
 #include <output/pq/sql/insertTable.h>
@@ -83,33 +84,44 @@ namespace MyGrate::Output::Pq {
 	void
 	UpdateDatabase::addTable(Input::MySQLConn * conn, const char * tableName)
 	{
-		auto cols = input::sql::selectColumns::execute(conn, tableName);
-		verify<std::logic_error>(cols->rows() > 0, "Table has no rows");
-		auto tableDef {std::make_unique<TableOutput>()};
-		Tx {this}([&] {
-			const auto table_id = **output::pq::sql::insertTable::execute(this, tableName, source);
-			std::stringstream ct;
-			scprintf<"CREATE TABLE %?.%?(">(ct, schema, tableName);
-			TypeMapper tm;
-			for (auto col : *cols) {
-				output::pq::sql::insertColumn::execute(this, col[0], col.currentRow(), table_id);
-				if (col.currentRow()) {
-					ct << ',';
+		// Assumes a readonly or transaction supporting table
+		conn->query("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ");
+		conn->query(scprintf<"LOCK TABLE %? READ">(tableName).c_str());
+		Tx {conn}([&] {
+			auto pos = *(*input::sql::showMasterStatus::execute(conn))[0].create<MySQL::ReplicationPosition, 2>();
+			conn->query("UNLOCK TABLES");
+			// Consistent unlocked view of table during transaction
+			auto cols = input::sql::selectColumns::execute(conn, tableName);
+			verify<std::logic_error>(cols->rows() > 0, "Table has no rows");
+			auto tableDef {std::make_unique<TableOutput>()};
+			Tx {this}([&] {
+				const auto table_id
+						= **output::pq::sql::insertTable::execute(this, tableName, source, pos.filename, pos.position);
+				std::stringstream ct;
+				scprintf<"CREATE TABLE %?.%?(">(ct, schema, tableName);
+				TypeMapper tm;
+				for (auto col : *cols) {
+					output::pq::sql::insertColumn::execute(this, col[0], col.currentRow(), table_id);
+					if (col.currentRow()) {
+						ct << ',';
+					}
+					scprintf<"%? %?">(ct, col[0], tm.map(col[2], scprintf<"%?.%?">(tableName, col[0])));
+					if (!col[1]) {
+						ct << " not null";
+					}
+					if (col[3]) {
+						ct << " primary key";
+						tableDef->keys += 1;
+					}
+					tableDef->columns.push_back(
+							std::make_unique<ColumnDef>(col[0], tableDef->columns.size() + 1, col[3]));
 				}
-				scprintf<"%? %?">(ct, col[0], tm.map(col[2], scprintf<"%?.%?">(tableName, col[0])));
-				if (!col[1]) {
-					ct << " not null";
-				}
-				if (col[3]) {
-					ct << " primary key";
-					tableDef->keys += 1;
-				}
-				tableDef->columns.push_back(std::make_unique<ColumnDef>(col[0], tableDef->columns.size() + 1, col[3]));
-			}
-			ct << ")";
-			this->query(ct.str().c_str());
+				ct << ")";
+				this->query(ct.str().c_str());
+				this->copyTableContent(conn, tableName, tableDef);
+			});
+			tables.emplace(tableName, std::move(tableDef));
 		});
-		tables.emplace(tableName, std::move(tableDef));
 	}
 
 	struct WritePqCopyStream {
@@ -206,13 +218,13 @@ namespace MyGrate::Output::Pq {
 	};
 
 	void
-	UpdateDatabase::copyTableContent(Input::MySQLConn * conn, const char * table)
+	UpdateDatabase::copyTableContent(Input::MySQLConn * conn, const char * table, const TableDefPtr & tableDef)
 	{
 		auto out = beginBulkUpload(schema.c_str(), table);
-		auto sourceSelect = [this](auto table) {
+		auto sourceSelect = [&tableDef](auto table) {
 			std::stringstream sf;
 			unsigned int ordinal {0};
-			for (const auto & col : tables.at(table)->columns) {
+			for (const auto & col : tableDef->columns) {
 				scprintf<"%? %?">(sf, !ordinal++ ? "SELECT " : ", ", col->name);
 			}
 			sf << " FROM " << table;

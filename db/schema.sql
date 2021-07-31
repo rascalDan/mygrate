@@ -92,7 +92,9 @@ ALTER TABLE mygrate.table_columns ALTER COLUMN column_id ADD GENERATED ALWAYS AS
 CREATE TABLE mygrate.tables (
     table_id integer NOT NULL,
     table_name name NOT NULL,
-    source_id integer NOT NULL
+    source_id integer NOT NULL,
+		start_file text NOT NULL,
+		start_position bigint NOT NULL
 );
 
 

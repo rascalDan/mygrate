@@ -50,7 +50,6 @@ namespace MyGrate::Output::Pq {
 				const char * db, int sid, const char * sc);
 
 		void addTable(Input::MySQLConn *, const char * tableName);
-		void copyTableContent(Input::MySQLConn *, const char * tableName);
 
 		// Replication events
 		void updateRow(MariaDB_Event_Ptr) override;
@@ -73,6 +72,8 @@ namespace MyGrate::Output::Pq {
 		static void verifyRow(const MariaDB_Event_Ptr & e, const TableDefPtr &);
 		static void copyAll(const Row & r, std::back_insert_iterator<std::vector<DbValue>> &&);
 		static void copyKeys(const Row & r, const TableDefPtr &, std::back_insert_iterator<std::vector<DbValue>> &&);
+
+		void copyTableContent(Input::MySQLConn *, const char * tableName, const TableDefPtr &);
 
 		using Tables = std::map<std::string, TableDefPtr, std::less<>>;
 		Tables tables;
