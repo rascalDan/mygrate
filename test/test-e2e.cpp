@@ -34,7 +34,7 @@ private:
 	semaphore ops {0};
 };
 
-BOOST_AUTO_TEST_CASE(e2e, *boost::unit_test::timeout(5))
+BOOST_AUTO_TEST_CASE(e2e, *boost::unit_test::timeout(15))
 {
 	const char * const target_schema {"testout"};
 	using namespace MyGrate::Testing;
