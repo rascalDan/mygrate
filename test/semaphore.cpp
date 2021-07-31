@@ -21,7 +21,7 @@ semaphore::acquire()
 bool
 semaphore::try_dec()
 {
-	std::lock_guard lk {m};
+	m.lock();
 	if (v) {
 		v--;
 		m.unlock();
