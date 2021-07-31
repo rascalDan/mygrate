@@ -2,6 +2,7 @@
 #include <boost/test/data/test_case.hpp>
 #include <boost/test/unit_test.hpp>
 
+#include "semaphore.h"
 #include "testdb-mysql.h"
 #include "testdb-postgresql.h"
 #include <input/replStream.h>
@@ -11,7 +12,29 @@
 #include <sql/selectTestTable.h>
 #include <thread>
 
-BOOST_AUTO_TEST_CASE(e2e)
+class TestUpdateDatabase : public MyGrate::Output::Pq::UpdateDatabase {
+public:
+	using MyGrate::Output::Pq::UpdateDatabase::UpdateDatabase;
+	void
+	afterEvent(const MyGrate::MariaDB_Event_Ptr & e) override
+	{
+		UpdateDatabase::afterEvent(std::move(e));
+		ops.release();
+	}
+
+	void
+	waitFor(unsigned int n)
+	{
+		while (n--) {
+			ops.acquire();
+		}
+	}
+
+private:
+	semaphore ops {0};
+};
+
+BOOST_AUTO_TEST_CASE(e2e, *boost::unit_test::timeout(5))
 {
 	const char * const target_schema {"testout"};
 	using namespace MyGrate::Testing;
@@ -24,8 +47,10 @@ BOOST_AUTO_TEST_CASE(e2e)
 	MyGrate::sql::createTestTable::execute(&mym);
 	MyGrate::sql::fillTestTable::execute(&mym);
 
-	auto out = MyGrate::Output::Pq::UpdateDatabase::createNew(&pqm, MySQLDB::SERVER, MySQLDB::USER, MySQLDB::PASSWORD,
-			MySQLDB::PORT, my.mockname.c_str(), 100, target_schema);
+	TestUpdateDatabase out {pqm.connstr.c_str(),
+			MyGrate::Output::Pq::UpdateDatabase::createNew(&pqm, MySQLDB::SERVER, MySQLDB::USER, MySQLDB::PASSWORD,
+					MySQLDB::PORT, my.mockname.c_str(), 100, target_schema)
+					.source};
 	BOOST_CHECK_EQUAL(out.source, 1);
 	auto src = out.getSource();
 	BOOST_REQUIRE(src);
@@ -46,7 +71,7 @@ BOOST_AUTO_TEST_CASE(e2e)
 	ins->execute({"hashyhash", "testuser", "groupadm", "10.10.0.1", 2433});
 	mym.query("flush logs");
 
-	sleep(1);
+	out.waitFor(4);
 
 	src->stopEvents();
 	repl.join();
