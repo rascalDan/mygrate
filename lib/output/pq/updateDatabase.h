@@ -13,7 +13,9 @@ namespace MyGrate::Input {
 }
 namespace MyGrate::Output::Pq {
 	struct ColumnDef {
+#ifndef __cpp_aggregate_paren_init
 		ColumnDef(std::string, std::size_t, bool);
+#endif
 
 		std::string name;
 		std::size_t ordinal;

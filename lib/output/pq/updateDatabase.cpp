@@ -27,7 +27,9 @@
 #include <streamSupport.h>
 
 namespace MyGrate::Output::Pq {
+#ifndef __cpp_aggregate_paren_init
 	ColumnDef::ColumnDef(std::string n, std::size_t o, bool p) : name {std::move(n)}, ordinal(o), is_pk(p) { }
+#endif
 
 	UpdateDatabase::UpdateDatabase(const char * const str, uint64_t s) : UpdateDatabase {PqConn {str}, s} { }
 
