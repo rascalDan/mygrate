@@ -402,8 +402,10 @@ namespace MyGrate::Output::Pq {
 	UpdateDatabase::rotate(MariaDB_Event_Ptr e)
 	{
 		if ((e->flags & LOG_EVENT_ARTIFICIAL_F) == 0) {
+			beforeEvent(e);
 			output::pq::sql::updateSourceRotate::execute(
 					this, *e->event.rotate.filename, e->event.rotate.position, source);
+			afterEvent(e);
 		}
 	}
 }
