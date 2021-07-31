@@ -62,12 +62,13 @@ namespace MyGrate::Output::Pq {
 		const std::string schema;
 		const std::string database;
 
+	protected:
+		virtual void beforeEvent(const MariaDB_Event_Ptr & e);
+		virtual void afterEvent(const MariaDB_Event_Ptr & e);
+
 	private:
 		UpdateDatabase(PqConn &&, uint64_t source);
 		UpdateDatabase(PqConn &&, uint64_t source, RecordSetPtr cfg);
-
-		void beforeEvent(const MariaDB_Event_Ptr & e);
-		void afterEvent(const MariaDB_Event_Ptr & e);
 
 		static void verifyRow(const MariaDB_Event_Ptr & e, const TableDefPtr &);
 		static void copyAll(const Row & r, std::back_insert_iterator<std::vector<DbValue>> &&);
