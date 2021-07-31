@@ -9,7 +9,7 @@ project : requirements
 
 lib testdb :
 	[ glob-tree *.sql : bin ]
-	[ glob testdb-*.cpp ] :
+	[ glob *.cpp : test-*.cpp ] :
 	<link>static
 	;
 
