@@ -33,7 +33,7 @@ namespace MyGrate::Output {
 	{
 		const auto & rs = event->event.rows;
 		scprintf<"Update %?\n">(std::cout, rs.table_id);
-		dumpRowPairData(event->event.rows);
+		dumpRowData(event->event.rows);
 	}
 
 	void
@@ -68,22 +68,10 @@ namespace MyGrate::Output {
 	void
 	DumpToConsole::dumpRowData(const st_mariadb_rpl_rows_event & row) const
 	{
-		Row r {row, tableMaps.at(row.table_id)->event.table_map};
-		std::for_each(r.begin(), r.end(), [](auto && fv) {
-			fv.visit(write {});
-		});
+		for (const auto & r : Row::fromRowsEvent(row, tableMaps.at(row.table_id)->event.table_map)) {
+			std::for_each(r.begin(), r.end(), [](auto && fv) {
+				fv.visit(write {});
+			});
+		}
 	}
-
-	void
-	DumpToConsole::dumpRowPairData(const st_mariadb_rpl_rows_event & row) const
-	{
-		RowPair rp {row, tableMaps.at(row.table_id)->event.table_map};
-		std::for_each(rp.first.begin(), rp.first.end(), [](auto && fv) {
-			fv.visit(write {});
-		});
-		std::for_each(rp.second.begin(), rp.second.end(), [](auto && fv) {
-			fv.visit(write {});
-		});
-	}
-
 }

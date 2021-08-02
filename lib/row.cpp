@@ -10,17 +10,6 @@
 #include <string>
 
 namespace MyGrate {
-	Row::Row(const st_mariadb_rpl_rows_event & row, const st_mariadb_rpl_table_map_event & tm) :
-		Row(row, tm, RawDataReader {tm.metadata}, RawDataReader {row.row_data, row.row_data_size})
-	{
-	}
-
-	Row::Row(const st_mariadb_rpl_rows_event & row, const st_mariadb_rpl_table_map_event & tm,
-			MyGrate::RawDataReader && md, MyGrate::RawDataReader && data) :
-		Row {row, tm, md, data}
-	{
-	}
-
 	Row::Row(const st_mariadb_rpl_rows_event & row, const st_mariadb_rpl_table_map_event & tm,
 			MyGrate::RawDataReader & md, MyGrate::RawDataReader & data)
 	{
@@ -114,15 +103,15 @@ namespace MyGrate {
 		}
 	}
 
-	RowPair::RowPair(const st_mariadb_rpl_rows_event & row, const st_mariadb_rpl_table_map_event & tm) :
-		RowPair(row, tm, RawDataReader {tm.metadata}, RawDataReader {tm.metadata},
-				RawDataReader {row.row_data, row.row_data_size})
+	Row::Rows
+	Row::fromRowsEvent(const st_mariadb_rpl_rows_event & row, const st_mariadb_rpl_table_map_event & tm)
 	{
-	}
-
-	RowPair::RowPair(const st_mariadb_rpl_rows_event & row, const st_mariadb_rpl_table_map_event & tm,
-			MyGrate::RawDataReader && md1, MyGrate::RawDataReader && md2, MyGrate::RawDataReader && data) :
-		std::pair<Row, Row> {Row {row, tm, md1, data}, Row {row, tm, md2, data}}
-	{
+		Rows rtn;
+		RawDataReader data {row.row_data, row.row_data_size};
+		while (data.more()) {
+			RawDataReader md {tm.metadata};
+			rtn.emplace_back(row, tm, md, data);
+		}
+		return rtn;
 	}
 }

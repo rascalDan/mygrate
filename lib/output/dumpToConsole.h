@@ -20,7 +20,6 @@ namespace MyGrate::Output {
 		using TableMaps = std::map<TableId, MyGrate::MariaDB_Event_Ptr>;
 
 		void dumpRowData(const st_mariadb_rpl_rows_event & row) const;
-		void dumpRowPairData(const st_mariadb_rpl_rows_event & row) const;
 
 		TableMaps tableMaps;
 	};

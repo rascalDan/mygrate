@@ -284,14 +284,7 @@ namespace MyGrate::Output::Pq {
 	}
 
 	void
-	UpdateDatabase::copyAll(const Row & r, std::back_insert_iterator<std::vector<DbValue>> && out)
-	{
-		std::copy(r.begin(), r.end(), out);
-	}
-
-	void
-	UpdateDatabase::copyKeys(
-			const Row & r, const TableDefPtr & td, std::back_insert_iterator<std::vector<DbValue>> && out)
+	UpdateDatabase::copyKeys(const Row & r, const TableDefPtr & td, std::back_insert_iterator<Row> && out)
 	{
 		std::copy_if(r.begin(), r.end(), out, [c = td->columns.begin()](auto &&) mutable {
 			return (c++)->get()->is_pk;
@@ -324,13 +317,13 @@ namespace MyGrate::Output::Pq {
 				out->update = prepare(ou.str().c_str(), kordinal);
 			}
 			beforeEvent(e);
-			std::vector<DbValue> updateValues;
-			updateValues.reserve(out->columns.size() + out->keys);
-			RowPair rp {e->event.rows, table_map->event.table_map};
-			copyAll(rp.second, std::back_inserter(updateValues));
-			copyKeys(rp.first, out, std::back_inserter(updateValues));
-			out->update->execute(updateValues);
-			verify<ReplicationError>(out->update->rows() == 1, "Wrong number of rows updated.");
+			auto rows {Row::fromRowsEvent(e->event.rows, table_map->event.table_map)};
+			verify<ReplicationError>(rows.size() % 2 == 0, "Odd number of update rows");
+			for (auto rp = rows.begin(); rp != rows.end(); rp++) {
+				copyKeys(*rp, out, std::back_inserter(*rp));
+				out->update->execute(*rp);
+				verify<ReplicationError>(out->update->rows() == 1, "Wrong number of rows updated.");
+			}
 			afterEvent(e);
 		}
 	}
@@ -356,12 +349,12 @@ namespace MyGrate::Output::Pq {
 				out->deleteFrom = prepare(ou.str().c_str(), kordinal);
 			}
 			beforeEvent(e);
-			std::vector<DbValue> updateValues;
-			updateValues.reserve(out->keys);
-			Row rp {e->event.rows, table_map->event.table_map};
-			copyKeys(rp, out, std::back_inserter(updateValues));
-			out->deleteFrom->execute(updateValues);
-			verify<ReplicationError>(out->deleteFrom->rows() == 1, "Wrong number of rows deleted.");
+			for (auto & r : Row::fromRowsEvent(e->event.rows, table_map->event.table_map)) {
+				Row keys;
+				copyKeys(r, out, std::back_inserter(keys));
+				out->deleteFrom->execute(keys);
+				verify<ReplicationError>(out->deleteFrom->rows() == 1, "Wrong number of rows deleted.");
+			}
 			afterEvent(e);
 		}
 	}
@@ -390,12 +383,10 @@ namespace MyGrate::Output::Pq {
 				out->insertInto = prepare(ou.str().c_str(), out->columns.size());
 			}
 			beforeEvent(e);
-			std::vector<DbValue> updateValues;
-			updateValues.reserve(out->columns.size());
-			Row rp {e->event.rows, table_map->event.table_map};
-			copyAll(rp, std::back_inserter(updateValues));
-			out->insertInto->execute(updateValues);
-			verify<ReplicationError>(out->insertInto->rows() == 1, "Wrong number of rows updated.");
+			for (const auto & r : Row::fromRowsEvent(e->event.rows, table_map->event.table_map)) {
+				out->insertInto->execute(r);
+				verify<ReplicationError>(out->insertInto->rows() == 1, "Wrong number of rows updated.");
+			}
 			afterEvent(e);
 		}
 	}

@@ -56,6 +56,12 @@ namespace MyGrate {
 
 		void discard(size_t);
 
+		bool
+		more() const
+		{
+			return offset < len;
+		}
+
 	private:
 		void offsetSizeCheck(size_t) const;
 
