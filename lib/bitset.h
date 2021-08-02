@@ -38,7 +38,7 @@ namespace MyGrate {
 		Iterator end() const;
 
 	private:
-		const std::span<const std::byte> bytes;
+		std::span<const std::byte> bytes;
 	};
 }
 
