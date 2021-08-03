@@ -30,7 +30,7 @@ namespace MyGrate {
 		eh[RAND_EVENT] = {"RAND_EVENT", nullptr};
 		eh[USER_VAR_EVENT] = {"USER_VAR_EVENT", nullptr};
 		eh[FORMAT_DESCRIPTION_EVENT] = {"FORMAT_DESCRIPTION_EVENT", nullptr};
-		eh[XID_EVENT] = {"XID_EVENT", nullptr};
+		eh[XID_EVENT] = {"XID_EVENT", &MyGrate::EventHandlerBase::xid};
 		eh[BEGIN_LOAD_QUERY_EVENT] = {"BEGIN_LOAD_QUERY_EVENT", nullptr};
 		eh[EXECUTE_LOAD_QUERY_EVENT] = {"EXECUTE_LOAD_QUERY_EVENT", nullptr};
 		eh[TABLE_MAP_EVENT] = {"TABLE_MAP_EVENT", &MyGrate::EventHandlerBase::tableMap};
@@ -56,7 +56,7 @@ namespace MyGrate {
 		eh[MARIA_EVENTS_BEGIN] = {"MARIA_EVENTS_BEGIN", nullptr};
 		eh[ANNOTATE_ROWS_EVENT] = {"ANNOTATE_ROWS_EVENT", nullptr};
 		eh[BINLOG_CHECKPOINT_EVENT] = {"BINLOG_CHECKPOINT_EVENT", nullptr};
-		eh[GTID_EVENT] = {"GTID_EVENT", nullptr};
+		eh[GTID_EVENT] = {"GTID_EVENT", &MyGrate::EventHandlerBase::gtid};
 		eh[GTID_LIST_EVENT] = {"GTID_LIST_EVENT", nullptr};
 		eh[START_ENCRYPTION_EVENT] = {"START_ENCRYPTION_EVENT", nullptr};
 		eh[QUERY_COMPRESSED_EVENT] = {"QUERY_COMPRESSED_EVENT", nullptr};
