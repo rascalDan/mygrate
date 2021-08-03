@@ -255,6 +255,8 @@ namespace MyGrate {
 	concept Writable = requires(T s)
 	{
 		{s << 0};
+		{s << ""};
+		{s.write("", 0U)};
 	};
 	template<const Support::basic_fixed_string Str, Writable stream, typename... Pn>
 	inline auto &
