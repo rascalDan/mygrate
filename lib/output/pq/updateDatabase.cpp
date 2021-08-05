@@ -27,6 +27,8 @@
 #include <streamSupport.h>
 
 namespace MyGrate::Output::Pq {
+	constexpr uint8_t STANDALONE {1};
+
 #ifndef __cpp_aggregate_paren_init
 	ColumnDef::ColumnDef(std::string n, std::size_t o, bool p) : name {std::move(n)}, ordinal(o), is_pk(p) { }
 #endif
@@ -266,14 +268,18 @@ namespace MyGrate::Output::Pq {
 	void
 	UpdateDatabase::beforeEvent(const MariaDB_Event_Ptr &)
 	{
-		beginTx();
+		if (!intx) {
+			beginTx();
+		}
 	}
 
 	void
 	UpdateDatabase::afterEvent(const MariaDB_Event_Ptr & e)
 	{
-		output::pq::sql::updateSourcePosition::execute(this, e->next_event_pos, source);
-		commitTx();
+		if (!intx) {
+			output::pq::sql::updateSourcePosition::execute(this, e->next_event_pos, source);
+			commitTx();
+		}
 	}
 
 	void
@@ -400,5 +406,23 @@ namespace MyGrate::Output::Pq {
 					this, *e->event.rotate.filename, e->event.rotate.position, source);
 			afterEvent(e);
 		}
+	}
+
+	void
+	UpdateDatabase::gtid(MariaDB_Event_Ptr e)
+	{
+		beforeEvent(e);
+		if (!(e->event.gtid.flags & STANDALONE)) {
+			intx = true;
+		}
+		afterEvent(e);
+	}
+
+	void
+	UpdateDatabase::xid(MariaDB_Event_Ptr e)
+	{
+		beforeEvent(e);
+		intx = false;
+		afterEvent(e);
 	}
 }
