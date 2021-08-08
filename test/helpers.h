@@ -3,8 +3,10 @@
 
 #include <concepts>
 #include <cstddef>
+#include <cstdio>
 #include <ctime>
 #include <iostream>
+#include <memory>
 #include <optional>
 
 inline constexpr std::byte operator""_b(const unsigned long long hex)
@@ -54,5 +56,16 @@ make_tm(int year, int mon, int day, int hr, int min, int sec)
 	mktime(&tm);
 	return tm;
 }
+
+struct MemStream {
+	MemStream();
+	virtual ~MemStream();
+
+	void flush();
+
+	char * out;
+	size_t len;
+	FILE * s;
+};
 
 #endif

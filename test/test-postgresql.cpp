@@ -1,6 +1,9 @@
 #define BOOST_TEST_MODULE PostgreSQL
+#include <boost/mpl/list.hpp>
+#include <boost/test/data/test_case.hpp>
 #include <boost/test/unit_test.hpp>
 
+#include "helpers.h"
 #include "testdb-postgresql.h"
 #include <cstddef>
 #include <dbConn.h>
@@ -11,6 +14,7 @@
 #include <helpers.h>
 #include <memory>
 #include <output/pq/pqConn.h>
+#include <output/pq/writePqCopyStrm.h>
 #include <stdexcept>
 #include <string_view>
 #include <type_traits>
@@ -91,3 +95,63 @@ BOOST_AUTO_TEST_CASE(mock_schema)
 	auto rs = MyGrate::DbStmt<"SELECT COUNT(*) FROM mygrate.source">::execute(&mdb);
 	BOOST_CHECK_EQUAL(rs->at(0, 0).operator unsigned int(), 0);
 }
+
+BOOST_FIXTURE_TEST_SUITE(ms, MemStream);
+
+BOOST_DATA_TEST_CASE(write_strings,
+		boost::unit_test::data::make({
+				std::make_tuple("", ""),
+				{"simple", "simple"},
+				{"simple with spaces", "simple with spaces"},
+				{"simple\twith\ttabs", "simple\\011with\\011tabs"},
+				{"\ttab start", "\\011tab start"},
+				{"tab end\t", "tab end\\011"},
+				{"tab\t\t\t\tmany", "tab\\011\\011\\011\\011many"},
+		}),
+		in, exp)
+{
+	MyGrate::Output::Pq::WritePqCopyStream c {s};
+	c(in);
+	flush();
+
+	BOOST_REQUIRE(out);
+	BOOST_CHECK_EQUAL(out, exp);
+}
+
+using IntTypes = boost::mpl::list<int8_t, int16_t, int32_t, int64_t, uint8_t, uint16_t, uint32_t, uint64_t>;
+BOOST_AUTO_TEST_CASE_TEMPLATE(write_ints, T, IntTypes)
+{
+	MyGrate::Output::Pq::WritePqCopyStream c {s};
+	c(T {1});
+	flush();
+
+	BOOST_REQUIRE(out);
+	BOOST_CHECK_EQUAL(len, 1);
+	BOOST_CHECK_EQUAL(out, "1");
+}
+
+using FloatTypes = boost::mpl::list<float, double>;
+BOOST_AUTO_TEST_CASE_TEMPLATE(write_floats, T, FloatTypes)
+{
+	MyGrate::Output::Pq::WritePqCopyStream c {s};
+	c(T {1.1});
+	flush();
+
+	BOOST_REQUIRE(out);
+	BOOST_CHECK_EQUAL(len, 3);
+	BOOST_CHECK_EQUAL(out, "1.1");
+}
+
+BOOST_AUTO_TEST_CASE(write_blob)
+{
+	MyGrate::Output::Pq::WritePqCopyStream c {s};
+	std::array<std::byte, 10> b {0x00_b, 0x10_b, 0x12_b, 0x30_b, 0x90_b, 0xaa_b, 0xff_b};
+	c(b);
+	flush();
+
+	BOOST_REQUIRE(out);
+	BOOST_CHECK_EQUAL(len, 23);
+	BOOST_CHECK_EQUAL(out, R"B(\\x0010123090AAFF000000)B");
+}
+
+BOOST_AUTO_TEST_SUITE_END();

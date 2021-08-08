@@ -59,7 +59,7 @@ namespace MyGrate::Output::Pq {
 				fwrite(pos, esc - pos, 1, out);
 				pos = esc;
 			}
-			while (pos != v.end()) {
+			while (pos != v.end() && std::iscntrl(*pos)) {
 				fprintf(out, "\\%03o", *pos);
 				pos++;
 			}
@@ -74,9 +74,17 @@ namespace MyGrate::Output::Pq {
 	void
 	WritePqCopyStream::operator()(Blob v) const
 	{
+		static constexpr const auto hex {[] {
+			std::array<std::array<char, 2>, 256> h {};
+			std::array<char, 16> hc {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+			for (int x {}; x < 256; x += 1) {
+				h[x] = {hc[x >> 4], hc[x & 0xF]};
+			}
+			return h;
+		}()};
 		fputs("\\\\x", out);
 		std::for_each(v.begin(), v.end(), [this](auto b) {
-			fprintf(out, "%02hhx", (uint8_t)b);
+			fwrite(hex[(uint8_t)b].data(), 2, 1, out);
 		});
 	}
 }

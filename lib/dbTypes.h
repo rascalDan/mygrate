@@ -13,10 +13,10 @@ struct timespec;
 namespace MyGrate {
 	template<typename T> struct printer;
 	template<> struct printer<double> {
-		constexpr static const char * const fmt {"%f"};
+		constexpr static const char * const fmt {"%g"};
 	};
 	template<> struct printer<float> {
-		constexpr static const char * const fmt {"%f"};
+		constexpr static const char * const fmt {"%g"};
 	};
 	template<> struct printer<int8_t> {
 		constexpr static const char * const fmt {"%hhd"};
