@@ -10,6 +10,7 @@
 #include <input/mysqlRecordSet.h>
 #include <input/replStream.h>
 #include <input/sql/selectColumns.h>
+#include <input/sql/selectIndexes.h>
 #include <input/sql/showMasterStatus.h>
 #include <memory>
 #include <mysql_types.h>
@@ -114,7 +115,6 @@ namespace MyGrate::Output::Pq {
 						ct << " not null";
 					}
 					if (col[3]) {
-						ct << " primary key";
 						tableDef->keys += 1;
 					}
 					tableDef->columns.push_back(
@@ -123,6 +123,7 @@ namespace MyGrate::Output::Pq {
 				ct << ")";
 				this->query(ct.str().c_str());
 				this->copyTableContent(conn, tableName, tableDef);
+				this->copyIndexes(conn, tableName);
 			});
 			tables.emplace(tableName, std::move(tableDef));
 		});
@@ -250,6 +251,27 @@ namespace MyGrate::Output::Pq {
 		}
 
 		fclose(out);
+	}
+
+	void
+	UpdateDatabase::copyIndexes(Input::MySQLConn * conn, const char * tableName)
+	{
+		auto idxs = input::sql::selectIndexes::execute(conn, tableName);
+		for (const auto idx : *idxs) {
+			const auto [name, columns, nonunique]
+					= *idx.create<std::tuple<std::string_view, std::string_view, bool>, 3, 1>();
+			if (nonunique) {
+				query(scprintf<"CREATE INDEX %? ON %?.%?(%?)">(name, schema, tableName, columns).c_str());
+			}
+			else if (name == "PRIMARY") {
+				query(scprintf<"ALTER TABLE %?.%? ADD CONSTRAINT pk_%? PRIMARY KEY(%?)">(
+						schema, tableName, name, columns)
+								.c_str());
+			}
+			else {
+				query(scprintf<"CREATE UNIQUE INDEX %? ON %?.%?(%?)">(name, schema, tableName, columns).c_str());
+			}
+		}
 	}
 
 	void

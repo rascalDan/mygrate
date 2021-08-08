@@ -10,5 +10,6 @@ CREATE TABLE session(
 	last_action varchar(255) null default null,
 
 	constraint `PRIMARY` primary key(id),
+	key created_time(created, modified),
 	constraint session_id unique(session_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

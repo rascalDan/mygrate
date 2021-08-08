@@ -78,6 +78,7 @@ namespace MyGrate::Output::Pq {
 		static void copyKeys(const Row & r, const TableDefPtr &, std::back_insert_iterator<Row> &&);
 
 		void copyTableContent(Input::MySQLConn *, const char * tableName, const TableDefPtr &);
+		void copyIndexes(Input::MySQLConn *, const char * tableName);
 
 		using Tables = std::map<std::string, TableDefPtr, std::less<>>;
 		Tables tables;
