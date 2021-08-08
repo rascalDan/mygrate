@@ -11,6 +11,38 @@
 struct timespec;
 
 namespace MyGrate {
+	template<typename T> struct printer;
+	template<> struct printer<double> {
+		constexpr static const char * const fmt {"%f"};
+	};
+	template<> struct printer<float> {
+		constexpr static const char * const fmt {"%f"};
+	};
+	template<> struct printer<int8_t> {
+		constexpr static const char * const fmt {"%hhd"};
+	};
+	template<> struct printer<uint8_t> {
+		constexpr static const char * const fmt {"%hhu"};
+	};
+	template<> struct printer<int16_t> {
+		constexpr static const char * const fmt {"%hd"};
+	};
+	template<> struct printer<uint16_t> {
+		constexpr static const char * const fmt {"%hu"};
+	};
+	template<> struct printer<int32_t> {
+		constexpr static const char * const fmt {"%d"};
+	};
+	template<> struct printer<uint32_t> {
+		constexpr static const char * const fmt {"%u"};
+	};
+	template<> struct printer<int64_t> {
+		constexpr static const char * const fmt {"%ld"};
+	};
+	template<> struct printer<uint64_t> {
+		constexpr static const char * const fmt {"%lu"};
+	};
+
 	struct Date {
 		inline Date() { }
 		inline Date(uint16_t y, uint8_t m, uint8_t d) : year {y}, month {m}, day {d} { }

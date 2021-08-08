@@ -1,6 +1,7 @@
 #include "updateDatabase.h"
 #include "pqConn.h"
 #include "typeMapper.h"
+#include "writePqCopyStrm.h"
 #include <compileTimeFormatter.h>
 #include <cstdint>
 #include <dbRecordSet.h>
@@ -129,99 +130,6 @@ namespace MyGrate::Output::Pq {
 		});
 	}
 
-	struct WritePqCopyStream {
-		explicit WritePqCopyStream(FILE * o) : out {o} { }
-		WritePqCopyStream(const WritePqCopyStream &) = delete;
-		WritePqCopyStream(WritePqCopyStream &&) = delete;
-		WritePqCopyStream & operator=(const WritePqCopyStream &) = delete;
-		WritePqCopyStream & operator=(WritePqCopyStream &&) = delete;
-
-		~WritePqCopyStream()
-		{
-			fputc('\n', out);
-		}
-
-		void
-		nextField()
-		{
-			fputc('\t', out);
-		}
-
-		void operator()(std::nullptr_t) const
-		{
-			fputs("\\N", out);
-		}
-#define BASIC_PRINT(T, fmt) \
-	void operator()(T v) const \
-	{ \
-		fprintf(out, fmt, v); \
-	}
-		BASIC_PRINT(double, "%f")
-		BASIC_PRINT(float, "%f")
-		BASIC_PRINT(int8_t, "%hhd")
-		BASIC_PRINT(uint8_t, "%hhu")
-		BASIC_PRINT(int16_t, "%hd")
-		BASIC_PRINT(uint16_t, "%hu")
-		BASIC_PRINT(int32_t, "%d")
-		BASIC_PRINT(uint32_t, "%u")
-		BASIC_PRINT(int64_t, "%ld")
-		BASIC_PRINT(uint64_t, "%lu")
-#undef BASIC_PRINT
-		void operator()(timespec) const
-		{
-			throw std::logic_error("timespec not implemented");
-		}
-		void
-		operator()(Date v) const
-		{
-			fprintf(out, "%d-%d-%d", v.year, v.month, v.day);
-		}
-		void
-		operator()(Time v) const
-		{
-			fprintf(out, "%d:%d:%d", v.hour, v.minute, v.second);
-		}
-		void
-		operator()(DateTime v) const
-		{
-			operator()(static_cast<Date &>(v));
-			fputc('T', out);
-			operator()(static_cast<Time &>(v));
-		}
-		void
-		operator()(std::string_view v) const
-		{
-			auto pos {v.begin()};
-			while (pos != v.end()) {
-				auto esc = std::find_if(pos, v.end(), [](unsigned char c) {
-					return std::iscntrl(c);
-				});
-				if (esc != pos) {
-					fwrite(pos, esc - pos, 1, out);
-					pos = esc;
-				}
-				while (pos != v.end()) {
-					fprintf(out, "\\%03o", *pos);
-					pos++;
-				}
-			}
-		}
-		void operator()(BitSet) const
-		{
-			throw std::logic_error("bitset not implemented");
-		}
-		void
-		operator()(Blob v) const
-		{
-			fputs("\\\\x", out);
-			std::for_each(v.begin(), v.end(), [this](auto b) {
-				fprintf(out, "%02hhx", (uint8_t)b);
-			});
-		}
-
-		FILE * out;
-	};
-
 	void
 	UpdateDatabase::copyTableContent(Input::MySQLConn * conn, const char * table, const TableDefPtr & tableDef)
 	{
@@ -240,14 +148,15 @@ namespace MyGrate::Output::Pq {
 		auto sourceCursor {stmt->cursor()};
 
 		const auto cols = sourceCursor->columns();
+		WritePqCopyStream cs {out};
 		while (sourceCursor->fetch()) {
-			WritePqCopyStream cs {out};
 			for (auto ordinal {0U}; ordinal < cols; ordinal += 1) {
 				if (ordinal) {
 					cs.nextField();
 				}
 				sourceCursor->at(ordinal).visit(cs);
 			}
+			cs.nextRecord();
 		}
 
 		fclose(out);
