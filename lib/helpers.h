@@ -8,9 +8,8 @@
 #include <utility>
 
 namespace MyGrate {
-	template<std::integral I>
 	constexpr inline auto
-	bitslice(const I i, uint8_t offset, uint8_t size)
+	bitslice(const std::integral auto i, uint8_t offset, uint8_t size)
 	{
 		return (i >> offset) & ((1U << size) - 1U);
 	}
@@ -25,9 +24,8 @@ namespace MyGrate {
 		return expr;
 	}
 
-	template<typename T>
 	constexpr inline auto
-	mod100_extract(T & i)
+	mod100_extract(std::integral auto & i)
 	{
 		const auto r {i % 100};
 		i /= 100;
@@ -41,6 +39,7 @@ namespace MyGrate {
 			std::to_string(a)
 			} -> std::same_as<std::string>;
 	};
+
 	template<typename T>
 	concept Viewable = requires(T a)
 	{

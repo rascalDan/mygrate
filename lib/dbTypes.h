@@ -107,9 +107,8 @@ namespace MyGrate {
 				return std::string {i};
 			}
 
-			template<HasToString I>
 			std::string
-			operator()(const I & i) const
+			operator()(const HasToString auto & i) const
 			{
 				return std::to_string(i);
 			}

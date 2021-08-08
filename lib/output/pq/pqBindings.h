@@ -2,6 +2,7 @@
 #define MYGRATE_OUTPUT_PQ_PQBINDINGS
 
 #include <compileTimeFormatter.h>
+#include <concepts>
 #include <dbTypes.h>
 #include <helpers.h>
 #include <initializer_list>
@@ -21,23 +22,20 @@ namespace MyGrate::Output::Pq {
 				v.visit(*this);
 			}
 		}
-		template<Stringable T>
 		void
-		operator()(const T & v)
+		operator()(const Stringable auto & v)
 		{
 			addBuf(std::to_string(v));
 		}
-		template<Viewable T>
 		void
-		operator()(const T & v)
+		operator()(const Viewable auto & v)
 		{
 			values.emplace_back(v.data());
 			lengths.emplace_back(v.size());
 			formats.push_back(1);
 		}
-		template<typename T>
 		void
-		operator()(const T & v)
+		operator()(const auto & v)
 		{
 			addBuf(scprintf<"%?">(v));
 		}

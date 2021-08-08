@@ -58,9 +58,8 @@ namespace MyGrate::Input {
 			b.buffer = nullptr;
 			b.is_null = &data.emplace_back(0, 1).null;
 		}
-		template<typename T>
 		void
-		operator()(const T &)
+		operator()(const auto &)
 		{
 			throw std::logic_error("Not implemented");
 		}
