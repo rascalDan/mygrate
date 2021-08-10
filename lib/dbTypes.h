@@ -46,7 +46,11 @@ namespace MyGrate {
 	struct Date {
 		inline Date() { }
 		inline Date(uint16_t y, uint8_t m, uint8_t d) : year {y}, month {m}, day {d} { }
-		explicit inline Date(const tm & tm) : Date(tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday) { }
+		explicit inline Date(const tm & tm) :
+			Date(boost::numeric_cast<uint16_t>(tm.tm_year + 1900), boost::numeric_cast<uint8_t>(tm.tm_mon + 1),
+					boost::numeric_cast<uint8_t>(tm.tm_mday))
+		{
+		}
 		uint16_t year;
 		uint8_t month;
 		uint8_t day;
@@ -54,7 +58,11 @@ namespace MyGrate {
 	struct Time {
 		inline Time() { }
 		inline Time(uint8_t h, uint8_t m, uint8_t s) : hour {h}, minute {m}, second {s} { }
-		explicit inline Time(const tm & tm) : Time(tm.tm_hour, tm.tm_min, tm.tm_sec) { }
+		explicit inline Time(const tm & tm) :
+			Time(boost::numeric_cast<uint8_t>(tm.tm_hour), boost::numeric_cast<uint8_t>(tm.tm_min),
+					boost::numeric_cast<uint8_t>(tm.tm_sec))
+		{
+		}
 		uint8_t hour;
 		uint8_t minute;
 		uint8_t second;

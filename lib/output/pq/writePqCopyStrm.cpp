@@ -56,7 +56,7 @@ namespace MyGrate::Output::Pq {
 				return std::iscntrl(c);
 			});
 			if (esc != pos) {
-				fwrite(pos, esc - pos, 1, out);
+				fwrite(pos, boost::numeric_cast<size_t>(esc - pos), 1, out);
 				pos = esc;
 			}
 			while (pos != v.end() && std::iscntrl(*pos)) {
@@ -77,7 +77,7 @@ namespace MyGrate::Output::Pq {
 		static constexpr const auto hex {[] {
 			std::array<std::array<char, 2>, 256> h {};
 			std::array<char, 16> hc {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-			for (int x {}; x < 256; x += 1) {
+			for (decltype(h)::size_type x {}; x < 256; x += 1) {
 				h[x] = {hc[x >> 4], hc[x & 0xF]};
 			}
 			return h;

@@ -31,7 +31,7 @@ namespace std {
 	std::ostream &
 	operator<<(std::ostream & s, const timespec & ts)
 	{
-		return MyGrate::scprintf<"%d.%09d">(s, ts.tv_sec, ts.tv_nsec);
+		return MyGrate::scprintf<"%ld.%09ld">(s, ts.tv_sec, ts.tv_nsec);
 	}
 
 	std::ostream &

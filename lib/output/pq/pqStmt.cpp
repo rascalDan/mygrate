@@ -53,7 +53,7 @@ namespace MyGrate::Output::Pq {
 		if (const auto i = c->stmts.find(q); i != c->stmts.end()) {
 			return i->second;
 		}
-		auto nam {scprintf<"pst%0x">(c->stmts.size())};
+		auto nam {scprintf<"pst%0lx">(c->stmts.size())};
 		ResPtr res {PQprepare(c->conn.get(), nam.c_str(), q, (int)n, nullptr), PQclear};
 		verify<PqErr>(PQresultStatus(res.get()) == PGRES_COMMAND_OK, q, c->conn.get());
 		return c->stmts.emplace(q, std::move(nam)).first->second;

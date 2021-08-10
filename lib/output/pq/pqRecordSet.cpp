@@ -18,13 +18,13 @@ namespace MyGrate::Output::Pq {
 	std::size_t
 	PqRecordSet::rows() const
 	{
-		return PQntuples(res.get());
+		return boost::numeric_cast<std::size_t>(PQntuples(res.get()));
 	}
 
 	std::size_t
 	PqRecordSet::columns() const
 	{
-		return PQnfields(res.get());
+		return boost::numeric_cast<std::size_t>(PQnfields(res.get()));
 	}
 
 	DbValue

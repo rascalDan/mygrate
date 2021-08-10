@@ -26,7 +26,7 @@ namespace MyGrate {
 					const auto pn = [](const char * c, const char * const e) {
 						std::size_t n {0};
 						while (++c != e && *c >= '0' && *c <= '9') {
-							n = (n * 10) + (*c - '0');
+							n = (n * 10) + unsigned(*c - '0');
 						}
 						return n;
 					};

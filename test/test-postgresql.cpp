@@ -134,7 +134,7 @@ using FloatTypes = boost::mpl::list<float, double>;
 BOOST_AUTO_TEST_CASE_TEMPLATE(write_floats, T, FloatTypes)
 {
 	MyGrate::Output::Pq::WritePqCopyStream c {s};
-	c(T {1.1});
+	c(T {1.1F});
 	flush();
 
 	BOOST_REQUIRE(out);

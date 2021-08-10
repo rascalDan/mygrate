@@ -16,11 +16,11 @@ namespace MyGrate::MySQL {
 #define INTEGER_TYPE(ET) \
 	typename Type<ET, false>::C Type<ET, false>::read(RawDataReader &, RawDataReader & data) \
 	{ \
-		return data.readValue<typename Type<ET>::C>(); \
+		return data.readValue<typename Type<ET, false>::C>(); \
 	} \
 	typename Type<ET, true>::C Type<ET, true>::read(RawDataReader &, RawDataReader & data) \
 	{ \
-		return data.readValue<typename Type<ET>::C>(); \
+		return data.readValue<typename Type<ET, true>::C>(); \
 	}
 	INTEGER_TYPE(MYSQL_TYPE_TINY);
 	INTEGER_TYPE(MYSQL_TYPE_SHORT);
@@ -138,7 +138,7 @@ namespace MyGrate::MySQL {
 		dt.hour = mod100_extract(dtint);
 		dt.day = mod100_extract(dtint);
 		dt.month = mod100_extract(dtint);
-		dt.year = dtint;
+		dt.year = boost::numeric_cast<decltype(dt.year)>(dtint);
 		return dt;
 	}
 
@@ -149,7 +149,7 @@ namespace MyGrate::MySQL {
 		Time t {};
 		t.second = mod100_extract(tint);
 		t.minute = mod100_extract(tint);
-		t.hour = tint;
+		t.hour = boost::numeric_cast<decltype(t.hour)>(tint);
 		return t;
 	}
 
@@ -164,9 +164,9 @@ namespace MyGrate::MySQL {
 	{
 		auto dint {data.readValue<uint32_t, 3>()};
 		Date d {};
-		d.day = bitslice(dint, 0, 6);
-		d.month = bitslice(dint, 6, 4);
-		d.year = bitslice(dint, 10, 14);
+		d.day = bitslice<6>(dint, 0);
+		d.month = bitslice<4>(dint, 6);
+		d.year = bitslice<14>(dint, 10);
 		return d;
 	}
 
@@ -201,12 +201,12 @@ namespace MyGrate::MySQL {
 		std::reverse(r.b.begin(), r.b.end());
 
 		DateTime dt;
-		dt.year = (bitslice(r.i, 22, 17) / 13);
-		dt.month = (bitslice(r.i, 22, 17) % 13);
-		dt.day = bitslice(r.i, 17, 5);
-		dt.hour = bitslice(r.i, 12, 5);
-		dt.minute = bitslice(r.i, 6, 6);
-		dt.second = bitslice(r.i, 0, 6);
+		dt.year = boost::numeric_cast<decltype(dt.year)>(bitslice<17>(r.i, 22) / 13);
+		dt.month = boost::numeric_cast<decltype(dt.month)>(bitslice<17>(r.i, 22) % 13);
+		dt.day = bitslice<5>(r.i, 17);
+		dt.hour = bitslice<5>(r.i, 12);
+		dt.minute = bitslice<6>(r.i, 6);
+		dt.second = bitslice<6>(r.i, 0);
 		return dt;
 	}
 }

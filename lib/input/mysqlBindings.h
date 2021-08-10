@@ -159,11 +159,15 @@ namespace MyGrate::Input {
 	private:
 		operator Date() const
 		{
-			return Date(buf.year, buf.month, buf.day);
+			return Date(boost::numeric_cast<decltype(Date::year)>(buf.year),
+					boost::numeric_cast<decltype(Date::month)>(buf.month),
+					boost::numeric_cast<decltype(Date::day)>(buf.day));
 		}
 		operator Time() const
 		{
-			return Time(buf.hour, buf.minute, buf.second);
+			return Time(boost::numeric_cast<decltype(Time::hour)>(buf.hour),
+					boost::numeric_cast<decltype(Time::minute)>(buf.minute),
+					boost::numeric_cast<decltype(Time::second)>(buf.second));
 		}
 		operator DateTime() const
 		{
