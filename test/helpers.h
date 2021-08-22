@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <cstdio>
 #include <ctime>
+#include <eventCounter.h>
 #include <iostream>
 #include <memory>
 #include <optional>
@@ -66,6 +67,11 @@ struct MemStream {
 	char * out;
 	size_t len;
 	FILE * s;
+};
+
+class EventCounterTarget : public MyGrate::EventCounter {
+public:
+	EventCounterTarget & add(mariadb_rpl_event, unsigned long);
 };
 
 #endif

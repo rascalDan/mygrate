@@ -17,6 +17,7 @@ run test-rawDataReader.cpp ;
 run test-bitset.cpp ;
 run test-streams.cpp ;
 run test-misc.cpp ;
+run test-counters.cpp : : : <library>testdb ;
 run test-mysql.cpp : : : <library>testdb ;
 run test-postgresql.cpp : -- : ../db/schema.sql : <library>testdb ;
 run test-e2e.cpp : -- : ../db/schema.sql : <library>testdb <implicit-dependency>testdb ;

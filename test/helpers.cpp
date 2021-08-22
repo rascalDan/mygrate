@@ -13,3 +13,10 @@ MemStream::flush()
 {
 	fflush(s);
 }
+
+EventCounterTarget &
+EventCounterTarget::add(mariadb_rpl_event e, unsigned long n)
+{
+	counters[e] += n;
+	return *this;
+}
