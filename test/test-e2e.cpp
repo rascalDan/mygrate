@@ -2,10 +2,11 @@
 #include <boost/test/data/test_case.hpp>
 #include <boost/test/unit_test.hpp>
 
-#include "semaphore.h"
+#include "helpers.h"
 #include "testdb-mysql.h"
 #include "testdb-postgresql.h"
 #include <compileTimeFormatter.h>
+#include <condition_variable>
 #include <dbConn.h>
 #include <input/replStream.h>
 #include <output/pq/updateDatabase.h>
@@ -26,20 +27,25 @@ public:
 	void
 	afterEvent(const MyGrate::MariaDB_Event_Ptr & e) override
 	{
-		UpdateDatabase::afterEvent(std::move(e));
-		ops.release();
+		{
+			std::lock_guard<std::mutex> lk(m);
+			UpdateDatabase::afterEvent(std::move(e));
+		}
+		cv.notify_all();
 	}
 
 	void
-	waitFor(unsigned int n)
+	waitFor(EventCounterTarget ect)
 	{
-		while (n--) {
-			ops.acquire();
-		}
+		std::unique_lock<std::mutex> lk(m);
+		cv.wait(lk, [&] {
+			return getProcessedCounts() >= ect;
+		});
 	}
 
 private:
-	semaphore ops {0};
+	std::condition_variable cv;
+	std::mutex m;
 };
 
 using namespace MyGrate::Testing;
@@ -80,7 +86,7 @@ public:
 	}
 
 	void
-	stopAfter(unsigned int events)
+	stopAfter(const EventCounterTarget & events)
 	{
 		BOOST_REQUIRE(out);
 		BOOST_REQUIRE(src);
@@ -126,7 +132,11 @@ BOOST_AUTO_TEST_CASE(e2e, *boost::unit_test::timeout(15))
 	ins->execute({"hashyhash", "testuser", "groupadm", "10.10.0.1", 2433});
 	mym.query("flush logs");
 
-	stopAfter(4);
+	stopAfter(EventCounterTarget {}
+					  .add(UPDATE_ROWS_EVENT_V1, 1)
+					  .add(DELETE_ROWS_EVENT_V1, 1)
+					  .add(WRITE_ROWS_EVENT_V1, 1)
+					  .add(ROTATE_EVENT, 1));
 }
 
 BOOST_AUTO_TEST_CASE(txns, *boost::unit_test::timeout(15))
@@ -145,7 +155,12 @@ BOOST_AUTO_TEST_CASE(txns, *boost::unit_test::timeout(15))
 		MyGrate::sql::simpleUpdateAll::execute(&mym, "Same");
 		MyGrate::sql::simpleDeleteSome::execute(&mym, 5);
 	});
-	stopAfter(14);
+	stopAfter(EventCounterTarget {}
+					  .add(GTID_EVENT, 1)
+					  .add(WRITE_ROWS_EVENT_V1, 10)
+					  .add(UPDATE_ROWS_EVENT_V1, 1)
+					  .add(DELETE_ROWS_EVENT_V1, 1)
+					  .add(XID_EVENT, 1));
 
 	auto recs = MyGrate::sql::simpleSelectAll::execute(&pqm);
 	BOOST_REQUIRE_EQUAL(recs->rows(), 6);

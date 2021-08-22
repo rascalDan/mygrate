@@ -1,6 +1,7 @@
 #ifndef MYGRATE_STREAM_SUPPORT_H
 #define MYGRATE_STREAM_SUPPORT_H
 
+#include "eventCounter.h"
 #include "mariadb_repl.h"
 #include <array>
 #include <cstddef>

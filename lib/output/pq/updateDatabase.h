@@ -4,6 +4,7 @@
 #include "pqConn.h"
 #include "pqStmt.h"
 #include <cstdint>
+#include <eventCounter.h>
 #include <eventHandlerBase.h>
 #include <eventSourceBase.h>
 #include <row.h>
@@ -62,6 +63,8 @@ namespace MyGrate::Output::Pq {
 		void gtid(MariaDB_Event_Ptr) override;
 		void xid(MariaDB_Event_Ptr) override;
 
+		const EventCounter & getProcessedCounts() const;
+
 		const uint64_t source;
 		const std::string schema;
 		const std::string database;
@@ -85,6 +88,7 @@ namespace MyGrate::Output::Pq {
 		Tables::const_iterator selected;
 		MariaDB_Event_Ptr table_map;
 		bool intx {false};
+		EventCounter processed;
 	};
 }
 

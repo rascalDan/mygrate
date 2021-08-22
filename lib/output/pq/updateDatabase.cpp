@@ -183,6 +183,12 @@ namespace MyGrate::Output::Pq {
 		}
 	}
 
+	const EventCounter &
+	UpdateDatabase::getProcessedCounts() const
+	{
+		return processed;
+	}
+
 	void
 	UpdateDatabase::tableMap(MariaDB_Event_Ptr e)
 	{
@@ -207,6 +213,7 @@ namespace MyGrate::Output::Pq {
 	void
 	UpdateDatabase::afterEvent(const MariaDB_Event_Ptr & e)
 	{
+		processed.tick(e->event_type);
 		if (!intx) {
 			output::pq::sql::updateSourcePosition::execute(this, e->next_event_pos, source);
 			commitTx();
