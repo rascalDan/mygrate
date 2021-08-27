@@ -134,3 +134,14 @@ BOOST_DATA_TEST_CASE(convert_time,
 {
 	BOOST_CHECK_EQUAL(MyGrate::MySQL::time2From24bit(tint), time);
 }
+
+BOOST_AUTO_TEST_CASE(getenv_with_default)
+{
+	const char * tenv {"mygrate_something"};
+	::unsetenv(tenv);
+	BOOST_CHECK_EQUAL(MyGrate::getenv(tenv, ""), "");
+	BOOST_CHECK_EQUAL(MyGrate::getenv(tenv, "default"), "default");
+	::setenv(tenv, "something else", 1);
+	BOOST_CHECK_EQUAL(MyGrate::getenv(tenv, "default"), "something else");
+	::unsetenv(tenv);
+}
