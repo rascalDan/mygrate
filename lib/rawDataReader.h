@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <span>
 #include <stdexcept>
 
 namespace MyGrate {
@@ -60,6 +61,12 @@ namespace MyGrate {
 		more() const
 		{
 			return offset < len;
+		}
+
+		std::span<const std::byte>
+		raw() const
+		{
+			return {rawdata, len};
 		}
 
 	private:
