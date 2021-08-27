@@ -69,7 +69,7 @@ namespace MyGrate::MySQL {
 	INTEGER_TYPE(MYSQL_TYPE_INT24, false, 3);
 	INTEGER_TYPE(MYSQL_TYPE_INT24, true, 3);
 	INTEGER_TYPE(MYSQL_TYPE_YEAR, false, 2);
-#undef INTEGER24_TYPE
+#undef INTEGER_TYPE
 
 	static Blob
 	readBlob(RawDataReader & md, RawDataReader & data)
