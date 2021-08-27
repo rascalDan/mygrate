@@ -99,3 +99,16 @@ BOOST_AUTO_TEST_CASE(create_datetime)
 	MyGrate::DateTime dt {tm};
 	BOOST_CHECK_EQUAL(dt, (MyGrate::DateTime {2021, 8, 17, 17, 44, 49}));
 }
+
+BOOST_AUTO_TEST_CASE(mod100_extract)
+{
+	long unsigned int i {1629222289};
+	BOOST_CHECK_EQUAL((int)MyGrate::mod100_extract(i), 89);
+	BOOST_CHECK_EQUAL((int)MyGrate::mod100_extract(i), 22);
+	BOOST_CHECK_EQUAL((int)MyGrate::mod100_extract(i), 22);
+	BOOST_CHECK_EQUAL((int)MyGrate::mod100_extract(i), 29);
+	BOOST_CHECK_EQUAL((int)MyGrate::mod100_extract(i), 16);
+	BOOST_CHECK_EQUAL((int)MyGrate::mod100_extract(i), 0);
+	BOOST_CHECK_EQUAL((int)MyGrate::mod100_extract(i), 0);
+	BOOST_CHECK_EQUAL((int)MyGrate::mod100_extract(i), 0);
+}
