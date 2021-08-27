@@ -84,6 +84,8 @@ namespace MyGrate {
 #undef DEFINE_USTYPE
 #undef DEFINE_TYPE
 
+		Time time2From24bit(uint32_t tint);
+
 		struct ReplicationPosition {
 #ifndef __cpp_aggregate_paren_init
 			ReplicationPosition(std::string f, uint64_t p) : filename {std::move(f)}, position {p} { }

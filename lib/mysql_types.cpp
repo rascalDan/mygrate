@@ -3,10 +3,21 @@
 #include "rawDataReader.h"
 #include <algorithm>
 #include <array>
+#include <byteswap.h>
 #include <stdexcept>
 #include <string>
 
 namespace MyGrate::MySQL {
+#define NTOH(B) \
+	inline auto ntoh(uint##B##_t x) \
+	{ \
+		if constexpr (__BYTE_ORDER == __LITTLE_ENDIAN) \
+			x = bswap_##B(x); \
+		return x; \
+	}
+	NTOH(32);
+	NTOH(64);
+
 	typename Type<MYSQL_TYPE_NULL, false>::C
 	Type<MYSQL_TYPE_NULL, false>::read(RawDataReader &, RawDataReader &)
 	{
@@ -153,10 +164,21 @@ namespace MyGrate::MySQL {
 		return t;
 	}
 
-	typename Type<MYSQL_TYPE_TIME2>::C
-	Type<MYSQL_TYPE_TIME2>::read(RawDataReader &, RawDataReader &)
+	Time
+	time2From24bit(uint32_t tint)
 	{
-		throw std::logic_error("Not implemented");
+		Time t {};
+		t.second = bitslice<6>(tint, 8);
+		t.minute = bitslice<6>(tint, 14);
+		t.hour = bitslice<5>(tint, 20);
+		return t;
+	}
+
+	typename Type<MYSQL_TYPE_TIME2>::C
+	Type<MYSQL_TYPE_TIME2>::read(RawDataReader & md, RawDataReader & data)
+	{
+		md.discard(1);
+		return time2From24bit(ntoh(data.readValue<uint32_t>(3)));
 	}
 
 	typename Type<MYSQL_TYPE_DATE>::C

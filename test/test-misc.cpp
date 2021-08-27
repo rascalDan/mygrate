@@ -1,11 +1,14 @@
 #define BOOST_TEST_MODULE BitSet
+#include <boost/test/data/test_case.hpp>
 #include <boost/test/unit_test.hpp>
 
 #include <cstddef>
 #include <cstdint>
 #include <dbTypes.h>
 #include <helpers.h>
+#include <mysql_types.h>
 #include <stdexcept>
+#include <streamSupport.h>
 #include <string>
 #include <string_view>
 #include <tuple>
@@ -111,4 +114,23 @@ BOOST_AUTO_TEST_CASE(mod100_extract)
 	BOOST_CHECK_EQUAL((int)MyGrate::mod100_extract(i), 0);
 	BOOST_CHECK_EQUAL((int)MyGrate::mod100_extract(i), 0);
 	BOOST_CHECK_EQUAL((int)MyGrate::mod100_extract(i), 0);
+}
+
+using ConvertTimeData = std::tuple<uint32_t, MyGrate::Time>;
+BOOST_DATA_TEST_CASE(convert_time,
+		boost::unit_test::data::make<ConvertTimeData>({
+				{0x8128cc00, {18, 35, 12}},
+				{0x81537500, {21, 13, 53}},
+				{0x817d2200, {23, 52, 34}},
+				{0x8027cf00, {2, 31, 15}},
+				{0x80527800, {5, 9, 56}},
+				{0x807c2500, {7, 48, 37}},
+				{0x80a6d200, {10, 27, 18}},
+				{0x80d17b00, {13, 5, 59}},
+				{0x80fb2800, {15, 44, 40}},
+				{0x8125d500, {18, 23, 21}},
+		}),
+		tint, time)
+{
+	BOOST_CHECK_EQUAL(MyGrate::MySQL::time2From24bit(tint), time);
 }
