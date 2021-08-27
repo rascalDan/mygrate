@@ -53,6 +53,16 @@ class MockSetup {
 public:
 	static constexpr const char * const target_schema {"testout"};
 	MockSetup() : pq {ROOT "/db/schema.sql"}, pqm {pq.mock()}, mym {my.mock()} { }
+	virtual ~MockSetup()
+	{
+		if (src) {
+			src->stopEvents();
+		}
+		if (repl) {
+			repl->join();
+			repl.reset();
+		}
+	}
 
 	TestUpdateDatabase &
 	getUpdateDatabase()
@@ -82,7 +92,19 @@ public:
 	{
 		BOOST_REQUIRE(out);
 		BOOST_REQUIRE(!repl);
-		repl.emplace(&MyGrate::EventSourceBase::readEvents, getSource().get(), std::ref(*out));
+		repl.emplace([&]() {
+			try {
+				getSource()->readEvents(*out);
+			}
+			catch (std::exception & ex) {
+				failed = true;
+				std::cerr << ex.what() << "\n";
+			}
+			catch (...) {
+				failed = true;
+				std::cerr << "bug\n";
+			}
+		});
 	}
 
 	void
@@ -91,16 +113,22 @@ public:
 		BOOST_REQUIRE(out);
 		BOOST_REQUIRE(src);
 		BOOST_REQUIRE(repl);
-		out->waitFor(events);
+		if (!failed) {
+			out->waitFor(events);
+		}
 		src->stopEvents();
 		repl->join();
 		repl.reset();
+		if (failed) {
+			throw std::runtime_error("Replication thread failed");
+		}
 	}
 
 	MySQLDB my;
 	PqConnDB pq;
 	MyGrate::Output::Pq::PqConn pqm;
 	MyGrate::Input::MySQLConn mym;
+	bool failed {false};
 
 	std::optional<TestUpdateDatabase> out;
 	MyGrate::EventSourceBasePtr src;
