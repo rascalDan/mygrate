@@ -215,20 +215,19 @@ namespace MyGrate::MySQL {
 	Type<MYSQL_TYPE_DATETIME2>::read(RawDataReader & md, RawDataReader & data)
 	{
 		md.discard(1);
-		union {
-			uint64_t i;
-			std::array<uint8_t, 5> b;
-		} r {};
-		r.b = data.readValue<decltype(r.b)>();
-		std::reverse(r.b.begin(), r.b.end());
+		return datetime2From40bit(ntoh(data.readValue<uint64_t>(5)));
+	}
 
+	DateTime
+	datetime2From40bit(uint64_t dtint)
+	{
 		DateTime dt;
-		dt.year = boost::numeric_cast<decltype(dt.year)>(bitslice<17>(r.i, 22) / 13);
-		dt.month = boost::numeric_cast<decltype(dt.month)>(bitslice<17>(r.i, 22) % 13);
-		dt.day = bitslice<5>(r.i, 17);
-		dt.hour = bitslice<5>(r.i, 12);
-		dt.minute = bitslice<6>(r.i, 6);
-		dt.second = bitslice<6>(r.i, 0);
+		dt.year = boost::numeric_cast<decltype(dt.year)>(bitslice<17>(dtint, 46) / 13);
+		dt.month = boost::numeric_cast<decltype(dt.month)>(bitslice<17>(dtint, 46) % 13);
+		dt.day = bitslice<5>(dtint, 41);
+		dt.hour = bitslice<5>(dtint, 36);
+		dt.minute = bitslice<6>(dtint, 30);
+		dt.second = bitslice<6>(dtint, 24);
 		return dt;
 	}
 }

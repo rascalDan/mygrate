@@ -85,6 +85,7 @@ namespace MyGrate {
 #undef DEFINE_TYPE
 
 		Time time2From24bit(uint32_t tint);
+		DateTime datetime2From40bit(uint64_t dtint);
 
 		struct ReplicationPosition {
 #ifndef __cpp_aggregate_paren_init
