@@ -70,7 +70,7 @@ namespace MyGrate::Output::Pq {
 			}
 			case TIMESTAMPOID: {
 				tm tm {};
-				const auto end = strptime(value, "%FT%T", &tm);
+				const auto end = strptime(value, "%F %T", &tm);
 				verify<std::runtime_error>(end && !*end, "Invalid timestamp string");
 				return DateTime {tm};
 			}
