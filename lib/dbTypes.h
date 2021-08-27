@@ -51,6 +51,7 @@ namespace MyGrate {
 					boost::numeric_cast<uint8_t>(tm.tm_mday))
 		{
 		}
+		bool operator<=>(const Date &) const = default;
 		uint16_t year;
 		uint8_t month;
 		uint8_t day;
@@ -63,6 +64,7 @@ namespace MyGrate {
 					boost::numeric_cast<uint8_t>(tm.tm_sec))
 		{
 		}
+		bool operator<=>(const Time &) const = default;
 		uint8_t hour;
 		uint8_t minute;
 		uint8_t second;
@@ -70,7 +72,12 @@ namespace MyGrate {
 	struct DateTime : public Date, public Time {
 		inline DateTime() { }
 		inline DateTime(const Date & d, const Time & t) : Date {d}, Time {t} { }
+		inline DateTime(uint16_t y, uint8_t m, uint8_t d, uint8_t H, uint8_t M, uint8_t S) :
+			DateTime {{y, m, d}, {H, M, S}}
+		{
+		}
 		explicit inline DateTime(const tm & tm) : Date {tm}, Time {tm} { }
+		bool operator<=>(const DateTime &) const = default;
 	};
 	using Blob = std::span<const std::byte>;
 

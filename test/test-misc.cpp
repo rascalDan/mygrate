@@ -88,3 +88,14 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(DbValueConvFloatToString, F, Floats)
 	MyGrate::DbValue v {F {123}};
 	BOOST_CHECK_EQUAL((std::string)v, "123.000000"s);
 }
+
+BOOST_AUTO_TEST_CASE(create_datetime)
+{
+	struct tm tm;
+	time_t t {1629222289};
+	gmtime_r(&t, &tm);
+	BOOST_REQUIRE_EQUAL(tm.tm_gmtoff, 0);
+	BOOST_REQUIRE_EQUAL(tm.tm_isdst, 0);
+	MyGrate::DateTime dt {tm};
+	BOOST_CHECK_EQUAL(dt, (MyGrate::DateTime {2021, 8, 17, 17, 44, 49}));
+}
