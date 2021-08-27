@@ -34,7 +34,6 @@ BOOST_AUTO_TEST_CASE(simple)
 	BOOST_CHECK_NO_THROW(c.query("SET @var = ?", {"string_view"}));
 	BOOST_CHECK_NO_THROW(c.query("SET @var = ?", {nullptr}));
 	BOOST_CHECK_NO_THROW(c.query("SET @var = ?", {1.2}));
-	BOOST_CHECK_THROW(c.query("SET @var = ?", {MyGrate::Time {}}), std::logic_error);
 }
 
 using SomeSelect = MyGrate::DbStmt<"SELECT * FROM foo">;

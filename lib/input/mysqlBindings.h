@@ -4,6 +4,7 @@
 #include <dbTypes.h>
 #include <helpers.h>
 #include <initializer_list>
+#include <memory>
 #include <mysql.h>
 #include <mysql_types.h>
 #include <variant>
@@ -16,7 +17,21 @@ namespace MyGrate::Input {
 		my_bool null;
 	};
 
+	MYSQL_TIME & operator<<(MYSQL_TIME & t, const Date &);
+	MYSQL_TIME & operator<<(MYSQL_TIME & t, const Time &);
+	MYSQL_TIME & operator<<(MYSQL_TIME & t, const DateTime & dt);
+
 	struct Bindings {
+		struct Buffer {
+			virtual ~Buffer() = default;
+		};
+		template<typename T> struct BufferOf : public Buffer {
+			template<typename S> BufferOf(const S & src) : val {}
+			{
+				val << src;
+			}
+			T val;
+		};
 		explicit Bindings(const std::span<const DbValue> vs)
 		{
 			binds.reserve(vs.size());
@@ -59,12 +74,43 @@ namespace MyGrate::Input {
 			b.is_null = &data.emplace_back(0, 1).null;
 		}
 		void
+		operator()(const DateTime & dt)
+		{
+			auto & b = binds.emplace_back();
+			auto t = std::make_unique<BufferOf<MYSQL_TIME>>(dt);
+			b.buffer_type = MySQL::CType<DateTime>::type;
+			b.buffer = &t->val;
+			b.buffer_length = sizeof(t->val);
+			buffers.push_back(std::move(t));
+		}
+		void
+		operator()(const Time & dt)
+		{
+			auto & b = binds.emplace_back();
+			auto t = std::make_unique<BufferOf<MYSQL_TIME>>(dt);
+			b.buffer_type = MySQL::CType<Time>::type;
+			b.buffer = &t->val;
+			b.buffer_length = sizeof(t->val);
+			buffers.push_back(std::move(t));
+		}
+		void
+		operator()(const Date & dt)
+		{
+			auto & b = binds.emplace_back();
+			auto t = std::make_unique<BufferOf<MYSQL_TIME>>(dt);
+			b.buffer_type = MySQL::CType<Date>::type;
+			b.buffer = &t->val;
+			b.buffer_length = sizeof(t->val);
+			buffers.push_back(std::move(t));
+		}
+		void
 		operator()(const auto &)
 		{
 			throw std::logic_error("Not implemented");
 		}
 		std::vector<MYSQL_BIND> binds;
 		std::vector<BingingData> data;
+		std::vector<std::unique_ptr<Buffer>> buffers;
 	};
 
 	class ResultData : public BingingData {
