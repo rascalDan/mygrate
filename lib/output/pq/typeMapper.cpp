@@ -42,7 +42,7 @@ namespace MyGrate::Output::Pq {
 		add(R"(timestamp(\(\d+\))?)"_r, "timestamp without time zone"); // drops precision
 		add(R"(time)"_r, "time without time zone");
 		add(R"(time(\(\d+\))?)"_r, "time without time zone"); // drops precision
-		add(R"(year)"_r, "smallint");
+		add(R"(year(\(\d+\))?)"_r, "smallint");
 		// https://dev.mysql.com/doc/refman/8.0/en/string-types.html
 		add(R"((var)?binary(\(\d+\))?)"_r, "bytea");
 		add(R"((var)?char(\(\d+\))?)"_r, "");

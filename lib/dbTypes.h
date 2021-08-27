@@ -164,14 +164,11 @@ namespace MyGrate {
 			else if constexpr (std::is_floating_point_v<R>) {
 				return visit(detail::SafeExtract<R, std::is_floating_point> {});
 			}
-			else if constexpr (std::is_same_v<std::string_view, R>) {
-				return get<std::string_view>();
-			}
 			else if constexpr (std::is_same_v<std::string, R>) {
 				return visit(detail::ToString {});
 			}
 			else {
-				static_assert(detail::is_false<R>::value, "Cannot extract one of these");
+				return get<R>();
 			}
 		}
 	};

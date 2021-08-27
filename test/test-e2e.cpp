@@ -19,6 +19,7 @@
 #include <sql/simpleSelectAll.h>
 #include <sql/simpleUpdate.h>
 #include <sql/simpleUpdateAll.h>
+#include <streamSupport.h>
 #include <thread>
 
 class TestUpdateDatabase : public MyGrate::Output::Pq::UpdateDatabase {
@@ -197,5 +198,160 @@ BOOST_AUTO_TEST_CASE(txns, *boost::unit_test::timeout(15))
 	BOOST_CHECK_EQUAL(recs->at(1, 1).get<std::string_view>(), "Same");
 	BOOST_CHECK_EQUAL(recs->at(3, 1).get<std::string_view>(), "Same");
 }
+
+template<int T> struct TypeTestDetail;
+#define TEST_TYPE(MYSQL_TYPE, IN, OUT, MYTYPE) \
+	template<> struct TypeTestDetail<MYSQL_TYPE> { \
+		using OutType = OUT; \
+		static constexpr auto mytype = #MYTYPE; \
+		static IN generate(size_t n); \
+	}; \
+	IN TypeTestDetail<MYSQL_TYPE>::generate(size_t n)
+
+TEST_TYPE(MYSQL_TYPE_STRING, std::string, std::string_view, text)
+{
+	return std::string(n * 200, 'f');
+}
+TEST_TYPE(MYSQL_TYPE_VARCHAR, std::string, std::string_view, varchar(2048))
+{
+	return std::string(n * 20, 'f');
+}
+TEST_TYPE(MYSQL_TYPE_JSON, std::string, std::string_view, json)
+{
+	return MyGrate::scprintf<"{ json: %? }">(n);
+}
+TEST_TYPE(MYSQL_TYPE_ENUM, std::string_view, std::string_view, enum('alpha', 'beta', 'gamma'))
+{
+	static constexpr std::array<std::string_view, 3> vals {"alpha", "beta", "gamma"};
+	return vals[n % vals.size()];
+}
+TEST_TYPE(MYSQL_TYPE_TINY, int8_t, int8_t, tinyint)
+{
+	return (int8_t)n;
+}
+TEST_TYPE(MYSQL_TYPE_SHORT, int16_t, int16_t, smallint)
+{
+	return (int16_t)n;
+}
+TEST_TYPE(MYSQL_TYPE_INT24, int32_t, int32_t, int)
+{
+	return (int32_t)n;
+}
+TEST_TYPE(MYSQL_TYPE_YEAR, int16_t, int16_t, year)
+{
+	if (!n) {
+		return 0;
+	}
+	return (int16_t)n + 1901;
+}
+TEST_TYPE(MYSQL_TYPE_LONG, int32_t, int32_t, int)
+{
+	return (int32_t)n;
+}
+TEST_TYPE(MYSQL_TYPE_LONGLONG, int64_t, int64_t, bigint)
+{
+	return (int64_t)n;
+}
+TEST_TYPE(MYSQL_TYPE_FLOAT, float, float, float)
+{
+	return (float)n;
+}
+TEST_TYPE(MYSQL_TYPE_DOUBLE, double, double, real)
+{
+	return (double)n;
+}
+TEST_TYPE(MYSQL_TYPE_DATETIME, MyGrate::DateTime, MyGrate::DateTime, datetime)
+{
+	time_t t = time(nullptr);
+	t -= (n * 12345679);
+	struct tm tm {
+	};
+	gmtime_r(&t, &tm);
+	return MyGrate::DateTime {tm};
+}
+TEST_TYPE(MYSQL_TYPE_DATE, MyGrate::Date, MyGrate::Date, date)
+{
+	time_t t = time(nullptr);
+	t -= (n * 12345679);
+	struct tm tm {
+	};
+	gmtime_r(&t, &tm);
+	return MyGrate::Date {tm};
+}
+TEST_TYPE(MYSQL_TYPE_TIME, MyGrate::Time, MyGrate::Time, time)
+{
+	time_t t = time(nullptr);
+	t -= (n * 12345679);
+	struct tm tm {
+	};
+	gmtime_r(&t, &tm);
+	auto r = MyGrate::Time {tm};
+	std::cerr << r << "\n";
+	return r;
+}
+
+template<int MYSQL_TYPE, typename Test>
+void
+replication_data_type_impl(Test * test)
+{
+	using T = TypeTestDetail<MYSQL_TYPE>;
+	using I = decltype(T::generate(0));
+	using O = typename T::OutType;
+
+	constexpr auto ROWS {100U};
+	BOOST_TEST_INFO(T::mytype);
+	test->mym.query(
+			MyGrate::scprintf<"CREATE TABLE test(id INT AUTO_INCREMENT, val %?, PRIMARY KEY(id))">(T::mytype).c_str());
+	TestUpdateDatabase & out {test->getUpdateDatabase()};
+	out.addTable(&test->mym, "test");
+
+	std::vector<I> vals;
+	vals.reserve(ROWS);
+
+	// insert test records
+	test->run();
+	MyGrate::Tx {&test->mym}([&vals, test] {
+		MyGrate::DbStmt<"INSERT INTO test(val) VALUES(?)"> ins;
+		for (size_t n {}; n < ROWS; n++) {
+			vals.push_back(T::generate(n));
+			ins.execute(&test->mym, vals.back());
+		}
+	});
+	test->stopAfter(EventCounterTarget {}.add(WRITE_ROWS_EVENT_V1, ROWS));
+
+	// read test records
+	auto rs {MyGrate::DbStmt<"SELECT val FROM testout.test ORDER BY id">::execute(&test->pqm)};
+	std::vector<O> outs;
+	vals.reserve(ROWS);
+	for (auto v : *rs) {
+		outs.push_back(v[0]);
+	}
+
+	// Check values
+	BOOST_CHECK_EQUAL_COLLECTIONS(vals.begin(), vals.end(), outs.begin(), outs.end());
+}
+
+#define TEST_MYSQL_TYPE(T) \
+	BOOST_TEST_DECORATOR(*boost::unit_test::timeout(5)) \
+	BOOST_AUTO_TEST_CASE(replication_data_type_##T) \
+	{ \
+		replication_data_type_impl<T>(this); \
+	}
+
+TEST_MYSQL_TYPE(MYSQL_TYPE_STRING);
+TEST_MYSQL_TYPE(MYSQL_TYPE_VARCHAR);
+TEST_MYSQL_TYPE(MYSQL_TYPE_JSON);
+// TEST_MYSQL_TYPE(MYSQL_TYPE_ENUM); // we don't have sufficient data available to support this
+TEST_MYSQL_TYPE(MYSQL_TYPE_TINY);
+TEST_MYSQL_TYPE(MYSQL_TYPE_SHORT);
+TEST_MYSQL_TYPE(MYSQL_TYPE_LONG);
+TEST_MYSQL_TYPE(MYSQL_TYPE_INT24);
+TEST_MYSQL_TYPE(MYSQL_TYPE_LONGLONG);
+TEST_MYSQL_TYPE(MYSQL_TYPE_FLOAT);
+TEST_MYSQL_TYPE(MYSQL_TYPE_DOUBLE);
+TEST_MYSQL_TYPE(MYSQL_TYPE_YEAR);
+TEST_MYSQL_TYPE(MYSQL_TYPE_DATETIME);
+TEST_MYSQL_TYPE(MYSQL_TYPE_DATE);
+TEST_MYSQL_TYPE(MYSQL_TYPE_TIME);
 
 BOOST_AUTO_TEST_SUITE_END();
