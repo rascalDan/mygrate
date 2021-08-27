@@ -332,8 +332,7 @@ replication_data_type_impl(Test * test)
 }
 
 #define TEST_MYSQL_TYPE(T) \
-	BOOST_TEST_DECORATOR(*boost::unit_test::timeout(5)) \
-	BOOST_AUTO_TEST_CASE(replication_data_type_##T) \
+	BOOST_AUTO_TEST_CASE(replication_data_type_##T, *boost::unit_test::timeout(5)) \
 	{ \
 		replication_data_type_impl<T>(this); \
 	}
