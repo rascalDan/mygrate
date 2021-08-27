@@ -1,5 +1,4 @@
 using gcc ;
-using clang : 12 ;
 
 using pkg-config ;
 import pkg-config ;
