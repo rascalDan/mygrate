@@ -322,7 +322,7 @@ replication_data_type_impl(Test * test)
 	// read test records
 	auto rs {MyGrate::DbStmt<"SELECT val FROM testout.test ORDER BY id">::execute(&test->pqm)};
 	std::vector<O> outs;
-	vals.reserve(ROWS);
+	outs.reserve(ROWS);
 	for (auto v : *rs) {
 		outs.push_back(v[0]);
 	}
