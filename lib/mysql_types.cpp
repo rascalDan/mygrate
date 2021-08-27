@@ -68,8 +68,17 @@ namespace MyGrate::MySQL {
 	}
 	INTEGER_TYPE(MYSQL_TYPE_INT24, false, 3);
 	INTEGER_TYPE(MYSQL_TYPE_INT24, true, 3);
-	INTEGER_TYPE(MYSQL_TYPE_YEAR, false, 2);
 #undef INTEGER_TYPE
+
+	typename Type<MYSQL_TYPE_YEAR, false>::C
+	Type<MYSQL_TYPE_YEAR, false>::read(RawDataReader &, RawDataReader & data)
+	{
+		auto y {data.readValue<typename Type<MYSQL_TYPE_YEAR, false>::C, 1>()};
+		if (y) {
+			y += 1900;
+		};
+		return y;
+	}
 
 	static Blob
 	readBlob(RawDataReader & md, RawDataReader & data)
