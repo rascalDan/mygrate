@@ -33,7 +33,7 @@ namespace MyGrate::Output::Pq {
 		add(R"(bigint(\(\d+\))?( (un)?signed)?)"_r, "bigint");
 		add(R"((numeric|decimal)(\(\d+(,\d+)?\))?)"_r, "");
 		add(R"(float(\(\d+,\d+\))?)"_r, "float");
-		add(R"((real|double( precision)?)(\(\d+,\d+\))?)"_r, "double");
+		add(R"((real|double( precision)?)(\(\d+,\d+\))?)"_r, "real");
 		// https://dev.mysql.com/doc/refman/8.0/en/date-and-time-types.html
 		add(R"(date)"_r, "date");
 		add(R"(datetime)"_r, "timestamp without time zone");
