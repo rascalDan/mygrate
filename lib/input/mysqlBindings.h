@@ -26,7 +26,7 @@ namespace MyGrate::Input {
 			virtual ~Buffer() = default;
 		};
 		template<typename T> struct BufferOf : public Buffer {
-			template<typename S> BufferOf(const S & src) : val {}
+			template<typename S> explicit BufferOf(const S & src) : val {}
 			{
 				val << src;
 			}
