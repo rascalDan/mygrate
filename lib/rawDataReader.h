@@ -36,6 +36,7 @@ namespace MyGrate {
 		typename type_map<T>::target
 		readValue(size_t L)
 		{
+			static_assert(std::is_trivial_v<T>, "Do not read non-trivial types");
 			verify<std::logic_error>(L > 0 && L <= sizeof(T), "Read exceeds target size");
 			offsetSizeCheck(L);
 			T v {};
