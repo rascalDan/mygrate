@@ -193,11 +193,11 @@ namespace MyGrate::MySQL {
 	typename Type<MYSQL_TYPE_DATE>::C
 	Type<MYSQL_TYPE_DATE>::read(RawDataReader &, RawDataReader & data)
 	{
-		auto dint {data.readValue<uint32_t, 3>()};
+		const auto dint {data.readValue<uint32_t, 3>()};
 		Date d {};
-		d.day = bitslice<6>(dint, 0);
-		d.month = bitslice<4>(dint, 6);
-		d.year = bitslice<14>(dint, 10);
+		d.day = bitslice<5>(dint, 0);
+		d.month = bitslice<4>(dint, 5);
+		d.year = bitslice<14>(dint, 9);
 		return d;
 	}
 
