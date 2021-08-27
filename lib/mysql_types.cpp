@@ -96,11 +96,11 @@ namespace MyGrate::MySQL {
 	typename Type<ET, false>::C Type<ET, false>::read(RawDataReader & md, RawDataReader & data) \
 	{ \
 		const auto realtype {md.readValue<enum_field_types, 1>()}; \
-		const auto lenlen {md.readValue<uint8_t>()}; \
+		const auto len {md.readValue<uint8_t>()}; \
 		switch (realtype) { \
 			case MYSQL_TYPE_ENUM: \
 			case MYSQL_TYPE_VAR_STRING: \
-				return data.viewValue<std::string_view>(lenlen); \
+				return data.viewValue<std::string_view>(len); \
 			default: \
 				throw std::logic_error("Not implemented: sub-type: " + std::to_string(realtype)); \
 		} \
