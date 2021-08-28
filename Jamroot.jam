@@ -26,6 +26,7 @@ project : requirements
 	<variant>debug:<cflags>-Woverloaded-virtual
 	<variant>debug:<cflags>-Wconversion
 	<variant>debug:<cflags>-Wsign-conversion
+	<variant>debug:<cflags>-Wnull-dereference
 	<variant>debug:<cflags>-Wdouble-promotion
 	<variant>coverage:<coverage>on
 	<toolset>tidy:<checkxx>boost-*
