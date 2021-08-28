@@ -21,7 +21,10 @@ namespace MyGrate::Output::Pq {
 		void
 		operator()(std::floating_point auto v) const
 		{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdouble-promotion"
 			fprintf(out, printer<decltype(v)>::fmt, v);
+#pragma GCC diagnostic pop
 		}
 		void operator()(timespec) const;
 		void operator()(Date v) const;
