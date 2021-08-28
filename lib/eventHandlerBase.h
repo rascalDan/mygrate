@@ -9,6 +9,7 @@ namespace MyGrate {
 	using MariaDB_Event_Ptr = std::unique_ptr<MARIADB_RPL_EVENT, decltype(&mariadb_free_rpl_event)>;
 	class EventHandlerBase {
 	public:
+		virtual ~EventHandlerBase() = default;
 		virtual void tableMap(MariaDB_Event_Ptr);
 		virtual void insertRow(MariaDB_Event_Ptr);
 		virtual void updateRow(MariaDB_Event_Ptr);

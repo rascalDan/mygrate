@@ -20,6 +20,7 @@ project : requirements
 	<variant>release:<lto>on
 	<variant>debug:<warnings>extra
 	<variant>debug:<warnings-as-errors>on
+	<variant>debug:<cflags>-Wnon-virtual-dtor
 	<variant>debug:<cflags>-Wconversion
 	<variant>coverage:<coverage>on
 	<toolset>tidy:<checkxx>boost-*
