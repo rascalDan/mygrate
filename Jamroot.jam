@@ -32,6 +32,7 @@ project : requirements
 	<toolset>gcc,<variant>debug:<cflags>-Wduplicated-cond
 	<toolset>gcc,<variant>debug:<cflags>-Wduplicated-branches
 	<toolset>gcc,<variant>debug:<cflags>-Wlogical-op
+	<toolset>gcc,<variant>debug:<cflags>-Wuseless-cast
 	<variant>coverage:<coverage>on
 	<toolset>tidy:<checkxx>boost-*
 	<toolset>tidy:<checkxx>bugprone-*
