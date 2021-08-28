@@ -24,6 +24,7 @@ project : requirements
 	<variant>debug:<cflags>-Wcast-align
 	<variant>debug:<cflags>-Wunused
 	<variant>debug:<cflags>-Wconversion
+	<variant>debug:<cflags>-Wsign-conversion
 	<variant>coverage:<coverage>on
 	<toolset>tidy:<checkxx>boost-*
 	<toolset>tidy:<checkxx>bugprone-*

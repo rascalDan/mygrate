@@ -260,34 +260,27 @@ TEST_TYPE(MYSQL_TYPE_DOUBLE, double, double, real)
 {
 	return (double)n;
 }
-TEST_TYPE(MYSQL_TYPE_DATETIME, MyGrate::DateTime, MyGrate::DateTime, datetime)
+static struct tm
+test_tm(size_t n)
 {
 	time_t t = time(nullptr);
-	t -= (n * 12345679);
+	t -= static_cast<time_t>(n * 12345679);
 	struct tm tm {
 	};
 	gmtime_r(&t, &tm);
-	return MyGrate::DateTime {tm};
+	return tm;
+}
+TEST_TYPE(MYSQL_TYPE_DATETIME, MyGrate::DateTime, MyGrate::DateTime, datetime)
+{
+	return MyGrate::DateTime {test_tm(n)};
 }
 TEST_TYPE(MYSQL_TYPE_DATE, MyGrate::Date, MyGrate::Date, date)
 {
-	time_t t = time(nullptr);
-	t -= (n * 12345679);
-	struct tm tm {
-	};
-	gmtime_r(&t, &tm);
-	return MyGrate::Date {tm};
+	return MyGrate::Date {test_tm(n)};
 }
 TEST_TYPE(MYSQL_TYPE_TIME, MyGrate::Time, MyGrate::Time, time)
 {
-	time_t t = time(nullptr);
-	t -= (n * 12345679);
-	struct tm tm {
-	};
-	gmtime_r(&t, &tm);
-	auto r = MyGrate::Time {tm};
-	std::cerr << r << "\n";
-	return r;
+	return MyGrate::Time {test_tm(n)};
 }
 
 template<int MYSQL_TYPE, typename Test>
