@@ -34,7 +34,8 @@ namespace MyGrate::Output::Pq {
 	PqConn::query(const char * const q, const std::initializer_list<DbValue> & vs)
 	{
 		Bindings b {vs};
-		ResPtr res {PQexecParams(conn.get(), q, (int)vs.size(), nullptr, b.values.data(), b.lengths.data(), nullptr, 0),
+		ResPtr res {PQexecParams(conn.get(), q, static_cast<int>(vs.size()), nullptr, b.values.data(), b.lengths.data(),
+							nullptr, 0),
 				&PQclear};
 		verify<PqErr>(PQresultStatus(res.get()) == PGRES_COMMAND_OK, q, res.get());
 	}
@@ -72,8 +73,8 @@ namespace MyGrate::Output::Pq {
 				{nullptr,
 						[](void * cookie, const char * buf, size_t size) {
 							auto conn = static_cast<PqConn *>(cookie)->conn.get();
-							verify<PqErr>(PQputCopyData(conn, buf, (int)size) == 1, "copy data", conn);
-							return (ssize_t)size;
+							verify<PqErr>(PQputCopyData(conn, buf, static_cast<int>(size)) == 1, "copy data", conn);
+							return static_cast<ssize_t>(size);
 						},
 						nullptr,
 						[](void * cookie) {

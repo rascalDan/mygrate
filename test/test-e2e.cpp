@@ -227,38 +227,38 @@ TEST_TYPE(MYSQL_TYPE_ENUM, std::string_view, std::string_view, enum('alpha', 'be
 }
 TEST_TYPE(MYSQL_TYPE_TINY, int8_t, int8_t, tinyint)
 {
-	return (int8_t)n;
+	return static_cast<int8_t>(n);
 }
 TEST_TYPE(MYSQL_TYPE_SHORT, int16_t, int16_t, smallint)
 {
-	return (int16_t)n;
+	return static_cast<int16_t>(n);
 }
 TEST_TYPE(MYSQL_TYPE_INT24, int32_t, int32_t, int)
 {
-	return (int32_t)n;
+	return static_cast<int32_t>(n);
 }
 TEST_TYPE(MYSQL_TYPE_YEAR, int16_t, int16_t, year)
 {
 	if (!n) {
 		return 0;
 	}
-	return (int16_t)n + 1901;
+	return static_cast<int16_t>(n + 1901);
 }
 TEST_TYPE(MYSQL_TYPE_LONG, int32_t, int32_t, int)
 {
-	return (int32_t)n;
+	return static_cast<int32_t>(n);
 }
 TEST_TYPE(MYSQL_TYPE_LONGLONG, int64_t, int64_t, bigint)
 {
-	return (int64_t)n;
+	return static_cast<int64_t>(n);
 }
 TEST_TYPE(MYSQL_TYPE_FLOAT, float, float, float)
 {
-	return (float)n;
+	return static_cast<float>(n);
 }
 TEST_TYPE(MYSQL_TYPE_DOUBLE, double, double, real)
 {
-	return (double)n;
+	return static_cast<double>(n);
 }
 static struct tm
 test_tm(size_t n)

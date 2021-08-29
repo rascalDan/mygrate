@@ -84,7 +84,7 @@ namespace MyGrate::Output::Pq {
 		}()};
 		fputs("\\\\x", out);
 		std::for_each(v.begin(), v.end(), [this](auto b) {
-			fwrite(hex[(uint8_t)b].data(), 2, 1, out);
+			fwrite(hex[static_cast<uint8_t>(b)].data(), 2, 1, out);
 		});
 	}
 }

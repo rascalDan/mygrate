@@ -8,7 +8,8 @@ namespace MyGrate::Testing {
 	const char * const MySQLDB::SERVER {MyGrate::getenv("MYGRATE_MYSQL_SERVER", "localhost")};
 	const char * const MySQLDB::USER {MyGrate::getenv("MYGRATE_MYSQL_USER", ::getenv("LOGNAME"))};
 	const char * const MySQLDB::PASSWORD {::getenv("MYGRATE_MYSQL_PASSWORD")};
-	const unsigned short MySQLDB::PORT {(unsigned short)std::atoi(MyGrate::getenv("MYGRATE_MYSQL_PORT", "3306"))};
+	const unsigned short MySQLDB::PORT {
+			static_cast<unsigned short>(std::atoi(MyGrate::getenv("MYGRATE_MYSQL_PORT", "3306")))};
 	std::size_t MySQLDB::mocknum;
 
 	MySQLDB::MySQLDB() :

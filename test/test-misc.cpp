@@ -71,8 +71,8 @@ BOOST_AUTO_TEST_CASE(DbValueConvStrViewToStringView)
 {
 	using namespace std::literals;
 	MyGrate::DbValue v {"str"};
-	BOOST_CHECK_EQUAL((std::string_view)v, "str"sv);
-	BOOST_CHECK_EQUAL((std::string)v, "str"s);
+	BOOST_CHECK_EQUAL(static_cast<std::string_view>(v), "str"sv);
+	BOOST_CHECK_EQUAL(static_cast<std::string>(v), "str"s);
 }
 
 static_assert(MyGrate::detail::HasToString<int>);
@@ -82,14 +82,14 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(DbValueConvIntToString, I, Ints)
 {
 	using namespace std::literals;
 	MyGrate::DbValue v {I {123}};
-	BOOST_CHECK_EQUAL((std::string)v, "123"s);
+	BOOST_CHECK_EQUAL(static_cast<std::string>(v), "123"s);
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(DbValueConvFloatToString, F, Floats)
 {
 	using namespace std::literals;
 	MyGrate::DbValue v {F {123}};
-	BOOST_CHECK_EQUAL((std::string)v, "123.000000"s);
+	BOOST_CHECK_EQUAL(static_cast<std::string>(v), "123.000000"s);
 }
 
 BOOST_AUTO_TEST_CASE(create_datetime)
@@ -106,14 +106,14 @@ BOOST_AUTO_TEST_CASE(create_datetime)
 BOOST_AUTO_TEST_CASE(mod100_extract)
 {
 	long unsigned int i {1629222289};
-	BOOST_CHECK_EQUAL((int)MyGrate::mod100_extract(i), 89);
-	BOOST_CHECK_EQUAL((int)MyGrate::mod100_extract(i), 22);
-	BOOST_CHECK_EQUAL((int)MyGrate::mod100_extract(i), 22);
-	BOOST_CHECK_EQUAL((int)MyGrate::mod100_extract(i), 29);
-	BOOST_CHECK_EQUAL((int)MyGrate::mod100_extract(i), 16);
-	BOOST_CHECK_EQUAL((int)MyGrate::mod100_extract(i), 0);
-	BOOST_CHECK_EQUAL((int)MyGrate::mod100_extract(i), 0);
-	BOOST_CHECK_EQUAL((int)MyGrate::mod100_extract(i), 0);
+	BOOST_CHECK_EQUAL(MyGrate::mod100_extract(i), 89);
+	BOOST_CHECK_EQUAL(MyGrate::mod100_extract(i), 22);
+	BOOST_CHECK_EQUAL(MyGrate::mod100_extract(i), 22);
+	BOOST_CHECK_EQUAL(MyGrate::mod100_extract(i), 29);
+	BOOST_CHECK_EQUAL(MyGrate::mod100_extract(i), 16);
+	BOOST_CHECK_EQUAL(MyGrate::mod100_extract(i), 0);
+	BOOST_CHECK_EQUAL(MyGrate::mod100_extract(i), 0);
+	BOOST_CHECK_EQUAL(MyGrate::mod100_extract(i), 0);
 }
 
 using ConvertTimeData = std::tuple<uint32_t, MyGrate::Time>;

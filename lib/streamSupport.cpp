@@ -49,7 +49,8 @@ namespace std {
 	std::ostream &
 	operator<<(std::ostream & s, const MyGrate::DateTime & dt)
 	{
-		return MyGrate::scprintf<"%? %?">(s, (const MyGrate::Date)dt, (const MyGrate::Time)dt);
+		return MyGrate::scprintf<"%? %?">(
+				s, static_cast<const MyGrate::Date>(dt), static_cast<const MyGrate::Time>(dt));
 	}
 
 	std::ostream &

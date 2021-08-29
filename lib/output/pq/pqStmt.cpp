@@ -22,8 +22,8 @@ namespace MyGrate::Output::Pq {
 	PqPrepStmt::execute(const std::span<const DbValue> vs)
 	{
 		Bindings b {vs};
-		res = {PQexecPrepared(
-					   conn, name.c_str(), (int)vs.size(), b.values.data(), b.lengths.data(), b.formats.data(), 0),
+		res = {PQexecPrepared(conn, name.c_str(), static_cast<int>(vs.size()), b.values.data(), b.lengths.data(),
+					   b.formats.data(), 0),
 				&PQclear};
 		verify<PqErr>(PQresultStatus(res.get()) == PGRES_COMMAND_OK || PQresultStatus(res.get()) == PGRES_TUPLES_OK,
 				name, conn);
@@ -54,7 +54,7 @@ namespace MyGrate::Output::Pq {
 			return i->second;
 		}
 		auto nam {scprintf<"pst%0lx">(c->stmts.size())};
-		ResPtr res {PQprepare(c->conn.get(), nam.c_str(), q, (int)n, nullptr), PQclear};
+		ResPtr res {PQprepare(c->conn.get(), nam.c_str(), q, static_cast<int>(n), nullptr), PQclear};
 		verify<PqErr>(PQresultStatus(res.get()) == PGRES_COMMAND_OK, q, c->conn.get());
 		return c->stmts.emplace(q, std::move(nam)).first->second;
 	}

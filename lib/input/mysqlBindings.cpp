@@ -22,7 +22,6 @@ namespace MyGrate::Input {
 	MYSQL_TIME &
 	operator<<(MYSQL_TIME & t, const DateTime & dt)
 	{
-		return t << (Date)dt << (Time)dt;
+		return t << static_cast<Date>(dt) << static_cast<Time>(dt);
 	}
-
 }

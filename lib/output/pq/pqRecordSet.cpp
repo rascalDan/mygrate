@@ -30,12 +30,12 @@ namespace MyGrate::Output::Pq {
 	DbValue
 	PqRecordSet::at(std::size_t row, std::size_t col) const
 	{
-		if (PQgetisnull(res.get(), (int)row, (int)col)) {
+		if (PQgetisnull(res.get(), static_cast<int>(row), static_cast<int>(col))) {
 			return nullptr;
 		}
-		const auto value {PQgetvalue(res.get(), (int)row, (int)col)};
-		const auto size {static_cast<size_t>(PQgetlength(res.get(), (int)row, (int)col))};
-		const auto type {PQftype(res.get(), (int)col)};
+		const auto value {PQgetvalue(res.get(), static_cast<int>(row), static_cast<int>(col))};
+		const auto size {static_cast<size_t>(PQgetlength(res.get(), static_cast<int>(row), static_cast<int>(col)))};
+		const auto type {PQftype(res.get(), static_cast<int>(col))};
 		switch (type) {
 			// case BITOID: TODO bool
 			// case BOOLOID: TODO bool

@@ -21,7 +21,8 @@ namespace MyGrate {
 		auto colIter {columnFlags.begin()};
 		for (auto c {0U}; c < tm.column_count; c++) {
 			if (*colIter) {
-				const enum_field_types type {(enum_field_types)(unsigned char)tm.column_types.str[c]};
+				const enum_field_types type {
+						static_cast<enum_field_types>(static_cast<unsigned char>(tm.column_types.str[c]))};
 				const auto null {*nullIter};
 				if (null) {
 					switch (type) {
