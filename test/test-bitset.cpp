@@ -11,7 +11,7 @@
 using namespace MyGrate;
 
 // LCOV_EXCL_START
-BOOST_TEST_DONT_PRINT_LOG_VALUE(BitSet::Iterator);
+BOOST_TEST_DONT_PRINT_LOG_VALUE(BitSet::Iterator)
 // LCOV_EXCL_STOP
 
 BOOST_AUTO_TEST_CASE(bitset)

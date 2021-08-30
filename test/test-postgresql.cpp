@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(mock_schema)
 	BOOST_CHECK_EQUAL(rs->at(0, 0).operator unsigned int(), 0);
 }
 
-BOOST_FIXTURE_TEST_SUITE(ms, MemStream);
+BOOST_FIXTURE_TEST_SUITE(ms, MemStream)
 
 BOOST_DATA_TEST_CASE(write_strings,
 		boost::unit_test::data::make({
@@ -154,4 +154,4 @@ BOOST_AUTO_TEST_CASE(write_blob)
 	BOOST_CHECK_EQUAL(out, R"B(\\x0010123090AAFF000000)B");
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()

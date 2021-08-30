@@ -99,15 +99,15 @@ namespace MyGrate {
 		}
 	};
 
-#define StreamWriterT(C...) \
+#define StreamWriterT(...) \
 	template<const auto S, auto L, auto pos, typename stream, auto... sn> \
-	struct StreamWriter<S, L, pos, stream, void, '%', C, sn...> : \
-		public StreamWriterBase<S, L, BOOST_PP_VARIADIC_SIZE(C) + pos, stream>
+	struct StreamWriter<S, L, pos, stream, void, '%', __VA_ARGS__, sn...> : \
+		public StreamWriterBase<S, L, BOOST_PP_VARIADIC_SIZE(__VA_ARGS__) + pos, stream>
 
-#define StreamWriterTP(P, C...) \
+#define StreamWriterTP(P, ...) \
 	template<const auto S, auto L, auto pos, typename stream, auto P, auto... sn> \
-	struct StreamWriter<S, L, pos, stream, void, '%', C, sn...> : \
-		public StreamWriterBase<S, L, BOOST_PP_VARIADIC_SIZE(C) + pos, stream>
+	struct StreamWriter<S, L, pos, stream, void, '%', __VA_ARGS__, sn...> : \
+		public StreamWriterBase<S, L, BOOST_PP_VARIADIC_SIZE(__VA_ARGS__) + pos, stream>
 
 	// Default stream writer formatter
 	StreamWriterT('?') {
@@ -300,7 +300,7 @@ namespace MyGrate {
 	BASICCONV(BASE, OP, CONV); \
 	BASICCONV(short BASE, OP, 'h', CONV); \
 	BASICCONV(long BASE, OP, 'l', CONV); \
-	BASICCONV(long long BASE, OP, 'l', 'l', CONV);
+	BASICCONV(long long BASE, OP, 'l', 'l', CONV)
 	INTCONV(int, s << std::dec << p, 'i');
 	INTCONV(int, s << std::dec << p, 'd');
 	INTCONV(unsigned int, s << std::oct << p, 'o');
@@ -323,7 +323,7 @@ namespace MyGrate {
 	// Floating point (a, A, e, E, f, F, g, G)
 #define FPCONV(BASE, OP, CONV) \
 	BASICCONV(BASE, OP, CONV); \
-	BASICCONV(long BASE, OP, 'L', CONV);
+	BASICCONV(long BASE, OP, 'L', CONV)
 	FPCONV(double, s << std::nouppercase << std::hexfloat << p, 'a');
 	FPCONV(double, s << std::uppercase << std::hexfloat << p, 'A');
 	FPCONV(double, s << std::nouppercase << std::scientific << p, 'e');
@@ -415,7 +415,7 @@ namespace MyGrate {
 			StreamWriter<S, L, pos + BOOST_PP_ADD(d, 1), stream, void, '%', nn, sn...>::write(s, pn...); \
 		} \
 	};
-	BOOST_PP_REPEAT(6, FMTWIDTH, void);
+	BOOST_PP_REPEAT(6, FMTWIDTH, void)
 #define FMTPRECISION(unused, d, data) \
 	template<const auto S, auto L, auto pos, typename stream, BOOST_PP_REPEAT(BOOST_PP_ADD(d, 1), AUTON, n), auto nn, \
 			auto... sn> \
@@ -431,7 +431,7 @@ namespace MyGrate {
 			StreamWriter<S, L, pos + BOOST_PP_ADD(d, 2), stream, void, '%', nn, sn...>::write(s, pn...); \
 		} \
 	};
-	BOOST_PP_REPEAT(6, FMTPRECISION, void);
+	BOOST_PP_REPEAT(6, FMTPRECISION, void)
 #undef AUTON
 #undef NS
 #undef ISDIGIT
@@ -467,7 +467,7 @@ namespace MyGrate {
 			OP; \
 			StreamWriter<S, L, pos + 1, stream, void, '%', sn...>::write(s, pn...); \
 		} \
-	};
+	}
 	FLAGCONV(s << std::showbase, '#');
 	FLAGCONV(s << std::setfill('0'), '0');
 	FLAGCONV(s << std::left, '-');

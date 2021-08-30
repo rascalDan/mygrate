@@ -3,7 +3,7 @@
 
 #include "helpers.h"
 
-BOOST_FIXTURE_TEST_SUITE(ec, EventCounterTarget);
+BOOST_FIXTURE_TEST_SUITE(ec, EventCounterTarget)
 
 BOOST_AUTO_TEST_CASE(zero)
 {
@@ -81,4 +81,4 @@ BOOST_AUTO_TEST_CASE(compare_many)
 	BOOST_CHECK(other >= *this);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()

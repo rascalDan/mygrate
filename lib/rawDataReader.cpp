@@ -26,9 +26,11 @@ namespace MyGrate {
 	uint64_t
 	RawDataReader::readValue<PackedInteger>()
 	{
-		switch (const auto byte1 {readValue<uint8_t>()}) {
-			case 0 ... 250: // The value as-is
-				return byte1;
+		const auto byte1 {readValue<uint8_t>()};
+		if (byte1 <= 250) {
+			return byte1;
+		}
+		switch (byte1) {
 			case 252: // 2 bytes
 				return readValue<uint16_t, 2>();
 			case 253: // 3 bytes

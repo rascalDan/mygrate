@@ -18,7 +18,7 @@ struct timespec;
 struct tm;
 #include <streamSupport.h>
 
-BOOST_FIXTURE_TEST_SUITE(stream, std::stringstream);
+BOOST_FIXTURE_TEST_SUITE(stream, std::stringstream)
 
 template<typename In> using ToStream = std::tuple<In, std::string_view>;
 BOOST_DATA_TEST_CASE(bytes,
@@ -102,4 +102,4 @@ BOOST_AUTO_TEST_CASE(vector)
 	BOOST_CHECK_EQUAL(this->str(), "[1,123456,-78910]");
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()

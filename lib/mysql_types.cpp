@@ -15,8 +15,8 @@ namespace MyGrate::MySQL {
 			x = bswap_##B(x); \
 		return x; \
 	}
-	NTOH(32);
-	NTOH(64);
+	NTOH(32)
+	NTOH(64)
 
 	typename Type<MYSQL_TYPE_NULL, false>::C
 	Type<MYSQL_TYPE_NULL, false>::read(RawDataReader &, RawDataReader &)
@@ -33,10 +33,10 @@ namespace MyGrate::MySQL {
 	{ \
 		return data.readValue<typename Type<ET, true>::C>(); \
 	}
-	INTEGER_TYPE(MYSQL_TYPE_TINY);
-	INTEGER_TYPE(MYSQL_TYPE_SHORT);
-	INTEGER_TYPE(MYSQL_TYPE_LONG);
-	INTEGER_TYPE(MYSQL_TYPE_LONGLONG);
+	INTEGER_TYPE(MYSQL_TYPE_TINY)
+	INTEGER_TYPE(MYSQL_TYPE_SHORT)
+	INTEGER_TYPE(MYSQL_TYPE_LONG)
+	INTEGER_TYPE(MYSQL_TYPE_LONGLONG)
 #undef INTEGER_TYPE
 
 #define FLOAT_TYPE(ET) \
@@ -45,8 +45,8 @@ namespace MyGrate::MySQL {
 		verify<std::length_error>(sizeof(typename Type<ET>::C) == md.readValue<uint8_t>(), "Invalid " #ET " size"); \
 		return data.readValue<typename Type<ET>::C>(); \
 	}
-	FLOAT_TYPE(MYSQL_TYPE_FLOAT);
-	FLOAT_TYPE(MYSQL_TYPE_DOUBLE);
+	FLOAT_TYPE(MYSQL_TYPE_FLOAT)
+	FLOAT_TYPE(MYSQL_TYPE_DOUBLE)
 #undef FLOAT_TYPE
 
 	typename Type<MYSQL_TYPE_DECIMAL>::C
@@ -66,8 +66,8 @@ namespace MyGrate::MySQL {
 	{ \
 		return data.readValue<typename Type<ET, s>::C, l>(); \
 	}
-	INTEGER_TYPE(MYSQL_TYPE_INT24, false, 3);
-	INTEGER_TYPE(MYSQL_TYPE_INT24, true, 3);
+	INTEGER_TYPE(MYSQL_TYPE_INT24, false, 3)
+	INTEGER_TYPE(MYSQL_TYPE_INT24, true, 3)
 #undef INTEGER_TYPE
 
 	typename Type<MYSQL_TYPE_YEAR, false>::C
@@ -92,10 +92,10 @@ namespace MyGrate::MySQL {
 	{ \
 		return readBlob(md, data); \
 	}
-	BLOB_TYPE(MYSQL_TYPE_TINY_BLOB);
-	BLOB_TYPE(MYSQL_TYPE_MEDIUM_BLOB);
-	BLOB_TYPE(MYSQL_TYPE_LONG_BLOB);
-	BLOB_TYPE(MYSQL_TYPE_GEOMETRY); // Ummm, pass this to the target to handle?
+	BLOB_TYPE(MYSQL_TYPE_TINY_BLOB)
+	BLOB_TYPE(MYSQL_TYPE_MEDIUM_BLOB)
+	BLOB_TYPE(MYSQL_TYPE_LONG_BLOB)
+	BLOB_TYPE(MYSQL_TYPE_GEOMETRY) // Ummm, pass this to the target to handle?
 #undef BLOB_TYPE
 
 	typename Type<MYSQL_TYPE_BLOB, false>::C
@@ -126,10 +126,10 @@ namespace MyGrate::MySQL {
 		} \
 		throw std::logic_error("Didn't return a value: " + std::to_string(realtype)); \
 	}
-	STRING_TYPE(MYSQL_TYPE_STRING);
-	STRING_TYPE(MYSQL_TYPE_JSON);
-	STRING_TYPE(MYSQL_TYPE_SET);
-	STRING_TYPE(MYSQL_TYPE_ENUM);
+	STRING_TYPE(MYSQL_TYPE_STRING)
+	STRING_TYPE(MYSQL_TYPE_JSON)
+	STRING_TYPE(MYSQL_TYPE_SET)
+	STRING_TYPE(MYSQL_TYPE_ENUM)
 #undef STRING_TYPE
 
 	typename Type<MYSQL_TYPE_VARCHAR>::C
