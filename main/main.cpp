@@ -17,9 +17,12 @@ main(int argc, char ** argv)
 	uint64_t sourceid {};
 	bool help {};
 	po::options_description opts("MyGrate");
-	opts.add_options()("postgresql,p", po::value(&pgconn)->required(), "Target PostgreSQL connection string")(
-			"sourceid,s", po::value(&sourceid)->default_value(1), "Source identifier")("help,h",
-			po::value(&help)->zero_tokens(), "Help");
+	// clang-format off
+	opts.add_options()
+		("postgresql,p", po::value(&pgconn)->required(), "Target PostgreSQL connection string")
+		("sourceid,s", po::value(&sourceid)->default_value(1), "Source identifier")
+		("help,h", po::value(&help)->zero_tokens(), "Help");
+	// clang-format on
 
 	po::variables_map vm;
 	po::store(po::command_line_parser(argc, argv).options(opts).run(), vm);
