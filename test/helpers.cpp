@@ -5,6 +5,7 @@ MemStream::MemStream() : out {nullptr}, len {}, s {open_memstream(&out, &len)} {
 MemStream::~MemStream()
 {
 	fclose(s);
+	// NOLINTNEXTLINE(hicpp-no-malloc)
 	free(out);
 }
 

@@ -65,6 +65,11 @@ public:
 		}
 	}
 
+	MockSetup(const MockSetup &) = delete;
+	MockSetup(MockSetup &&) = delete;
+	MockSetup & operator=(const MockSetup &) = delete;
+	MockSetup & operator=(MockSetup &&) = delete;
+
 	TestUpdateDatabase &
 	getUpdateDatabase()
 	{
@@ -316,9 +321,9 @@ replication_data_type_impl(Test * test)
 	auto rs {MyGrate::DbStmt<"SELECT val FROM testout.test ORDER BY id">::execute(&test->pqm)};
 	std::vector<O> outs;
 	outs.reserve(ROWS);
-	for (auto v : *rs) {
-		outs.push_back(v[0]);
-	}
+	std::transform(rs->begin(), rs->end(), std::back_inserter(outs), [](const auto & v) {
+		return static_cast<O>(v[0]);
+	});
 
 	// Check values
 	BOOST_CHECK_EQUAL_COLLECTIONS(vals.begin(), vals.end(), outs.begin(), outs.end());

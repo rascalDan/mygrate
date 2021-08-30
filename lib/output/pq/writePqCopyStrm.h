@@ -16,6 +16,7 @@ namespace MyGrate::Output::Pq {
 		void
 		operator()(std::integral auto v) const
 		{
+			// NOLINTNEXTLINE(clang-diagnostic-format-nonliteral)
 			fprintf(out, printer<decltype(v)>::fmt, v);
 		}
 		void
@@ -23,6 +24,7 @@ namespace MyGrate::Output::Pq {
 		{
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdouble-promotion"
+			// NOLINTNEXTLINE(clang-diagnostic-format-nonliteral)
 			fprintf(out, printer<decltype(v)>::fmt, v);
 #pragma GCC diagnostic pop
 		}

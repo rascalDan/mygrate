@@ -94,7 +94,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(DbValueConvFloatToString, F, Floats)
 
 BOOST_AUTO_TEST_CASE(create_datetime)
 {
-	struct tm tm;
+	struct tm tm {
+	};
 	time_t t {1629222289};
 	gmtime_r(&t, &tm);
 	BOOST_REQUIRE_EQUAL(tm.tm_gmtoff, 0);
@@ -106,14 +107,12 @@ BOOST_AUTO_TEST_CASE(create_datetime)
 BOOST_AUTO_TEST_CASE(mod100_extract)
 {
 	long unsigned int i {1629222289};
-	BOOST_CHECK_EQUAL(MyGrate::mod100_extract(i), 89);
-	BOOST_CHECK_EQUAL(MyGrate::mod100_extract(i), 22);
-	BOOST_CHECK_EQUAL(MyGrate::mod100_extract(i), 22);
-	BOOST_CHECK_EQUAL(MyGrate::mod100_extract(i), 29);
-	BOOST_CHECK_EQUAL(MyGrate::mod100_extract(i), 16);
-	BOOST_CHECK_EQUAL(MyGrate::mod100_extract(i), 0);
-	BOOST_CHECK_EQUAL(MyGrate::mod100_extract(i), 0);
-	BOOST_CHECK_EQUAL(MyGrate::mod100_extract(i), 0);
+	std::vector<int> extracted;
+	while (i) {
+		extracted.push_back(MyGrate::mod100_extract(i));
+	}
+	const std::initializer_list<int> expected {89, 22, 22, 29, 16};
+	BOOST_CHECK_EQUAL_COLLECTIONS(extracted.begin(), extracted.end(), expected.begin(), expected.end());
 }
 
 using ConvertTimeData = std::tuple<uint32_t, MyGrate::Time>;
@@ -137,11 +136,12 @@ BOOST_DATA_TEST_CASE(convert_time,
 
 BOOST_AUTO_TEST_CASE(getenv_with_default)
 {
+	using namespace std::literals;
 	const char * tenv {"mygrate_something"};
 	::unsetenv(tenv);
-	BOOST_CHECK_EQUAL(MyGrate::getenv(tenv, ""), "");
-	BOOST_CHECK_EQUAL(MyGrate::getenv(tenv, "default"), "default");
+	BOOST_CHECK_EQUAL(std::string_view(MyGrate::getenv(tenv, "")), ""sv);
+	BOOST_CHECK_EQUAL(std::string_view(MyGrate::getenv(tenv, "default")), "default"sv);
 	::setenv(tenv, "something else", 1);
-	BOOST_CHECK_EQUAL(MyGrate::getenv(tenv, "default"), "something else");
+	BOOST_CHECK_EQUAL(std::string_view {MyGrate::getenv(tenv, "default")}, "something else"sv);
 	::unsetenv(tenv);
 }

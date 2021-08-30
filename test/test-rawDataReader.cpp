@@ -152,7 +152,8 @@ BOOST_DATA_TEST_CASE(read_field_type,
 		bytes, exp)
 {
 	RawDataReader rdr {bytes.data(), bytes.size()};
-	BOOST_CHECK_EQUAL(rdr.readValue<enum_field_types>(1), exp);
+	const auto e {rdr.readValue<enum_field_types>(1)};
+	BOOST_CHECK_EQUAL(e, exp);
 }
 
 BOOST_AUTO_TEST_CASE(rdr_from_MARIADB_STRING)
@@ -160,7 +161,8 @@ BOOST_AUTO_TEST_CASE(rdr_from_MARIADB_STRING)
 	std::string buf {"test"};
 	MARIADB_STRING str {buf.data(), buf.length()};
 	RawDataReader rdr {str};
-	BOOST_CHECK_EQUAL(rdr.viewValue<std::string_view>(buf.length()), buf);
+	const auto s {rdr.viewValue<std::string_view>(buf.length())};
+	BOOST_CHECK_EQUAL(s, buf);
 }
 
 using SimpleTypes = boost::mpl::list<std::byte, int8_t, int16_t, int32_t, int64_t, uint8_t, uint16_t, uint32_t,
